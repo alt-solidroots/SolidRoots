@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aayush — Developer & Founder of Webthism</title>
+    <meta name="description" content="Aayush is a BTech student, developer, and founder of Webthism. Building ideas into real products.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="loader-inner">
+            <span class="loader-text">Aayush</span>
+            <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
+        </div>
+    </div>
+
+    <!-- Cursor -->
+    <div class="cur" id="cur"></div>
+    <div class="cur-o" id="curO"></div>
+
+    <!-- Scrollbar -->
+    <div class="scrollbar"><div class="scrollbar-thumb" id="sThumb"></div></div>
+
+    <!-- Nav -->
+    <header class="header" id="header">
+        <div class="wrap">
+            <a href="#" class="header-logo" id="headerLogo">Aayush</a>
+            <nav class="header-nav">
+                <a href="#work" class="header-link" data-text="Work">Work</a>
+                <a href="#about" class="header-link" data-text="About">About</a>
+                <a href="#contact" class="header-link" data-text="Contact">Contact</a>
+            </nav>
+            <button class="mob-toggle" id="mobToggle" aria-label="Menu">
+                <span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mob-menu" id="mobMenu">
+        <a href="#" class="mob-link" data-text="Home">Home</a>
+        <a href="#work" class="mob-link" data-text="Work">Work</a>
+        <a href="#about" class="mob-link" data-text="About">About</a>
+        <a href="#contact" class="mob-link" data-text="Contact">Contact</a>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+        <div class="wrap">
+            <div class="hero-upper">
+                <p class="hero-label mono anim-fade" data-delay="0">Developer / Founder / Cyber Security</p>
+            </div>
+            <h1 class="hero-heading">
+                <span class="hero-line"><span class="hero-word anim-up" data-delay="1">Building</span> <span class="hero-word anim-up" data-delay="2">ideas</span></span>
+                <span class="hero-line"><span class="hero-word anim-up" data-delay="3">into</span> <span class="hero-word anim-up highlight" data-delay="4">reality.</span></span>
+            </h1>
+            <div class="hero-bottom">
+                <p class="hero-sub anim-fade" data-delay="5">I'm Aayush — a BTech student and founder of <strong>Webthism</strong>.<br>I turn concepts into working products that people actually use.</p>
+                <div class="hero-actions anim-fade" data-delay="6">
+                    <a href="#work" class="btn btn-primary">View my work</a>
+                    <a href="#contact" class="btn btn-ghost">Get in touch</a>
+                </div>
+                <div class="hero-avatar anim-fade" data-delay="7">
+                    <img src="images/aayush.jpg" alt="Aayush">
+                    <span class="hero-avatar-label mono">Aayush — Founder, Webthism</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll anim-fade" data-delay="7">
+            <span class="mono">Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Work -->
+    <section class="section work" id="work">
+        <div class="wrap">
+            <div class="section-top">
+                <h2 class="section-title anim-up-s">Selected Projects</h2>
+                <p class="section-sub mono anim-up-s">Things I've built</p>
+            </div>
+
+            <div class="projects-grid">
+
+                <a href="#" class="project-card anim-up-s">
+                    <div class="project-img">
+                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80" alt="Promptmizer" loading="lazy">
+                        <div class="project-img-overlay"></div>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-meta">
+                            <span class="project-tag mono">AI Tool</span>
+                            <span class="project-arrow">
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5"/></svg>
+                            </span>
+                        </div>
+                        <h3 class="project-name">Promptmizer</h3>
+                        <p class="project-desc">AI-powered prompt optimizer that refines and enhances your prompts for better outputs across any LLM.</p>
+                    </div>
+                </a>
+
+                <a href="#" class="project-card anim-up-s">
+                    <div class="project-img">
+                        <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&q=80" alt="SkillMap" loading="lazy">
+                        <div class="project-img-overlay"></div>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-meta">
+                            <span class="project-tag mono">EdTech</span>
+                            <span class="project-arrow">
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5"/></svg>
+                            </span>
+                        </div>
+                        <h3 class="project-name">SkillMap</h3>
+                        <p class="project-desc">Generate personalized learning roadmaps with AI. Pick a skill, get a structured path from zero to mastery.</p>
+                    </div>
+                </a>
+
+                <a href="#" class="project-card anim-up-s">
+                    <div class="project-img">
+                        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&q=80" alt="Oslint" loading="lazy">
+                        <div class="project-img-overlay"></div>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-meta">
+                            <span class="project-tag mono">AI Interview</span>
+                            <span class="project-arrow">
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5"/></svg>
+                            </span>
+                        </div>
+                        <h3 class="project-name">Oslint</h3>
+                        <p class="project-desc">AI-powered mock interviewer that simulates real interviews, gives feedback, and helps you prepare smarter.</p>
+                    </div>
+                </a>
+
+                <a href="https://student-leaderboard-five.vercel.app/" target="_blank" class="project-card anim-up-s">
+                    <div class="project-img">
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80" alt="TaskSquare" loading="lazy">
+                        <div class="project-img-overlay"></div>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-meta">
+                            <span class="project-tag mono">Platform</span>
+                            <span class="project-arrow">
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5"/></svg>
+                            </span>
+                        </div>
+                        <h3 class="project-name">TaskSquare</h3>
+                        <p class="project-desc">Student leaderboard platform that gamifies learning. Track progress, compete, and stay motivated.</p>
+                    </div>
+                </a>
+
+            </div>
+
+            <div class="projects-more anim-up-s">
+                <a href="projects.html" class="btn btn-primary btn-lg">
+                    See all projects
+                    <svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section class="section about" id="about">
+        <div class="wrap">
+            <div class="about-layout">
+                <div class="about-photo anim-up-s">
+                    <div class="about-img-wrap">
+                        <img src="images/aayush.jpg" alt="Aayush">
+                    </div>
+                </div>
+                <div class="about-right">
+                    <h2 class="section-title anim-up-s">About me</h2>
+                    <p class="about-para anim-up-s">
+                        I'm a BTech student who codes, builds products, and runs a company. I started <strong>Webthism</strong> to turn ideas into real, usable applications — not just concepts.
+                    </p>
+                    <p class="about-para anim-up-s">
+                        I work across the full stack, but what drives me is shipping things that matter. Whether it's an AI tool, an ed-tech platform, or a security project — I build it, launch it, and iterate.
+                    </p>
+                    <div class="about-roles anim-up-s">
+                        <span class="role">Developer</span>
+                        <span class="role">Founder</span>
+                        <span class="role">Leader</span>
+                        <span class="role">Security Learner</span>
+                    </div>
+                    <div class="about-exp-inline">
+                        <h3 class="exp-heading mono anim-up-s">Experience</h3>
+                        <div class="exp-list">
+                            <div class="exp-item anim-up-s">
+                                <div class="exp-dot"></div>
+                                <div class="exp-content">
+                                    <span class="exp-time mono">Present</span>
+                                    <h4 class="exp-role">Founder & Developer</h4>
+                                    <p class="exp-place">Webthism</p>
+                                </div>
+                            </div>
+                            <div class="exp-item anim-up-s">
+                                <div class="exp-dot"></div>
+                                <div class="exp-content">
+                                    <span class="exp-time mono">1 Year</span>
+                                    <h4 class="exp-role">Cyber Security</h4>
+                                    <p class="exp-place">Learning & Practicing</p>
+                                </div>
+                            </div>
+                            <div class="exp-item anim-up-s">
+                                <div class="exp-dot"></div>
+                                <div class="exp-content">
+                                    <span class="exp-time mono">6 Months</span>
+                                    <h4 class="exp-role">Web Development</h4>
+                                    <p class="exp-place">Full-Stack Projects</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <footer class="section footer" id="contact">
+        <div class="wrap">
+            <div class="footer-top">
+                <p class="footer-label mono anim-up-s">Get in touch</p>
+                <h2 class="footer-heading anim-up-s">Let's build<br>something together.</h2>
+                <a href="mailto:webthism@gmail.com" class="footer-email anim-up-s" data-text="webthism@gmail.com">webthism@gmail.com</a>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <div class="footer-col">
+                    <span class="footer-small mono">&copy; 2026 Aayush / Webthism</span>
+                </div>
+                <div class="footer-col">
+                    <div class="footer-socials">
+                        <a href="https://github.com/aayushsearching" target="_blank" class="footer-social" data-text="GitHub">GitHub</a>
+                        <a href="https://www.linkedin.com/in/aayush-kumar18/" target="_blank" class="footer-social" data-text="LinkedIn">LinkedIn</a>
+                        <a href="https://instagram.com/howsaayush" target="_blank" class="footer-social" data-text="Instagram">Instagram</a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <span class="footer-small mono back-to-top" id="backToTop">Back to top &uarr;</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
