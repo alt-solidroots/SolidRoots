@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Work_Sans:wght@300;400;500;600;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="styles.css" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#d1e4ff",
+                    "surface-container": "#f0eded",
+                    "surface-container-low": "#f6f3f2",
+                    "surface-bright": "#fcf9f8",
+                    "on-secondary-container": "#4d637d",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#101b30",
+                    "outline-variant": "#c4c6cc",
+                    "on-tertiary-fixed-variant": "#5d4201",
+                    "background": "#fcf9f8",
+                    "tertiary": "#000000",
+                    "secondary-fixed-dim": "#b2c8e7",
+                    "on-primary": "#ffffff",
+                    "surface": "#fcf9f8",
+                    "surface-container-high": "#eae7e7",
+                    "primary-fixed": "#d7e2ff",
+                    "surface-dim": "#dcd9d9",
+                    "secondary": "#4a607a",
+                    "on-primary-fixed-variant": "#3c475d",
+                    "tertiary-fixed": "#ffdea5",
+                    "on-secondary-fixed-variant": "#334861",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#261900",
+                    "on-background": "#1b1b1b",
+                    "inverse-primary": "#bbc6e2",
+                    "on-surface-variant": "#44474c",
+                    "error": "#ba1a1a",
+                    "on-surface": "#1b1b1b",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#e9c176",
+                    "tertiary-container": "#261900",
+                    "secondary-container": "#c8dffe",
+                    "on-tertiary-container": "#a17f3b",
+                    "primary": "#000000",
+                    "primary-container": "#101b30",
+                    "on-primary-container": "#79849d",
+                    "on-error": "#ffffff",
+                    "surface-tint": "#545e76",
+                    "outline": "#74777d",
+                    "primary-fixed-dim": "#bbc6e2",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-secondary": "#ffffff",
+                    "inverse-surface": "#313030",
+                    "on-secondary-fixed": "#031d34",
+                    "surface-variant": "#e5e2e1",
+                    "inverse-on-surface": "#f3f0ef"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Work Sans"],
+                    "label": ["Work Sans"]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-[#fcf9f8]/80 dark:bg-[#0D1B2A]/80 backdrop-blur-xl">
+<div class="flex justify-between items-center px-8 py-6 max-w-screen-2xl mx-auto">
+<a class="text-2xl font-bold tracking-tighter text-[#000000] dark:text-white font-headline" href="index.html">
+        Solid Roots
+      </a>
+<div class="hidden md:flex items-center space-gap-8 gap-x-12">
+<a class="text-[#4a607a] dark:text-slate-400 font-medium hover:text-[#000000] dark:hover:text-white transition-colors duration-300 font-headline tracking-tight" href="#">Buy</a>
+<a class="text-[#4a607a] dark:text-slate-400 font-medium hover:text-[#000000] dark:hover:text-white transition-colors duration-300 font-headline tracking-tight" href="#">Sell</a>
+<a class="text-[#4a607a] dark:text-slate-400 font-medium hover:text-[#000000] dark:hover:text-white transition-colors duration-300 font-headline tracking-tight" href="#">About Us</a>
+</div>
+</div>
+</nav>
+<!-- Split Selection Main Content -->
+<main class="relative h-screen w-full flex flex-col md:flex-row overflow-hidden">
+<!-- Left Section: Wants to Buy -->
+<section class="relative flex-1 group cursor-pointer overflow-hidden flex items-center justify-center">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="luxurious cozy living room interior with warm sunlight streaming through large floor-to-ceiling windows and high-end furniture" style="background-image: url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&amp;fit=crop&amp;w=1600&amp;q=80')">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-primary-container/80 via-transparent to-transparent"></div>
+<div class="absolute inset-0 bg-primary-container/20 group-hover:bg-primary-container/10 transition-colors duration-500"></div>
+<div class="relative z-10 flex flex-col items-center text-center px-12">
+<span class="text-tertiary-fixed font-label tracking-[0.2em] text-xs font-bold mb-4 uppercase">Acquire Excellence</span>
+<h2 class="text-5xl md:text-7xl font-headline font-extrabold text-white mb-8 tracking-tighter text-shadow-premium">Wants to Buy</h2>
+<button class="px-10 py-5 bg-surface-container-lowest text-primary font-bold text-lg rounded-none hover:bg-primary hover:text-white transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-2xl">
+                    Explore Properties
+                </button>
+</div>
+<div class="absolute bottom-12 left-12 opacity-40 text-white font-label text-sm uppercase tracking-widest hidden lg:block">
+                01 / CURATED PORTFOLIO
+            </div>
+</section>
+<!-- Vertical Divider (Visual Only) -->
+<div class="hidden md:block w-[1px] h-full bg-white/20 z-20"></div>
+<!-- Right Section: Wants to Sell -->
+<section class="relative flex-1 group cursor-pointer overflow-hidden flex items-center justify-center">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="modern brutalist architectural shot of a luxury villa with clean concrete lines and sharp shadows during dusk" style="background-image: url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&amp;fit=crop&amp;w=1600&amp;q=80')">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-primary-container/80 via-transparent to-transparent"></div>
+<div class="absolute inset-0 bg-primary-container/20 group-hover:bg-primary-container/10 transition-colors duration-500"></div>
+<div class="relative z-10 flex flex-col items-center text-center px-12">
+<span class="text-tertiary-fixed font-label tracking-[0.2em] text-xs font-bold mb-4 uppercase">Market Authority</span>
+<h2 class="text-5xl md:text-7xl font-headline font-extrabold text-white mb-8 tracking-tighter text-shadow-premium">Wants to Sell</h2>
+<button class="px-10 py-5 bg-surface-container-lowest text-primary font-bold text-lg rounded-none hover:bg-primary hover:text-white transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-2xl">
+                    List Your Property
+                </button>
+</div>
+<div class="absolute bottom-12 right-12 opacity-40 text-white font-label text-sm uppercase tracking-widest hidden lg:block">
+                02 / GLOBAL REACH
+            </div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full bg-[#f6f3f2] dark:bg-[#101b30] mt-0">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 px-12 py-20 w-full max-w-screen-2xl mx-auto">
+<div class="col-span-1 md:col-span-1">
+<div class="text-xl font-black text-[#000000] dark:text-white mb-4 font-headline">Solid Roots</div>
+<p class="text-[#4a607a] dark:text-slate-400 font-body leading-relaxed text-sm">
+                    © 2024 Solid Roots. Architectural Intent in Real Estate.
+                </p>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="text-[#000000] dark:text-white font-bold font-headline uppercase text-xs tracking-widest">Connect</h4>
+<a class="text-[#4a607a] dark:text-slate-400 hover:text-[#000000] dark:hover:text-white transition-all font-body text-sm" href="#">Contact</a>
+<a class="text-[#4a607a] dark:text-slate-400 hover:text-[#000000] dark:hover:text-white transition-all font-body text-sm" href="#">Newsletter</a>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="text-[#000000] dark:text-white font-bold font-headline uppercase text-xs tracking-widest">Legal</h4>
+<a class="text-[#4a607a] dark:text-slate-400 hover:text-[#000000] dark:hover:text-white transition-all font-body text-sm" href="#">Privacy Policy</a>
+<a class="text-[#4a607a] dark:text-slate-400 hover:text-[#000000] dark:hover:text-white transition-all font-body text-sm" href="#">Terms of Service</a>
+<a class="text-[#4a607a] dark:text-slate-400 hover:text-[#000000] dark:hover:text-white transition-all font-body text-sm" href="#">Cookie Policy</a>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="text-[#000000] dark:text-white font-bold font-headline uppercase text-xs tracking-widest">Offices</h4>
+<p class="text-[#4a607a] dark:text-slate-400 font-body text-sm">London • New York • Zurich</p>
+<div class="flex gap-4 mt-2">
+<span class="material-symbols-outlined text-[#4a607a] hover:text-[#000000] cursor-pointer">public</span>
+<span class="material-symbols-outlined text-[#4a607a] hover:text-[#000000] cursor-pointer">landscape</span>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

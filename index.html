@@ -1,254 +1,323 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aayush — Developer & Founder of Webthism</title>
-    <meta name="description" content="Aayush is a BTech student, developer, and founder of Webthism. Building ideas into real products.">
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Work+Sans:wght@300..600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="styles.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface-variant": "#44474c",
+                        "surface-dim": "#dcd9d9",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#334861",
+                        "inverse-primary": "#bbc6e2",
+                        "secondary-fixed": "#d1e4ff",
+                        "outline": "#74777d",
+                        "surface-container": "#f0eded",
+                        "on-primary-container": "#79849d",
+                        "on-primary-fixed-variant": "#3c475d",
+                        "surface-container-high": "#eae7e7",
+                        "primary-fixed": "#d7e2ff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#5d4201",
+                        "on-primary-fixed": "#101b30",
+                        "tertiary-fixed-dim": "#e9c176",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c4c6cc",
+                        "on-background": "#1b1b1b",
+                        "surface": "#fcf9f8",
+                        "surface-container-low": "#f6f3f2",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#b2c8e7",
+                        "inverse-on-surface": "#f3f0ef",
+                        "surface-bright": "#fcf9f8",
+                        "error": "#ba1a1a",
+                        "background": "#fcf9f8",
+                        "secondary": "#4a607a",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#bbc6e2",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#031d34",
+                        "primary-container": "#101b30",
+                        "tertiary-container": "#261900",
+                        "surface-tint": "#545e76",
+                        "tertiary-fixed": "#ffdea5",
+                        "on-tertiary-fixed": "#261900",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#4d637d",
+                        "tertiary": "#000000",
+                        "on-surface": "#1b1b1b",
+                        "inverse-surface": "#313030",
+                        "on-tertiary-container": "#a17f3b",
+                        "secondary-container": "#c8dffe",
+                        "surface-variant": "#e5e2e1",
+                        "surface-container-highest": "#e5e2e1",
+                        "primary": "#000000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Work Sans"],
+                        "label": ["Work Sans"]
+                    }
+                },
+            },
+        }
+    </script>
 </head>
-<body>
-
-    <!-- Loader -->
-    <div class="loader" id="loader">
-        <div class="loader-inner">
-            <span class="loader-text">Aayush</span>
-            <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
-        </div>
-    </div>
-
-    <!-- Cursor -->
-    <div class="cur" id="cur"></div>
-    <div class="cur-o" id="curO"></div>
-
-    <!-- Scrollbar -->
-    <div class="scrollbar"><div class="scrollbar-thumb" id="sThumb"></div></div>
-
-    <!-- Nav -->
-    <header class="header" id="header">
-        <div class="wrap">
-            <a href="#" class="header-logo" id="headerLogo">Aayush</a>
-            <nav class="header-nav">
-                <a href="#work" class="header-link" data-text="Work">Work</a>
-                <a href="#about" class="header-link" data-text="About">About</a>
-                <a href="#contact" class="header-link" data-text="Contact">Contact</a>
-            </nav>
-            <button class="mob-toggle" id="mobToggle" aria-label="Menu">
-                <span></span><span></span>
+<body class="bg-surface font-body text-on-surface selection:bg-tertiary-fixed selection:text-on-tertiary-fixed">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm dark:shadow-none transition-colors duration-300">
+<nav class="flex justify-between items-center w-full px-8 py-6 max-w-screen-2xl mx-auto font-manrope tracking-tight font-medium">
+<div class="text-2xl font-bold tracking-tighter text-neutral-900 dark:text-neutral-50">Solid Roots</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-neutral-900 dark:text-neutral-50 border-b-2 border-neutral-900 dark:border-neutral-50 pb-1 ease-out duration-300 transform-gpu" href="#">Listings</a>
+<a class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 transition-all duration-200" href="#">About Us</a>
+<a class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 transition-all duration-200" href="#">Sell</a>
+</div>
+<div class="flex items-center space-x-6">
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-container transition-all ease-out duration-300">
+                Browse Properties
             </button>
-        </div>
-    </header>
-
-    <!-- Mobile Menu -->
-    <div class="mob-menu" id="mobMenu">
-        <a href="#" class="mob-link" data-text="Home">Home</a>
-        <a href="#work" class="mob-link" data-text="Work">Work</a>
-        <a href="#about" class="mob-link" data-text="About">About</a>
-        <a href="#contact" class="mob-link" data-text="Contact">Contact</a>
-    </div>
-
-    <!-- Hero -->
-    <section class="hero" id="hero">
-        <div class="wrap">
-            <div class="hero-upper">
-                <p class="hero-label mono anim-fade" data-delay="0">Developer / Founder / Cyber Security</p>
-            </div>
-            <h1 class="hero-heading">
-                <span class="hero-line"><span class="hero-word anim-up" data-delay="1">Building</span> <span class="hero-word anim-up" data-delay="2">ideas</span></span>
-                <span class="hero-line"><span class="hero-word anim-up" data-delay="3">into</span> <span class="hero-word anim-up highlight" data-delay="4">reality.</span></span>
-            </h1>
-            <div class="hero-bottom">
-                <p class="hero-sub anim-fade" data-delay="5">I'm Aayush — a BTech student and founder of <strong>Webthism</strong>.<br>I turn concepts into working products that people actually use.</p>
-                <div class="hero-actions anim-fade" data-delay="6">
-                    <a href="#work" class="btn btn-primary">View my work</a>
-                    <a href="#contact" class="btn btn-ghost">Get in touch</a>
-                </div>
-                <div class="hero-avatar anim-fade" data-delay="7">
-                    <img src="images/aayush.jpg" alt="Aayush">
-                    <span class="hero-avatar-label mono">Aayush — Founder, Webthism</span>
-                </div>
-            </div>
-        </div>
-        <div class="hero-scroll anim-fade" data-delay="7">
-            <span class="mono">Scroll</span>
-            <div class="scroll-line"></div>
-        </div>
-    </section>
-
-    <!-- Work -->
-    <section class="section work" id="work">
-        <div class="wrap">
-            <div class="section-top">
-                <h2 class="section-title anim-up-s">Selected Projects</h2>
-                <p class="section-sub mono anim-up-s">Things I've built</p>
-            </div>
-
-            <div class="projects-grid">
-
-                <a href="#" class="project-card anim-up-s">
-                    <div class="project-img">
-                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80" alt="Promptmizer" loading="lazy">
-                        <div class="project-img-overlay"></div>
-                    </div>
-                    <div class="project-info">
-                        <div class="project-meta">
-                            <span class="project-tag mono">AI Tool</span>
-                            <span class="project-arrow">
-                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5"/></svg>
-                            </span>
-                        </div>
-                        <h3 class="project-name">Promptmizer</h3>
-                        <p class="project-desc">AI-powered prompt optimizer that refines and enhances your prompts for better outputs across any LLM.</p>
-                    </div>
-                </a>
-
-                <a href="#" class="project-card anim-up-s">
-                    <div class="project-img">
-                        <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&q=80" alt="SkillMap" loading="lazy">
-                        <div class="project-img-overlay"></div>
-                    </div>
-                    <div class="project-info">
-                        <div class="project-meta">
-                            <span class="project-tag mono">EdTech</span>
-                            <span class="project-arrow">
-                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5"/></svg>
-                            </span>
-                        </div>
-                        <h3 class="project-name">SkillMap</h3>
-                        <p class="project-desc">Generate personalized learning roadmaps with AI. Pick a skill, get a structured path from zero to mastery.</p>
-                    </div>
-                </a>
-
-                <a href="#" class="project-card anim-up-s">
-                    <div class="project-img">
-                        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&q=80" alt="Oslint" loading="lazy">
-                        <div class="project-img-overlay"></div>
-                    </div>
-                    <div class="project-info">
-                        <div class="project-meta">
-                            <span class="project-tag mono">AI Interview</span>
-                            <span class="project-arrow">
-                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5"/></svg>
-                            </span>
-                        </div>
-                        <h3 class="project-name">Oslint</h3>
-                        <p class="project-desc">AI-powered mock interviewer that simulates real interviews, gives feedback, and helps you prepare smarter.</p>
-                    </div>
-                </a>
-
-                <a href="https://student-leaderboard-five.vercel.app/" target="_blank" class="project-card anim-up-s">
-                    <div class="project-img">
-                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80" alt="TaskSquare" loading="lazy">
-                        <div class="project-img-overlay"></div>
-                    </div>
-                    <div class="project-info">
-                        <div class="project-meta">
-                            <span class="project-tag mono">Platform</span>
-                            <span class="project-arrow">
-                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5"/></svg>
-                            </span>
-                        </div>
-                        <h3 class="project-name">TaskSquare</h3>
-                        <p class="project-desc">Student leaderboard platform that gamifies learning. Track progress, compete, and stay motivated.</p>
-                    </div>
-                </a>
-
-            </div>
-
-            <div class="projects-more anim-up-s">
-                <a href="projects.html" class="btn btn-primary btn-lg">
-                    See all projects
-                    <svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5"/></svg>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- About -->
-    <section class="section about" id="about">
-        <div class="wrap">
-            <div class="about-layout">
-                <div class="about-photo anim-up-s">
-                    <div class="about-img-wrap">
-                        <img src="images/aayush.jpg" alt="Aayush">
-                    </div>
-                </div>
-                <div class="about-right">
-                    <h2 class="section-title anim-up-s">About me</h2>
-                    <p class="about-para anim-up-s">
-                        I'm a BTech student who codes, builds products, and runs a company. I started <strong>Webthism</strong> to turn ideas into real, usable applications — not just concepts.
-                    </p>
-                    <p class="about-para anim-up-s">
-                        I work across the full stack, but what drives me is shipping things that matter. Whether it's an AI tool, an ed-tech platform, or a security project — I build it, launch it, and iterate.
-                    </p>
-                    <div class="about-roles anim-up-s">
-                        <span class="role">Developer</span>
-                        <span class="role">Founder</span>
-                        <span class="role">Leader</span>
-                        <span class="role">Security Learner</span>
-                    </div>
-                    <div class="about-exp-inline">
-                        <h3 class="exp-heading mono anim-up-s">Experience</h3>
-                        <div class="exp-list">
-                            <div class="exp-item anim-up-s">
-                                <div class="exp-dot"></div>
-                                <div class="exp-content">
-                                    <span class="exp-time mono">Present</span>
-                                    <h4 class="exp-role">Founder & Developer</h4>
-                                    <p class="exp-place">Webthism</p>
-                                </div>
-                            </div>
-                            <div class="exp-item anim-up-s">
-                                <div class="exp-dot"></div>
-                                <div class="exp-content">
-                                    <span class="exp-time mono">1 Year</span>
-                                    <h4 class="exp-role">Cyber Security</h4>
-                                    <p class="exp-place">Learning & Practicing</p>
-                                </div>
-                            </div>
-                            <div class="exp-item anim-up-s">
-                                <div class="exp-dot"></div>
-                                <div class="exp-content">
-                                    <span class="exp-time mono">6 Months</span>
-                                    <h4 class="exp-role">Web Development</h4>
-                                    <p class="exp-place">Full-Stack Projects</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact -->
-    <footer class="section footer" id="contact">
-        <div class="wrap">
-            <div class="footer-top">
-                <p class="footer-label mono anim-up-s">Get in touch</p>
-                <h2 class="footer-heading anim-up-s">Let's build<br>something together.</h2>
-                <a href="mailto:webthism@gmail.com" class="footer-email anim-up-s" data-text="webthism@gmail.com">webthism@gmail.com</a>
-            </div>
-            <div class="footer-divider"></div>
-            <div class="footer-bottom">
-                <div class="footer-col">
-                    <span class="footer-small mono">&copy; 2026 Aayush / Webthism</span>
-                </div>
-                <div class="footer-col">
-                    <div class="footer-socials">
-                        <a href="https://github.com/aayushsearching" target="_blank" class="footer-social" data-text="GitHub">GitHub</a>
-                        <a href="https://www.linkedin.com/in/aayush-kumar18/" target="_blank" class="footer-social" data-text="LinkedIn">LinkedIn</a>
-                        <a href="https://instagram.com/howsaayush" target="_blank" class="footer-social" data-text="Instagram">Instagram</a>
-                    </div>
-                </div>
-                <div class="footer-col">
-                    <span class="footer-small mono back-to-top" id="backToTop">Back to top &uarr;</span>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
-</body>
-</html>
+</div>
+</nav>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Luxury Real Estate" class="w-full h-full object-cover" data-alt="stunning minimalist concrete and glass architectural villa at sunset with infinity pool reflecting the orange sky and manicured landscaping" src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&amp;fit=crop&amp;w=1600&amp;q=80"/>
+<div class="absolute inset-0 bg-black/40"></div>
+</div>
+<div class="relative z-10 w-full max-w-screen-2xl mx-auto px-8">
+<div class="max-w-4xl">
+<span class="inline-block px-4 py-1.5 mb-6 bg-tertiary-fixed text-on-tertiary-fixed text-xs font-bold tracking-[0.2em] rounded-full uppercase">Premium Real Estate Marketplace</span>
+<h1 class="text-white font-headline text-6xl md:text-8xl font-extrabold tracking-tighter leading-[0.9] mb-8">
+                    Buy and Sell <br/>Premium Homes <br/>Directly Online.
+                </h1>
+<p class="text-white/80 text-2xl font-medium mb-12 max-w-2xl leading-relaxed">
+                    The premier marketplace for luxury houses, modern apartments, and prime land. Connect directly with owners. <span class="text-tertiary-fixed font-bold">Absolutely Zero Brokerage Fees.</span>
+</p>
+<!-- Search Call to Action -->
+<div class="flex flex-col sm:flex-row gap-4 max-w-xl">
+<a class="inline-flex items-center justify-center bg-primary text-on-primary px-10 py-5 rounded-lg font-bold text-xl hover:bg-primary-container transition-all ease-out duration-300 shadow-xl" href="select-your-path.html">
+        Get Started
+    </a>
+</div>
+<p class="mt-4 text-white/60 text-sm font-medium px-2">Discover thousands of verified premium listings. Direct buyer-to-seller connections.</p>
+</div>
+</div>
+</section>
+<!-- Property Categories Section -->
+<section class="py-32 bg-surface" id="categories">
+<div class="max-w-screen-2xl mx-auto px-8">
+<div class="mb-20">
+<span class="text-[10px] font-bold tracking-[0.3em] text-on-surface-variant uppercase mb-4 block">Our Portfolio</span>
+<h2 class="text-5xl font-headline font-bold tracking-tighter text-on-surface">Find Your Next Investment</h2>
+<p class="mt-4 text-on-surface-variant text-xl max-w-2xl">Explore a curated selection of high-value properties across prime locations, all available with zero brokerage commissions.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Luxury Houses -->
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] overflow-hidden rounded-2xl mb-6 relative">
+<img alt="Luxury Houses" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="ultra-modern luxury mansion with white facade, large glass walls, and swimming pool in a lush green landscape" src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+<div class="absolute bottom-8 left-8 text-white">
+<h3 class="text-3xl font-headline font-bold mb-2">Luxury Houses</h3>
+<p class="text-white/80 text-sm font-medium uppercase tracking-widest">Premium Estates</p>
+</div>
+</div>
+<p class="text-on-surface-variant leading-relaxed">Standalone architectural masterpieces offering absolute privacy and luxury in elite neighborhoods.</p>
+</div>
+<!-- Modern Apartments -->
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] overflow-hidden rounded-2xl mb-6 relative">
+<img alt="Modern Apartments" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="sleek contemporary glass apartment building towering over a modern cityscape at dusk" src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+<div class="absolute bottom-8 left-8 text-white">
+<h3 class="text-3xl font-headline font-bold mb-2">Modern Apartments</h3>
+<p class="text-white/80 text-sm font-medium uppercase tracking-widest">Urban Living</p>
+</div>
+</div>
+<p class="text-on-surface-variant leading-relaxed">High-end flats and penthouses situated in the most sought-after urban and cultural districts.</p>
+</div>
+<!-- Prime Land -->
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] overflow-hidden rounded-2xl mb-6 relative">
+<img alt="Prime Land" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="vast green landscape with a clear building site overlooking a valley, perfect for luxury development" src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+<div class="absolute bottom-8 left-8 text-white">
+<h3 class="text-3xl font-headline font-bold mb-2">Prime Land</h3>
+<p class="text-white/80 text-sm font-medium uppercase tracking-widest">Development Opportunities</p>
+</div>
+</div>
+<p class="text-on-surface-variant leading-relaxed">Exclusive plots and land parcels ready for your custom residential or commercial development.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Service Section -->
+<section class="py-32 bg-surface-container-low">
+<div class="max-w-screen-2xl mx-auto px-8">
+<div class="text-center mb-24">
+<span class="text-[10px] font-bold tracking-[0.3em] text-on-surface-variant uppercase mb-4 block">The Marketplace Edge</span>
+<h2 class="text-4xl md:text-5xl font-headline font-bold tracking-tighter text-on-surface">Why Sell With Solid Roots</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-16">
+<div class="flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-full bg-surface-container-lowest flex items-center justify-center mb-8 shadow-sm">
+<span class="material-symbols-outlined text-3xl text-primary" data-weight="fill">account_balance_wallet</span>
+</div>
+<h3 class="text-xl font-headline font-bold mb-4">Zero Brokerage Fees</h3>
+<p class="text-on-surface-variant leading-relaxed">We eliminate the traditional middleman. Save up to 5% of your property value by dealing directly with buyers.</p>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-full bg-surface-container-lowest flex items-center justify-center mb-8 shadow-sm">
+<span class="material-symbols-outlined text-3xl text-primary">verified</span>
+</div>
+<h3 class="text-xl font-headline font-bold mb-4">Verified Listings</h3>
+<p class="text-on-surface-variant leading-relaxed">Every property undergoes a rigorous verification process to ensure legal compliance and accurate representation.</p>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-full bg-surface-container-lowest flex items-center justify-center mb-8 shadow-sm">
+<span class="material-symbols-outlined text-3xl text-primary">ads_click</span>
+</div>
+<h3 class="text-xl font-headline font-bold mb-4">Targeted Exposure</h3>
+<p class="text-on-surface-variant leading-relaxed">Reach a global audience of high-net-worth buyers actively looking for premium real estate opportunities.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Seller's Section -->
+<section class="py-32 relative overflow-hidden bg-primary text-on-primary">
+<div class="max-w-screen-2xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+<div class="relative z-10 order-2 lg:order-1">
+<span class="text-[10px] font-bold tracking-[0.3em] text-on-primary-container uppercase mb-6 block">Maximize Your Return</span>
+<h2 class="text-5xl md:text-7xl font-headline font-extrabold tracking-tighter leading-tight mb-8">Sell your home <br/>without the fees.</h2>
+<p class="text-on-primary-container text-xl leading-relaxed mb-12 max-w-lg">
+                    List your luxury property or prime land on our platform with <span class="text-white font-bold">zero brokerage fees</span>. Get the full value your property deserves.
+                </p>
+<div class="flex flex-col sm:flex-row gap-6">
+<button class="bg-surface text-primary px-10 py-4 rounded-lg font-bold text-lg hover:bg-tertiary-fixed transition-all">List Your Property</button>
+<button class="border border-on-primary/30 text-on-primary px-10 py-4 rounded-lg font-bold text-lg hover:bg-white/10 transition-all">How It Works</button>
+</div>
+</div>
+<div class="relative order-1 lg:order-2">
+<div class="aspect-square relative group">
+<div class="absolute -inset-4 bg-primary-container rounded-lg -rotate-3 z-0"></div>
+<img alt="Luxury interior" class="w-full h-full object-cover rounded-lg relative z-10 shadow-2xl" data-alt="ultra luxurious minimalist living room with high ceilings, sculptural furniture, and a panoramic window looking out over a metropolitan skyline at night" src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&amp;fit=crop&amp;w=1400&amp;q=80"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="py-32 bg-surface">
+<div class="max-w-screen-2xl mx-auto px-8">
+<div class="max-w-3xl mb-24">
+<h2 class="text-4xl md:text-5xl font-headline font-bold tracking-tighter text-on-surface leading-tight">Trusted by Real Estate <br/>Investors Worldwide.</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<div class="p-12 bg-surface-container-lowest rounded-xl shadow-sm">
+<div class="flex text-tertiary-fixed mb-8">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-2xl font-body italic text-on-surface leading-relaxed mb-10">"The zero brokerage model is a game changer. I saved over $50,000 on my last sale by listing here directly."</p>
+<div class="flex items-center space-x-4">
+<div class="w-12 h-12 rounded-full bg-surface-dim overflow-hidden">
+<img alt="Client portrait" class="w-full h-full object-cover" data-alt="professional portrait of a middle-aged man with glasses and a refined smile in a studio setting with soft lighting" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&amp;fit=crop&amp;w=400&amp;q=80"/>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Julian Vane</h4>
+<span class="text-sm text-on-surface-variant">Real Estate Investor</span>
+</div>
+</div>
+</div>
+<div class="p-12 bg-surface-container-lowest rounded-xl shadow-sm">
+<div class="flex text-tertiary-fixed mb-8">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-2xl font-body italic text-on-surface leading-relaxed mb-10">"Listing my penthouse was effortless. I found a verified buyer within two weeks, no broker required."</p>
+<div class="flex items-center space-x-4">
+<div class="w-12 h-12 rounded-full bg-surface-dim overflow-hidden">
+<img alt="Client portrait" class="w-full h-full object-cover" data-alt="elegant woman with confident expression and professional attire against a blurred architectural background" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&amp;fit=crop&amp;w=400&amp;q=80"/>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Elena Sorvino</h4>
+<span class="text-sm text-on-surface-variant">Luxury Property Seller</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 px-8 py-20 max-w-screen-2xl mx-auto font-work-sans leading-relaxed text-sm">
+<div class="space-y-6">
+<div class="text-xl font-bold tracking-tighter text-neutral-900 dark:text-neutral-50">Solid Roots</div>
+<p class="text-neutral-600 dark:text-neutral-400 max-w-xs">A premium, fee-free real estate marketplace for the world's most significant luxury houses, apartments, and land.</p>
+<div class="flex space-x-4">
+<a class="text-neutral-600 hover:text-primary transition-all" href="#"><span class="material-symbols-outlined">share</span></a>
+<a class="text-neutral-600 hover:text-primary transition-all" href="#"><span class="material-symbols-outlined">camera</span></a>
+</div>
+</div>
+<div class="space-y-6">
+<h5 class="font-bold uppercase tracking-widest text-[10px]">Marketplace</h5>
+<ul class="space-y-4 text-neutral-600 dark:text-neutral-400">
+<li><a class="hover:underline transition-all" href="#">Luxury Houses</a></li>
+<li><a class="hover:underline transition-all" href="#">Modern Apartments</a></li>
+<li><a class="hover:underline transition-all" href="#">Prime Land</a></li>
+<li><a class="hover:underline transition-all" href="#">Sell Your Property</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<h5 class="font-bold uppercase tracking-widest text-[10px]">Company</h5>
+<ul class="space-y-4 text-neutral-600 dark:text-neutral-400">
+<li><a class="hover:underline transition-all" href="#">Our Mission</a></li>
+<li><a class="hover:underline transition-all" href="#">Help Center</a></li>
+<li><a class="hover:underline transition-all" href="#">Contact Us</a></li>
+<li><a class="hover:underline transition-all" href="#">Privacy</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<h5 class="font-bold uppercase tracking-widest text-[10px]">Stay Updated</h5>
+<p class="text-neutral-600 dark:text-neutral-400">A premium, fee-free real estate marketplace for the world's most significant luxury houses, apartments, and land.</p>
+<div class="flex">
+<input class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 px-4 py-2 w-full focus:ring-0 focus:border-primary outline-none" placeholder="Email address" type="email"/>
+<button class="bg-primary text-on-primary px-4">Subscribe</button>
+</div>
+</div>
+</div>
+<div class="max-w-screen-2xl mx-auto px-8 py-10 border-t border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row justify-between items-center gap-6">
+<span class="text-neutral-500 dark:text-neutral-400">© 2024 Solid Roots. All Rights Reserved.</span>
+<div class="flex space-x-8 text-neutral-500 dark:text-neutral-400">
+<a class="hover:text-primary transition-all" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-all" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-all" href="#">Accessibility</a>
+</div>
+</div>
+</footer>
+</body></html>
