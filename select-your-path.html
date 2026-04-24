@@ -160,12 +160,12 @@
             <div class="col-span-1 md:col-span-1">
                 <div class="text-xl font-black text-[#000000] dark:text-white mb-4 font-headline">Solid Roots</div>
                 <p class="text-[#4a607a] dark:text-slate-400 font-body leading-relaxed text-sm">
-                    © 2024 Solid Roots. Architectural Intent in Real Estate.
+                    © 2026 Solid Roots. Architectural Intent in Real Estate.
                 </p>
             </div>
             <div class="flex flex-col gap-4">
                 <h4 class="text-[#000000] dark:text-white font-bold font-headline uppercase text-xs tracking-widest">Connect</h4>
-                <a class="text-[#4a607a] dark:text-slate-400 hover:text-[#000000] dark:hover:text-white transition-all font-body text-sm" href="#">Contact</a>
+                <a class="text-[#4a607a] dark:text-slate-400 hover:text-[#000000] dark:hover:text-white transition-all font-body text-sm" href="https://wa.me/919034242724" target="_blank">Contact Us</a>
                 <a class="text-[#4a607a] dark:text-slate-400 hover:text-[#000000] dark:hover:text-white transition-all font-body text-sm" href="#">Newsletter</a>
             </div>
             <div class="flex flex-col gap-4">
@@ -221,13 +221,20 @@
         let answers = { buy: {}, sell: {} };
 
         function startFlow(type) {
+            const otherType = type === 'buy' ? 'sell' : 'buy';
+            
+            // Reset the other side to intro state
+            document.getElementById(`${otherType}-questions`).classList.add('hidden');
+            document.getElementById(`${otherType}-intro`).classList.remove('hidden');
+            currentStep[otherType] = 0; // Reset step count
+            
+            // Show active side
             document.getElementById(`${type}-intro`).classList.add('hidden');
             const questionsContainer = document.getElementById(`${type}-questions`);
             questionsContainer.classList.remove('hidden');
             questionsContainer.classList.add('flex');
             
             // Expand the section to take more space
-            const otherType = type === 'buy' ? 'sell' : 'buy';
             document.getElementById(`${type}-section`).style.flex = '3';
             document.getElementById(`${otherType}-section`).style.flex = '1';
             
@@ -261,7 +268,7 @@
                 const isAgeQuestion = flowData.q.includes('How old is the property?');
                 html += `<div class="space-y-4">
                             <div class="relative flex items-center">
-                                <input type="text" id="${type}-input-${step}" placeholder="${flowData.placeholder}" 
+                                <input type="text" id="${type}-input-${step}" onkeydown="handleEnter(event, '${type}')" placeholder="${flowData.placeholder}" 
                                     class="w-full px-6 py-5 bg-black/40 backdrop-blur-md border-2 border-white/50 text-white placeholder-white/60 font-bold text-xl focus:outline-none focus:bg-white focus:text-primary focus:border-white transition-all duration-300 ${isAgeQuestion ? 'pr-32' : ''}">
                                 ${isAgeQuestion ? `<button id="age-unit-btn" onclick="toggleAgeUnit()" class="absolute right-3 px-4 py-2 bg-tertiary-fixed text-on-tertiary-fixed font-bold text-sm rounded-none hover:bg-white transition-all shadow-md">Years</button>` : ''}
                             </div>
@@ -307,6 +314,17 @@
             if (input && input.value.trim() === '') return;
             const unit = btn ? btn.innerText : 'Years';
             saveAnswer(type, `${input.value} ${unit}`);
+        }
+
+        function handleEnter(event, type) {
+            if (event.key === 'Enter') {
+                const isAgeQuestion = flows[type][currentStep[type]].q.includes('How old is the property?');
+                if (isAgeQuestion) {
+                    saveAgeAnswer(type);
+                } else {
+                    saveTextAnswer(type);
+                }
+            }
         }
 
         function nextStep(type) {
