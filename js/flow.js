@@ -16,7 +16,9 @@ const flows = {
         { q: "Ready to move in or okay with under-construction?", type: "choice", options: ["Ready to move", "Under-construction"] },
         { q: "When do you need to move in?", type: "text", placeholder: "e.g. Within 3 months" },
         { q: "Is this for personal use or investment?", type: "choice", options: ["Personal Use", "Investment"] },
-        { q: "Are you open to seeing properties online or only in-person?", type: "choice", options: ["Online & In-person", "In-person Only"] }
+        { q: "Are you open to seeing properties online or only in-person?", type: "choice", options: ["Online & In-person", "In-person Only"] },
+        { q: "What is your email address?", type: "text", inputType: "email", placeholder: "Email Address" },
+        { q: "What is your phone number?", type: "text", inputType: "tel", placeholder: "Phone Number" }
     ],
     sell: [
         { q: "What type of property are you selling?", type: "choice", options: ["Apartment", "House", "Plot", "Commercial"] },
@@ -30,7 +32,9 @@ const flows = {
         { q: "How old is the property?", type: "text", placeholder: "Enter Age" },
         { q: "Has the property been recently renovated?", type: "choice", options: ["Recently Renovated", "No Recent Reno"] },
         { q: "How urgently do you need to sell?", type: "choice", options: ["Urgent", "Flexible"] },
-        { q: "Are you open to negotiation on price?", type: "choice", options: ["Yes, Open", "No, Fixed"] }
+        { q: "Are you open to negotiation on price?", type: "choice", options: ["Yes, Open", "No, Fixed"] },
+        { q: "What is your email address?", type: "text", inputType: "email", placeholder: "Email Address" },
+        { q: "What is your phone number?", type: "text", inputType: "tel", placeholder: "Phone Number" }
     ]
 };
 
@@ -85,7 +89,7 @@ function renderQuestion(type) {
         const isAgeQuestion = flowData.q.includes('How old is the property?');
         html += `<div class="space-y-4">
                     <div class="relative flex items-center">
-                        <input type="text" id="${type}-input-${step}" onkeydown="handleEnter(event, '${type}')" placeholder="${flowData.placeholder}"
+                        <input type="${flowData.inputType || 'text'}" id="${type}-input-${step}" onkeydown="handleEnter(event, '${type}')" placeholder="${flowData.placeholder}"
                             class="w-full px-6 py-5 bg-black/40 backdrop-blur-md border-2 border-white/50 text-white placeholder-white/60 font-bold text-xl focus:outline-none focus:bg-white focus:text-primary focus:border-white transition-all duration-300 ${isAgeQuestion ? 'pr-32' : ''}">
                         ${isAgeQuestion ? `<button id="age-unit-btn" onclick="toggleAgeUnit()" class="absolute right-3 px-4 py-2 bg-tertiary-fixed text-on-tertiary-fixed font-bold text-sm rounded-none hover:bg-white transition-all shadow-md">Years</button>` : ''}
                     </div>
