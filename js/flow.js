@@ -97,7 +97,7 @@ function renderQuestion(type) {
                             class="w-full px-6 py-5 bg-black/40 backdrop-blur-md border-2 border-white/50 text-white placeholder-white/60 font-bold text-xl focus:outline-none focus:bg-white focus:text-primary focus:border-white transition-all duration-300 ${isAgeQuestion ? 'pr-32' : ''}">
                         ${isAgeQuestion ? `<button id="age-unit-btn" onclick="toggleAgeUnit()" class="absolute right-3 px-4 py-2 bg-tertiary-fixed text-on-tertiary-fixed font-bold text-sm rounded-none hover:bg-white transition-all shadow-md">Years</button>` : ''}
                     </div>
-                    <p id="${type}-error-${step}" class="text-error font-medium text-sm hidden mt-2 m-0 bg-black/50 p-2 rounded"></p>
+                    <p id="${type}-error-${step}" class="text-white font-medium text-sm hidden mt-2 m-0 bg-black/50 p-2 rounded border-l-4 border-error"></p>
                     <button onclick="${isAgeQuestion ? `saveAgeAnswer('${type}')` : `saveTextAnswer('${type}')`}" class="w-full py-4 md:py-5 bg-surface-container-lowest text-primary font-bold text-lg md:text-xl rounded-none hover:bg-primary hover:text-white transition-all duration-300 shadow-xl">Next</button>
                 </div>`;
     }
@@ -125,7 +125,7 @@ function showError(type, step, input, message) {
     
     // Add shake animation and error styling
     input.classList.remove('border-white/50', 'text-white', 'focus:border-white');
-    input.classList.add('shake', 'border-error', 'text-error', 'focus:border-error');
+    input.classList.add('shake', 'border-error', 'text-white', 'focus:border-error');
     
     // Remove shake class after animation so it can be triggered again
     setTimeout(() => {
