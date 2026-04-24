@@ -89,7 +89,11 @@ function renderQuestion(type) {
         const isAgeQuestion = flowData.q.includes('How old is the property?');
         html += `<div class="space-y-4">
                     <div class="relative flex items-center">
-                        <input type="${flowData.inputType || 'text'}" id="${type}-input-${step}" onkeydown="handleEnter(event, '${type}')" placeholder="${flowData.placeholder}"
+                        <input type="${flowData.inputType || 'text'}" 
+                            id="${type}-input-${step}" 
+                            onkeydown="handleEnter(event, '${type}')" 
+                            ${flowData.inputType === 'tel' ? 'oninput="this.value = this.value.replace(/[^0-9]/g, \'\')"' : ''}
+                            placeholder="${flowData.placeholder}"
                             class="w-full px-6 py-5 bg-black/40 backdrop-blur-md border-2 border-white/50 text-white placeholder-white/60 font-bold text-xl focus:outline-none focus:bg-white focus:text-primary focus:border-white transition-all duration-300 ${isAgeQuestion ? 'pr-32' : ''}">
                         ${isAgeQuestion ? `<button id="age-unit-btn" onclick="toggleAgeUnit()" class="absolute right-3 px-4 py-2 bg-tertiary-fixed text-on-tertiary-fixed font-bold text-sm rounded-none hover:bg-white transition-all shadow-md">Years</button>` : ''}
                     </div>
@@ -112,9 +116,28 @@ function saveAnswer(type, val) {
 }
 
 function saveTextAnswer(type) {
-    const input = document.getElementById(`${type}-input-${currentStep[type]}`);
-    if (input.value.trim() === '') return;
-    saveAnswer(type, input.value);
+    const step = currentStep[type];
+    const flowData = flows[type][step];
+    const input = document.getElementById(`${type}-input-${step}`);
+    let val = input.value.trim();
+
+    if (val === '') return;
+
+    if (flowData.inputType === 'email') {
+        if (!val.toLowerCase().endsWith('@gmail.com')) {
+            alert('Please enter a valid Gmail address ending with @gmail.com');
+            return;
+        }
+    }
+
+    if (flowData.inputType === 'tel') {
+        if (!/^\d+$/.test(val)) {
+            alert('Please enter only digits for the phone number');
+            return;
+        }
+    }
+
+    saveAnswer(type, val);
 }
 
 function saveMultiAnswer(type) {
