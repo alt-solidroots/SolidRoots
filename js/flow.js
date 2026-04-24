@@ -92,11 +92,12 @@ function renderQuestion(type) {
                         <input type="${flowData.inputType || 'text'}" 
                             id="${type}-input-${step}" 
                             onkeydown="handleEnter(event, '${type}')" 
-                            ${flowData.inputType === 'tel' ? 'oninput="this.value = this.value.replace(/[^0-9]/g, \'\')"' : ''}
+                            ${flowData.inputType === 'tel' ? `oninput="this.value = this.value.replace(/[^0-9]/g, ''); clearError('${type}', ${step}, this)"` : `oninput="clearError('${type}', ${step}, this)"`}
                             placeholder="${flowData.placeholder}"
                             class="w-full px-6 py-5 bg-black/40 backdrop-blur-md border-2 border-white/50 text-white placeholder-white/60 font-bold text-xl focus:outline-none focus:bg-white focus:text-primary focus:border-white transition-all duration-300 ${isAgeQuestion ? 'pr-32' : ''}">
                         ${isAgeQuestion ? `<button id="age-unit-btn" onclick="toggleAgeUnit()" class="absolute right-3 px-4 py-2 bg-tertiary-fixed text-on-tertiary-fixed font-bold text-sm rounded-none hover:bg-white transition-all shadow-md">Years</button>` : ''}
                     </div>
+                    <p id="${type}-error-${step}" class="text-error font-medium text-sm hidden mt-2 m-0 bg-black/50 p-2 rounded"></p>
                     <button onclick="${isAgeQuestion ? `saveAgeAnswer('${type}')` : `saveTextAnswer('${type}')`}" class="w-full py-4 md:py-5 bg-surface-container-lowest text-primary font-bold text-lg md:text-xl rounded-none hover:bg-primary hover:text-white transition-all duration-300 shadow-xl">Next</button>
                 </div>`;
     }
@@ -115,24 +116,58 @@ function saveAnswer(type, val) {
     nextStep(type);
 }
 
+function showError(type, step, input, message) {
+    const errorEl = document.getElementById(`${type}-error-${step}`);
+    if (errorEl) {
+        errorEl.innerText = message;
+        errorEl.classList.remove('hidden');
+    }
+    
+    // Add shake animation and error styling
+    input.classList.remove('border-white/50', 'text-white', 'focus:border-white');
+    input.classList.add('shake', 'border-error', 'text-error', 'focus:border-error');
+    
+    // Remove shake class after animation so it can be triggered again
+    setTimeout(() => {
+        input.classList.remove('shake');
+    }, 500);
+}
+
+function clearError(type, step, input) {
+    const errorEl = document.getElementById(`${type}-error-${step}`);
+    if (errorEl) {
+        errorEl.classList.add('hidden');
+        errorEl.innerText = '';
+    }
+    
+    // Restore default styling
+    input.classList.remove('border-error', 'text-error', 'focus:border-error');
+    input.classList.add('border-white/50', 'text-white', 'focus:border-white');
+}
+
 function saveTextAnswer(type) {
     const step = currentStep[type];
     const flowData = flows[type][step];
     const input = document.getElementById(`${type}-input-${step}`);
     let val = input.value.trim();
 
-    if (val === '') return;
+    clearError(type, step, input);
+
+    if (val === '') {
+        showError(type, step, input, 'This field is required');
+        return;
+    }
 
     if (flowData.inputType === 'email') {
         if (!val.toLowerCase().endsWith('@gmail.com')) {
-            alert('Please enter a valid Gmail address ending with @gmail.com');
+            showError(type, step, input, 'Please enter a valid Gmail address ending with @gmail.com');
             return;
         }
     }
 
     if (flowData.inputType === 'tel') {
-        if (!/^\d+$/.test(val)) {
-            alert('Please enter only digits for the phone number');
+        if (!/^\d{10}$/.test(val)) {
+            showError(type, step, input, 'Phone number must be exactly 10 digits');
             return;
         }
     }
