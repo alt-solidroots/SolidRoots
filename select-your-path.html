@@ -91,9 +91,9 @@
     </nav>
 
     <!-- Split Selection Main Content -->
-    <main class="relative h-screen w-full flex flex-col md:flex-row overflow-hidden">
+    <main class="relative min-h-screen w-full flex flex-col md:flex-row overflow-hidden pt-14 md:pt-0">
         <!-- Left Section: Wants to Buy -->
-        <section id="buy-section" class="relative flex-1 group cursor-pointer overflow-hidden flex items-center justify-center transition-all duration-700">
+        <section id="buy-section" class="relative flex-1 min-h-[50vh] md:min-h-0 group cursor-pointer overflow-hidden flex items-center justify-center transition-all duration-700">
             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="luxurious cozy living room interior with warm sunlight streaming through large floor-to-ceiling windows and high-end furniture" style="background-image: url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1600&q=80')"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-primary-container/80 via-transparent to-transparent"></div>
             <div class="absolute inset-0 bg-primary-container/20 group-hover:bg-primary-container/10 transition-colors duration-500"></div>
@@ -101,8 +101,8 @@
                 <div id="buy-flow" class="w-full max-w-lg">
                     <div id="buy-intro">
                         <span class="text-tertiary-fixed font-label tracking-[0.2em] text-xs font-bold mb-4 uppercase block">Acquire Excellence</span>
-                    <h2 class="text-4xl md:text-5xl lg:text-7xl font-headline font-extrabold text-white mb-6 md:mb-8 tracking-tighter text-shadow-premium">Wants to Buy</h2>
-                        <button onclick="startFlow('buy')" class="px-10 py-5 bg-surface-container-lowest text-primary font-bold text-lg rounded-none hover:bg-primary hover:text-white transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-2xl">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-headline font-extrabold text-white mb-4 md:mb-6 tracking-tighter text-shadow-premium">Wants to Buy</h2>
+                        <button onclick="startFlow('buy')" class="px-7 py-3 md:px-10 md:py-5 bg-surface-container-lowest text-primary font-bold text-base md:text-lg rounded-none hover:bg-primary hover:text-white transition-all duration-500 opacity-100 md:opacity-0 md:translate-y-4 md:group-hover:translate-y-0 md:group-hover:opacity-100 shadow-2xl">
                             Explore Properties
                         </button>
                     </div>
@@ -125,7 +125,7 @@
         <div class="hidden md:block w-[1px] h-full bg-white/20 z-20"></div>
 
         <!-- Right Section: Wants to Sell -->
-        <section id="sell-section" class="relative flex-1 group cursor-pointer overflow-hidden flex items-center justify-center transition-all duration-700">
+        <section id="sell-section" class="relative flex-1 min-h-[50vh] md:min-h-0 group cursor-pointer overflow-hidden flex items-center justify-center transition-all duration-700">
             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="modern brutalist architectural shot of a luxury villa with clean concrete lines and sharp shadows during dusk" style="background-image: url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=80')"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-primary-container/80 via-transparent to-transparent"></div>
             <div class="absolute inset-0 bg-primary-container/20 group-hover:bg-primary-container/10 transition-colors duration-500"></div>
@@ -133,8 +133,8 @@
                 <div id="sell-flow" class="w-full max-w-lg">
                     <div id="sell-intro">
                         <span class="text-tertiary-fixed font-label tracking-[0.2em] text-xs font-bold mb-4 uppercase block">Market Authority</span>
-                    <h2 class="text-4xl md:text-5xl lg:text-7xl font-headline font-extrabold text-white mb-6 md:mb-8 tracking-tighter text-shadow-premium">Wants to Sell</h2>
-                        <button onclick="startFlow('sell')" class="px-10 py-5 bg-surface-container-lowest text-primary font-bold text-lg rounded-none hover:bg-primary hover:text-white transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-2xl">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-headline font-extrabold text-white mb-4 md:mb-6 tracking-tighter text-shadow-premium">Wants to Sell</h2>
+                        <button onclick="startFlow('sell')" class="px-7 py-3 md:px-10 md:py-5 bg-surface-container-lowest text-primary font-bold text-base md:text-lg rounded-none hover:bg-primary hover:text-white transition-all duration-500 opacity-100 md:opacity-0 md:translate-y-4 md:group-hover:translate-y-0 md:group-hover:opacity-100 shadow-2xl">
                             List Your Property
                         </button>
                     </div>
@@ -156,7 +156,7 @@
 
     <!-- Footer -->
     <footer class="w-full bg-[#f6f3f2] dark:bg-[#101b30] mt-0">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 px-12 py-20 w-full max-w-screen-2xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-4 sm:px-8 py-10 md:py-20 w-full max-w-screen-2xl mx-auto">
             <div class="col-span-1 md:col-span-1">
                 <div class="text-xl font-black text-[#000000] dark:text-white mb-4 font-headline">Solid Roots</div>
                 <p class="text-[#4a607a] dark:text-slate-400 font-body leading-relaxed text-sm">
