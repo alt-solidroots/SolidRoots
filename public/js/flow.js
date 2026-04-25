@@ -234,7 +234,6 @@ async function showSuccess(type) {
             <span class="material-symbols-outlined text-8xl text-tertiary-fixed drop-shadow-xl animate-bounce">verified</span>
             <h3 class="text-4xl md:text-5xl font-headline font-extrabold text-white tracking-tighter text-shadow-premium">Requirements Submitted</h3>
             <p class="text-white/90 text-xl font-medium leading-relaxed max-w-md mx-auto">Our premium advisors will review your details and contact you within 24 hours.</p>
-            <div id="submission-status" class="text-white/50 text-xs mt-2 italic">Saving to database...</div>
             <div class="pt-6">
                 <a href="index.html" class="inline-block px-10 py-5 bg-white text-primary font-bold text-lg rounded-none hover:bg-tertiary-fixed transition-all shadow-xl">Return Home</a>
             </div>
@@ -243,22 +242,12 @@ async function showSuccess(type) {
 
     // Perform background submission to Cloudflare D1
     try {
-        const response = await fetch('/api/submit', {
+        await fetch('/api/submit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(submissionData)
         });
-        
-        const statusEl = document.getElementById('submission-status');
-        if (response.ok) {
-            if (statusEl) statusEl.innerText = "Data securely saved.";
-        } else {
-            if (statusEl) statusEl.innerText = "Local backup saved (Backend sync pending).";
-            console.warn('Backend submission failed, check D1 binding.');
-        }
     } catch (err) {
-        const statusEl = document.getElementById('submission-status');
-        if (statusEl) statusEl.innerText = "Submission completed.";
-        console.error('Submission error:', err);
+        console.error('Background submission error:', err);
     }
 }
