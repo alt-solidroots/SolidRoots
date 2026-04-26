@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Dashboard – Solid Roots</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0..1&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #ffffff12;
+    --text: #f0f0f5;
+    --muted: #8888aa;
+    --accent: #7c6fcd;
+    --accent2: #a78bfa;
+    --buy: #22c55e;
+    --sell: #f59e0b;
+    --danger: #ef4444;
+  }
+
+  body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 60% 30%, #1e1540 0%, #0a0a0f 70%);
+  }
+  .login-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 420px;
+    box-shadow: 0 40px 80px #00000080;
+  }
+  .login-logo { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .login-logo span { color: var(--accent2); }
+  .login-sub { color: var(--muted); font-size: 14px; margin-bottom: 36px; }
+  .field label { display: block; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .field input {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px; color: var(--text);
+    font-family: inherit; font-size: 15px; outline: none; transition: border-color .2s;
+  }
+  .field input:focus { border-color: var(--accent); }
+  .btn-login {
+    width: 100%; margin-top: 24px; padding: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: 10px; color: #fff;
+    font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: opacity .2s;
+  }
+  .btn-login:hover { opacity: .88; }
+  #login-error { color: var(--danger); font-size: 13px; margin-top: 12px; display: none; }
+
+  /* ── DASHBOARD ── */
+  #dashboard { display: none; }
+
+  header.dash-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 32px; border-bottom: 1px solid var(--border);
+    background: var(--surface); position: sticky; top: 0; z-index: 10;
+  }
+  .dash-logo { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+  .dash-logo span { color: var(--accent2); }
+  .badge-admin { background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; letter-spacing: .1em; margin-left: 10px; }
+  .btn-logout { background: none; border: 1px solid var(--border); color: var(--muted); padding: 8px 16px; border-radius: 8px; font-family: inherit; font-size: 13px; cursor: pointer; transition: all .2s; }
+  .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+
+  main.dash-main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+
+  /* Stats Row */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 24px 20px; display: flex; align-items: center; gap: 16px;
+  }
+  .stat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .stat-icon.total  { background: #7c6fcd22; color: var(--accent2); }
+  .stat-icon.buys   { background: #22c55e22; color: var(--buy); }
+  .stat-icon.sells  { background: #f59e0b22; color: var(--sell); }
+  .stat-icon.today  { background: #38bdf822; color: #38bdf8; }
+  .stat-num { font-size: 28px; font-weight: 800; line-height: 1; }
+  .stat-lbl { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 600; }
+
+  /* Toolbar */
+  .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
+  .toolbar input[type="text"] {
+    flex: 1; min-width: 220px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 16px; color: var(--text);
+    font-family: inherit; font-size: 14px; outline: none; transition: border-color .2s;
+  }
+  .toolbar input:focus { border-color: var(--accent); }
+  .filter-btn {
+    padding: 10px 18px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--muted); font-family: inherit;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
+  }
+  .filter-btn.active, .filter-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-refresh { margin-left: auto; background: none; border: 1px solid var(--border); color: var(--muted); padding: 10px 16px; border-radius: 10px; font-family: inherit; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all .2s; }
+  .btn-refresh:hover { border-color: var(--accent2); color: var(--accent2); }
+  .btn-csv { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: #fff; padding: 10px 18px; border-radius: 10px; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: opacity .2s; }
+  .btn-csv:hover { opacity: .85; }
+
+  /* Table */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead th { background: var(--surface2); padding: 14px 18px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  tbody tr { border-top: 1px solid var(--border); transition: background .15s; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td { padding: 14px 18px; vertical-align: top; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+  .badge.buy  { background: #22c55e22; color: var(--buy); }
+  .badge.sell { background: #f59e0b22; color: var(--sell); }
+  .email-cell { color: var(--accent2); }
+  .phone-cell { font-family: monospace; font-size: 13px; }
+  .answers-cell { max-width: 320px; }
+  .answer-item { margin-bottom: 6px; }
+  .answer-q { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+  .answer-a { font-size: 13px; font-weight: 600; }
+  .date-cell { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .expand-btn { background: none; border: none; color: var(--accent2); cursor: pointer; font-size: 12px; font-family: inherit; padding: 0; }
+
+  /* Pagination */
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-top: 1px solid var(--border); }
+  .pag-info { font-size: 13px; color: var(--muted); }
+  .pag-btns { display: flex; gap: 8px; }
+  .pag-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: none; color: var(--text); font-family: inherit; font-size: 13px; cursor: pointer; transition: all .2s; }
+  .pag-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .pag-btn:not(:disabled):hover { border-color: var(--accent); color: var(--accent2); }
+
+  /* Loading / Empty */
+  .loading-row td, .empty-row td { text-align: center; padding: 60px; color: var(--muted); }
+  .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid var(--border); border-top-color: var(--accent2); border-radius: 50%; animation: spin .7s linear infinite; margin-bottom: 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Detail Modal */
+  .modal-bg { position: fixed; inset: 0; background: #000000aa; backdrop-filter: blur(6px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 24px; }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; max-width: 560px; width: 100%; padding: 36px; position: relative; max-height: 90vh; overflow-y: auto; }
+  .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 22px; }
+  .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 24px; }
+  .modal-field { margin-bottom: 18px; }
+  .modal-label { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .modal-value { font-size: 15px; font-weight: 600; word-break: break-all; }
+  .modal-answers { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+  .modal-answer-item { background: var(--surface2); border-radius: 10px; padding: 14px 16px; }
+  .modal-answer-q { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .modal-answer-a { font-size: 14px; font-weight: 700; }
+
+  @media (max-width: 700px) {
+    main.dash-main { padding: 16px; }
+    header.dash-header { padding: 16px; }
+    .answers-cell { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">Solid <span>Roots</span></div>
+    <div class="login-sub">Admin Dashboard · Restricted Access</div>
+    <div class="field">
+      <label>Admin Password</label>
+      <input type="password" id="password-input" placeholder="Enter admin password" autocomplete="current-password"/>
+    </div>
+    <button class="btn-login" id="login-btn">Sign In</button>
+    <div id="login-error">⚠ Incorrect password. Please try again.</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <header class="dash-header">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="dash-logo">Solid <span>Roots</span></div>
+      <span class="badge-admin">ADMIN</span>
+    </div>
+    <button class="btn-logout" id="logout-btn">
+      <span class="material-symbols-outlined" style="font-size:15px;vertical-align:middle">logout</span>
+      Sign Out
+    </button>
+  </header>
+
+  <main class="dash-main">
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon total"><span class="material-symbols-outlined">database</span></div>
+        <div><div class="stat-num" id="stat-total">—</div><div class="stat-lbl">Total Inquiries</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon buys"><span class="material-symbols-outlined">home</span></div>
+        <div><div class="stat-num" id="stat-buy">—</div><div class="stat-lbl">Buy Inquiries</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon sells"><span class="material-symbols-outlined">sell</span></div>
+        <div><div class="stat-num" id="stat-sell">—</div><div class="stat-lbl">Sell Inquiries</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon today"><span class="material-symbols-outlined">today</span></div>
+        <div><div class="stat-num" id="stat-today">—</div><div class="stat-lbl">Today</div></div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <input type="text" id="search-input" placeholder="🔍  Search email, phone, or answers…"/>
+      <button class="filter-btn active" data-type="all">All</button>
+      <button class="filter-btn" data-type="buy">Buy</button>
+      <button class="filter-btn" data-type="sell">Sell</button>
+      <button class="btn-refresh" id="refresh-btn">
+        <span class="material-symbols-outlined" style="font-size:16px">refresh</span> Refresh
+      </button>
+      <button class="btn-csv" id="csv-btn">
+        <span class="material-symbols-outlined" style="font-size:16px">download</span> Export CSV
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Type</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Answers</th>
+            <th>Submitted</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr class="loading-row"><td colspan="7">
+            <div class="spinner"></div><br/>Loading data…
+          </td></tr>
+        </tbody>
+      </table>
+      <div class="pagination">
+        <div class="pag-info" id="pag-info">—</div>
+        <div class="pag-btns">
+          <button class="pag-btn" id="prev-btn" disabled>← Prev</button>
+          <button class="pag-btn" id="next-btn" disabled>Next →</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <button class="modal-close" id="modal-close">✕</button>
+    <div class="modal-title" id="modal-title">Inquiry Detail</div>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+// State
+// ──────────────────────────────────────────────
+let adminKey = "";
+let allData  = [];          // all rows fetched (client-side filtering)
+let filtered = [];
+let currentPage = 1;
+const PAGE_SIZE = 20;
+let currentType = "all";
+
+// ──────────────────────────────────────────────
+// Login
+// ──────────────────────────────────────────────
+document.getElementById("login-btn").addEventListener("click", attemptLogin);
+document.getElementById("password-input").addEventListener("keydown", e => { if (e.key === "Enter") attemptLogin(); });
+
+async function attemptLogin() {
+  const pw = document.getElementById("password-input").value.trim();
+  if (!pw) return;
+  document.getElementById("login-btn").textContent = "Verifying…";
+  const res = await fetch(`/api/admin?key=${encodeURIComponent(pw)}&pageSize=1`);
+  document.getElementById("login-btn").textContent = "Sign In";
+  if (res.ok) {
+    adminKey = pw;
+    document.getElementById("login-screen").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    loadAllData();
+  } else {
+    document.getElementById("login-error").style.display = "block";
+  }
+}
+
+document.getElementById("logout-btn").addEventListener("click", () => {
+  adminKey = ""; allData = []; filtered = [];
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("login-screen").style.display = "flex";
+  document.getElementById("password-input").value = "";
+});
+
+// ──────────────────────────────────────────────
+// Data Loading
+// ──────────────────────────────────────────────
+async function loadAllData() {
+  setLoading(true);
+  // Fetch all rows (up to 1000 for client-side filtering/search)
+  const res = await fetch(`/api/admin?key=${encodeURIComponent(adminKey)}&pageSize=1000`);
+  const json = await res.json();
+  allData = json.data || [];
+  computeStats();
+  applyFilter();
+}
+
+function computeStats() {
+  const today = new Date().toISOString().slice(0, 10);
+  document.getElementById("stat-total").textContent = allData.length;
+  document.getElementById("stat-buy").textContent   = allData.filter(r => r.type === "buy").length;
+  document.getElementById("stat-sell").textContent  = allData.filter(r => r.type === "sell").length;
+  document.getElementById("stat-today").textContent = allData.filter(r => r.created_at && r.created_at.startsWith(today)).length;
+}
+
+function applyFilter() {
+  const q = document.getElementById("search-input").value.toLowerCase();
+  filtered = allData.filter(r => {
+    const typeOk = currentType === "all" || r.type === currentType;
+    const qOk = !q ||
+      (r.email  || "").toLowerCase().includes(q) ||
+      (r.phone  || "").toLowerCase().includes(q) ||
+      (r.answers|| "").toLowerCase().includes(q);
+    return typeOk && qOk;
+  });
+  currentPage = 1;
+  renderTable();
+}
+
+// ──────────────────────────────────────────────
+// Render
+// ──────────────────────────────────────────────
+function setLoading(yes) {
+  if (yes) {
+    document.getElementById("table-body").innerHTML =
+      `<tr class="loading-row"><td colspan="7"><div class="spinner"></div><br/>Loading data…</td></tr>`;
+  }
+}
+
+function renderTable() {
+  const tbody = document.getElementById("table-body");
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const page  = filtered.slice(start, start + PAGE_SIZE);
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">No records found.</td></tr>`;
+    document.getElementById("pag-info").textContent = "No results";
+    document.getElementById("prev-btn").disabled = true;
+    document.getElementById("next-btn").disabled = true;
+    return;
+  }
+
+  tbody.innerHTML = page.map((row, i) => {
+    const answers = parseAnswers(row.answers);
+    const preview = answers.slice(0, 2).map(a =>
+      `<div class="answer-item"><div class="answer-q">${esc(a.q)}</div><div class="answer-a">${esc(a.a)}</div></div>`
+    ).join("") + (answers.length > 2 ? `<button class="expand-btn" data-id="${row.id}">+${answers.length - 2} more…</button>` : "");
+
+    const date = row.created_at ? new Date(row.created_at).toLocaleString() : "—";
+
+    return `<tr>
+      <td>${row.id}</td>
+      <td><span class="badge ${row.type}">${row.type}</span></td>
+      <td class="email-cell">${esc(row.email || "—")}</td>
+      <td class="phone-cell">${esc(row.phone || "—")}</td>
+      <td class="answers-cell">${preview}</td>
+      <td class="date-cell">${date}</td>
+      <td><button class="expand-btn" style="font-size:13px;font-weight:700" data-id="${row.id}">View ↗</button></td>
+    </tr>`;
+  }).join("");
+
+  // Pagination info
+  const total = filtered.length;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  document.getElementById("pag-info").textContent =
+    `Showing ${start + 1}–${Math.min(start + PAGE_SIZE, total)} of ${total} records`;
+  document.getElementById("prev-btn").disabled = currentPage <= 1;
+  document.getElementById("next-btn").disabled = currentPage >= totalPages;
+
+  // Row click → modal
+  tbody.querySelectorAll(".expand-btn").forEach(btn => {
+    btn.addEventListener("click", () => openModal(parseInt(btn.dataset.id)));
+  });
+}
+
+// ──────────────────────────────────────────────
+// Modal
+// ──────────────────────────────────────────────
+function openModal(id) {
+  const row = allData.find(r => r.id === id);
+  if (!row) return;
+  const answers = parseAnswers(row.answers);
+  const date = row.created_at ? new Date(row.created_at).toLocaleString() : "—";
+
+  document.getElementById("modal-title").textContent = `Inquiry #${row.id} · ${row.type.toUpperCase()}`;
+  document.getElementById("modal-content").innerHTML = `
+    <div class="modal-field">
+      <div class="modal-label">Email</div>
+      <div class="modal-value" style="color:var(--accent2)">${esc(row.email || "Not provided")}</div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Phone</div>
+      <div class="modal-value" style="font-family:monospace">${esc(row.phone || "Not provided")}</div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Submitted At</div>
+      <div class="modal-value" style="color:var(--muted)">${date}</div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Answers (${answers.length})</div>
+      <div class="modal-answers">
+        ${answers.length === 0 ? "<div style='color:var(--muted);font-size:13px'>No answers recorded.</div>" :
+          answers.map(a => `
+            <div class="modal-answer-item">
+              <div class="modal-answer-q">${esc(a.q)}</div>
+              <div class="modal-answer-a">${esc(a.a)}</div>
+            </div>`).join("")}
+      </div>
+    </div>`;
+  document.getElementById("modal-bg").classList.add("open");
+}
+
+document.getElementById("modal-close").addEventListener("click", () => {
+  document.getElementById("modal-bg").classList.remove("open");
+});
+document.getElementById("modal-bg").addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-bg"))
+    document.getElementById("modal-bg").classList.remove("open");
+});
+
+// ──────────────────────────────────────────────
+// Filters / Search
+// ──────────────────────────────────────────────
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentType = btn.dataset.type;
+    applyFilter();
+  });
+});
+
+let searchTimer;
+document.getElementById("search-input").addEventListener("input", () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(applyFilter, 250);
+});
+
+document.getElementById("refresh-btn").addEventListener("click", () => {
+  setLoading(true); loadAllData();
+});
+
+document.getElementById("prev-btn").addEventListener("click", () => { currentPage--; renderTable(); });
+document.getElementById("next-btn").addEventListener("click", () => { currentPage++; renderTable(); });
+
+// ──────────────────────────────────────────────
+// CSV Export
+// ──────────────────────────────────────────────
+document.getElementById("csv-btn").addEventListener("click", () => {
+  const rows = [["ID","Type","Email","Phone","Answers","Created At"]];
+  filtered.forEach(r => {
+    const answers = parseAnswers(r.answers).map(a => `${a.q}: ${a.a}`).join(" | ");
+    rows.push([r.id, r.type, r.email||"", r.phone||"", answers, r.created_at||""]);
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url  = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `solidroots-inquiries-${Date.now()}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+});
+
+// ──────────────────────────────────────────────
+// Helpers
+// ──────────────────────────────────────────────
+function parseAnswers(raw) {
+  if (!raw) return [];
+  try {
+    const obj = JSON.parse(raw);
+    if (Array.isArray(obj)) return obj.map((v, i) => ({ q: `Answer ${i + 1}`, a: v }));
+    return Object.entries(obj).map(([q, a]) => ({ q, a }));
+  } catch { return [{ q: "Raw", a: raw }]; }
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+</script>
+</body>
+</html>
