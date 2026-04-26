@@ -556,20 +556,27 @@ document.getElementById("next-btn").addEventListener("click", () => { currentPag
 
 // CSV
 document.getElementById("csv-btn").addEventListener("click", () => {
-    // 1. Collect unique questions for column headers
+    // 1. Collect unique questions per type for N/A logic
     const questionKeys = new Set();
+    const questionTypeMap = {}; // track which type each question belongs to
+
     const parsedRowsData = filtered.map(r => {
         let parsedAnswers = {};
         try {
             const ansObj = JSON.parse(r.answers);
             if (typeof ansObj === 'object' && ansObj !== null && !Array.isArray(ansObj)) {
                 parsedAnswers = ansObj;
-                Object.keys(ansObj).forEach(k => questionKeys.add(k));
+                Object.keys(ansObj).forEach(k => {
+                    questionKeys.add(k);
+                    // Mark which inquiry type introduced this question
+                    if (!questionTypeMap[k]) questionTypeMap[k] = r.type;
+                });
             } else if (Array.isArray(ansObj)) {
                 ansObj.forEach((a, i) => {
                     const key = `Response ${i+1}`;
                     parsedAnswers[key] = a;
                     questionKeys.add(key);
+                    if (!questionTypeMap[key]) questionTypeMap[key] = r.type;
                 });
             } else {
                 parsedAnswers["Raw Answer"] = r.answers;
@@ -585,29 +592,44 @@ document.getElementById("csv-btn").addEventListener("click", () => {
     });
 
     const questionsArray = Array.from(questionKeys);
-    
+
     // 2. Build headers
     const rows = [["ID", "Type", "Email", "Phone", "Date", ...questionsArray]];
-    
+
+    // Helper: force Excel to treat a value as text (prevents 0000000000 → 0)
+    function forceText(val) {
+        return `\t${val}`; // Tab prefix tells Excel/Sheets: treat as text
+    }
+
     // 3. Build data rows matching headers
     parsedRowsData.forEach(r => {
         const row = [
-            r.id, 
-            r.type, 
-            r.email || "", 
-            r.phone || "", 
+            forceText(r.id),          // prevent ID from being treated as number
+            r.type,
+            r.email || "",
+            forceText(r.phone || ""), // KEY FIX: prevent 0000000000 → 0
             r.created_at || ""
         ];
-        
+
         questionsArray.forEach(q => {
-            row.push(r.parsedAnswers[q] !== undefined ? r.parsedAnswers[q] : "");
+            if (r.parsedAnswers[q] !== undefined) {
+                // This submission has an answer for this question
+                row.push(r.parsedAnswers[q]);
+            } else if (questionTypeMap[q] && questionTypeMap[q] !== r.type) {
+                // This question belongs to the OTHER form type → N/A
+                row.push("N/A");
+            } else {
+                // Same form type but no answer (truly blank)
+                row.push("");
+            }
         });
-        
+
         rows.push(row);
     });
 
     const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    // Add BOM for Excel UTF-8 compatibility
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url; a.download = `solidroots-inquiries-${new Date().toISOString().slice(0,10)}.csv`;
