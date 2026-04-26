@@ -335,8 +335,9 @@ td {
                         <button class="btn-pill" data-type="buy">Buy</button>
                         <button class="btn-pill" data-type="sell">Sell</button>
                     </div>
-                    <div>
-                        <button class="btn-primary" id="csv-btn" style="padding: 8px 16px; font-size: 14px;">Export CSV</button>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-primary" id="csv-buy-btn" style="padding: 8px 16px; font-size: 14px; background:var(--ps-blue);">⬇ Buy CSV</button>
+                        <button class="btn-primary" id="csv-sell-btn" style="padding: 8px 16px; font-size: 14px; background:var(--ps-text-charcoal);">⬇ Sell CSV</button>
                     </div>
                 </div>
 
@@ -554,31 +555,35 @@ document.getElementById("search-input").addEventListener("input", () => {
 document.getElementById("prev-btn").addEventListener("click", () => { if(currentPage > 1) { currentPage--; renderTable(); } });
 document.getElementById("next-btn").addEventListener("click", () => { currentPage++; renderTable(); });
 
-// CSV
-document.getElementById("csv-btn").addEventListener("click", () => {
-    // 1. Collect unique questions per type for N/A logic
-    const questionKeys = new Set();
-    const questionTypeMap = {}; // track which type each question belongs to
+// CSV — shared helper
+function forceText(val) {
+    return `\t${val}`; // Tab prefix: forces Excel/Sheets to treat as text, not number
+}
 
-    const parsedRowsData = filtered.map(r => {
+function generateCSV(type) {
+    // 1. Filter to only this type's rows (from ALL data, not just current filter)
+    const typeRows = allData.filter(r => r.type === type);
+    if (typeRows.length === 0) {
+        alert(`No ${type} inquiries found.`);
+        return;
+    }
+
+    // 2. Parse answers and collect only columns relevant to this type
+    const questionKeys = new Set();
+    const parsedRowsData = typeRows.map(r => {
         let parsedAnswers = {};
         try {
             const ansObj = JSON.parse(r.answers);
             if (typeof ansObj === 'object' && ansObj !== null && !Array.isArray(ansObj)) {
                 parsedAnswers = ansObj;
-                Object.keys(ansObj).forEach(k => {
-                    questionKeys.add(k);
-                    // Mark which inquiry type introduced this question
-                    if (!questionTypeMap[k]) questionTypeMap[k] = r.type;
-                });
+                Object.keys(ansObj).forEach(k => questionKeys.add(k));
             } else if (Array.isArray(ansObj)) {
                 ansObj.forEach((a, i) => {
                     const key = `Response ${i+1}`;
                     parsedAnswers[key] = a;
                     questionKeys.add(key);
-                    if (!questionTypeMap[key]) questionTypeMap[key] = r.type;
                 });
-            } else {
+            } else if (r.answers) {
                 parsedAnswers["Raw Answer"] = r.answers;
                 questionKeys.add("Raw Answer");
             }
@@ -593,48 +598,36 @@ document.getElementById("csv-btn").addEventListener("click", () => {
 
     const questionsArray = Array.from(questionKeys);
 
-    // 2. Build headers
-    const rows = [["ID", "Type", "Email", "Phone", "Date", ...questionsArray]];
+    // 3. Build header row — base columns + only THIS type's questions
+    const rows = [["ID", "Email", "Phone", "Date", ...questionsArray]];
 
-    // Helper: force Excel to treat a value as text (prevents 0000000000 → 0)
-    function forceText(val) {
-        return `\t${val}`; // Tab prefix tells Excel/Sheets: treat as text
-    }
-
-    // 3. Build data rows matching headers
+    // 4. Build data rows
     parsedRowsData.forEach(r => {
         const row = [
-            forceText(r.id),          // prevent ID from being treated as number
-            r.type,
+            forceText(r.id),
             r.email || "",
-            forceText(r.phone || ""), // KEY FIX: prevent 0000000000 → 0
+            forceText(r.phone || ""),
             r.created_at || ""
         ];
-
         questionsArray.forEach(q => {
-            if (r.parsedAnswers[q] !== undefined) {
-                // This submission has an answer for this question
-                row.push(r.parsedAnswers[q]);
-            } else if (questionTypeMap[q] && questionTypeMap[q] !== r.type) {
-                // This question belongs to the OTHER form type → N/A
-                row.push("N/A");
-            } else {
-                // Same form type but no answer (truly blank)
-                row.push("");
-            }
+            row.push(r.parsedAnswers[q] !== undefined ? r.parsedAnswers[q] : "");
         });
-
         rows.push(row);
     });
 
+    // 5. Download
     const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
-    // Add BOM for Excel UTF-8 compatibility
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = `solidroots-inquiries-${new Date().toISOString().slice(0,10)}.csv`;
-    a.click(); URL.revokeObjectURL(url);
-});
+    a.href = url;
+    a.download = `solidroots-${type}-inquiries-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+document.getElementById("csv-buy-btn").addEventListener("click", () => generateCSV("buy"));
+document.getElementById("csv-sell-btn").addEventListener("click", () => generateCSV("sell"));
 
 function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 </script>
