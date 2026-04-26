@@ -556,24 +556,56 @@ document.getElementById("next-btn").addEventListener("click", () => { currentPag
 
 // CSV
 document.getElementById("csv-btn").addEventListener("click", () => {
-    const rows = [["ID", "Type", "Email", "Phone", "Answers", "Date"]];
-    filtered.forEach(r => {
-        let ansStr = "";
+    // 1. Collect unique questions for column headers
+    const questionKeys = new Set();
+    const parsedRowsData = filtered.map(r => {
+        let parsedAnswers = {};
         try {
             const ansObj = JSON.parse(r.answers);
-            if (Array.isArray(ansObj)) {
-                ansStr = ansObj.map((a, i) => `Response ${i+1}: ${a}`).join(" | ");
-            } else if (typeof ansObj === 'object' && ansObj !== null) {
-                ansStr = Object.entries(ansObj).map(([q, a]) => `${q}: ${a}`).join(" | ");
+            if (typeof ansObj === 'object' && ansObj !== null && !Array.isArray(ansObj)) {
+                parsedAnswers = ansObj;
+                Object.keys(ansObj).forEach(k => questionKeys.add(k));
+            } else if (Array.isArray(ansObj)) {
+                ansObj.forEach((a, i) => {
+                    const key = `Response ${i+1}`;
+                    parsedAnswers[key] = a;
+                    questionKeys.add(key);
+                });
             } else {
-                ansStr = r.answers;
+                parsedAnswers["Raw Answer"] = r.answers;
+                questionKeys.add("Raw Answer");
             }
         } catch(e) {
-            ansStr = r.answers || "";
+            if (r.answers) {
+                parsedAnswers["Raw Answer"] = r.answers;
+                questionKeys.add("Raw Answer");
+            }
         }
-        rows.push([r.id, r.type, r.email||"", r.phone||"", ansStr, r.created_at||""]);
+        return { ...r, parsedAnswers };
     });
-    // Use true newline character \n instead of escaped string \\n
+
+    const questionsArray = Array.from(questionKeys);
+    
+    // 2. Build headers
+    const rows = [["ID", "Type", "Email", "Phone", "Date", ...questionsArray]];
+    
+    // 3. Build data rows matching headers
+    parsedRowsData.forEach(r => {
+        const row = [
+            r.id, 
+            r.type, 
+            r.email || "", 
+            r.phone || "", 
+            r.created_at || ""
+        ];
+        
+        questionsArray.forEach(q => {
+            row.push(r.parsedAnswers[q] !== undefined ? r.parsedAnswers[q] : "");
+        });
+        
+        rows.push(row);
+    });
+
     const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
