@@ -558,15 +558,27 @@ document.getElementById("next-btn").addEventListener("click", () => { currentPag
 document.getElementById("csv-btn").addEventListener("click", () => {
     const rows = [["ID", "Type", "Email", "Phone", "Answers", "Date"]];
     filtered.forEach(r => {
-        let ansStr = r.answers;
-        try { ansStr = JSON.stringify(JSON.parse(r.answers)); } catch(e){}
+        let ansStr = "";
+        try {
+            const ansObj = JSON.parse(r.answers);
+            if (Array.isArray(ansObj)) {
+                ansStr = ansObj.map((a, i) => `Response ${i+1}: ${a}`).join(" | ");
+            } else if (typeof ansObj === 'object' && ansObj !== null) {
+                ansStr = Object.entries(ansObj).map(([q, a]) => `${q}: ${a}`).join(" | ");
+            } else {
+                ansStr = r.answers;
+            }
+        } catch(e) {
+            ansStr = r.answers || "";
+        }
         rows.push([r.id, r.type, r.email||"", r.phone||"", ansStr, r.created_at||""]);
     });
-    const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    // Use true newline character \n instead of escaped string \\n
+    const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = "inquiries.csv";
+    a.href = url; a.download = `solidroots-inquiries-${new Date().toISOString().slice(0,10)}.csv`;
     a.click(); URL.revokeObjectURL(url);
 });
 
