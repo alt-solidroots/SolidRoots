@@ -2,13 +2,7 @@
 import { signJwt } from '../utils/auth.js';
 import { verifyPassword } from '../utils/password.js';
 import { errorResponse } from '../utils/errors.js';
-import { jsonResponse } from './utils.js';
-
-// Minimal jsonResponse helper for this endpoint
-const JSON_HEADERS = { "Content-Type": "application/json" };
-function jsonResponse(body, status = 200) {
-  return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
-}
+// (No local jsonResponse; centralized error responses handle output)
 
 export async function onRequestPost(context) {
   const { request, env } = context;
