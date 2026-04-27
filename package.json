@@ -1,0 +1,27 @@
+{
+  "name": "solid-roots",
+  "version": "1.0.0",
+  "description": "Solid Roots is a premium real estate marketplace designed to connect discerning buyers with extraordinary properties. Our platform offers a seamless, fee-free experience for buying and selling luxury homes, modern apartments, and prime land.",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint functions public/js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alt-solidroots/SolidRoots.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/alt-solidroots/SolidRoots/issues"
+  },
+  "homepage": "https://github.com/alt-solidroots/SolidRoots#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.2.1",
+    "globals": "^17.5.0"
+  }
+}

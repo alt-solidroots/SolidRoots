@@ -1,72 +1,134 @@
-// Admin API - protected by a secret key passed as a query parameter
-// Usage: GET /api/admin?key=YOUR_ADMIN_SECRET
-// Set ADMIN_SECRET in your Cloudflare Pages environment variables.
+// ============================================================
+// Solid Roots — Admin API
+// GET /api/admin?key=YOUR_ADMIN_SECRET
+// Protected by ADMIN_SECRET environment variable.
+// ============================================================
+
+import { sanitizeValue, validateAdminKey } from '../utils/validate.js';
+import { rateLimitKV } from '../utils/ratelimit.js';
+
+// Rate limiter: prefer KV-based and fallback to in-memory per-instance for admin API.
+const RATE_LIMITER_ADMIN = new Map();
+const ADMIN_RATE_LIMIT = 20; // max requests
+const ADMIN_RATE_WINDOW_MS = 60 * 1000; // per 1 minute
+
+function getClientIp(request) {
+  try {
+    const cf = request.headers.get("CF-Connecting-IP");
+    if (cf) return cf;
+    const xf = request.headers.get("X-Forwarded-For");
+    if (xf) return xf.split(",")[0].trim();
+  } catch (e) {
+    // fall through
+  }
+  return (
+    request.headers.get("X-Real-IP") || request.headers.get("Remote-Addr") || "unknown"
+  );
+}
+
+function allowRequestInWindow(map, key, limit, windowMs) {
+  const now = Date.now();
+  const rec = map.get(key) || { start: now, count: 0 };
+  if (now - rec.start > windowMs) {
+    rec.start = now;
+    rec.count = 0;
+  }
+  if (rec.count >= limit) {
+    map.set(key, rec);
+    return false;
+  }
+  rec.count += 1;
+  map.set(key, rec);
+  return true;
+}
+
+// Admin key validation handled by shared module (validateAdminKey)
+const DEFAULT_PAGE_SIZE = 50;
+const DEFAULT_PAGE = 1;
+// Removed fallback admin secret. Admin access requires explicit environment-provided secret.
+
+const JSON_HEADERS = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+};
+
+function jsonResponse(body, status = 200) {
+    return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
+}
+
+function isAuthorized(key, env) {
+    const secret = env.ADMIN_SECRET;
+    if (!secret) return false;
+    return key === secret;
+}
+
+function parsePaginationParams(searchParams) {
+    let page = parseInt(searchParams.get("page") || DEFAULT_PAGE, 10);
+    if (Number.isNaN(page) || page < 1) page = DEFAULT_PAGE;
+    let pageSize = parseInt(searchParams.get("pageSize") || DEFAULT_PAGE_SIZE, 10);
+    if (Number.isNaN(pageSize) || pageSize < 1) pageSize = DEFAULT_PAGE_SIZE;
+    const typeFilter = searchParams.get("type") || "all";
+    const offset = (page - 1) * pageSize;
+    return { page, pageSize, typeFilter, offset };
+}
+
+function buildInquiryQueries(typeFilter, pageSize, offset) {
+    const hasFilter = typeFilter !== "all";
+    const whereClause = hasFilter ? " WHERE type = ?" : "";
+    const filterBindings = hasFilter ? [typeFilter] : [];
+
+    return {
+        dataQuery: `SELECT * FROM inquiries${whereClause} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+        dataBindings: [...filterBindings, pageSize, offset],
+        countQuery: `SELECT COUNT(*) as total FROM inquiries${whereClause}`,
+        countBindings: filterBindings,
+    };
+}
+
+async function fetchInquiries(env, queries) {
+    const { dataQuery, dataBindings, countQuery, countBindings } = queries;
+
+    const [result, countResult] = await Promise.all([
+        env.DB.prepare(dataQuery).bind(...dataBindings).all(),
+        env.DB.prepare(countQuery).bind(...countBindings).first(),
+    ]);
+
+    return { rows: result.results, total: countResult.total };
+}
 
 export async function onRequestGet(context) {
     const { request, env } = context;
     const url = new URL(request.url);
-    const key = url.searchParams.get("key");
+    const key = sanitizeValue(url.searchParams.get("key") ?? "");
 
-    // Check secret key
-    const adminSecret = env.ADMIN_SECRET || "solidroots-admin-2026";
-    if (key !== adminSecret) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
-            status: 401,
-            headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-            },
-        });
+    // Rate limit check for admin API
+    const ip = getClientIp(request);
+    if (env.RATE_LIMIT_KV) {
+        const rl = await rateLimitKV(env.RATE_LIMIT_KV, ip, '/admin', ADMIN_RATE_LIMIT, Math.ceil(ADMIN_RATE_WINDOW_MS / 1000));
+        if (!rl.allowed) {
+            return jsonResponse({ error: "Too Many Requests" }, 429);
+        }
+    } else if (!allowRequestInWindow(RATE_LIMITER_ADMIN, ip, ADMIN_RATE_LIMIT, ADMIN_RATE_WINDOW_MS)) {
+        return jsonResponse({ error: "Too Many Requests" }, 429);
+    }
+
+    // Validate input before authorization
+    const validation = validateAdminKey(key);
+    if (!validation.valid) {
+        return jsonResponse({ error: validation.errors[0] }, 400);
+    }
+
+    if (!isAuthorized(key, env)) {
+        return jsonResponse({ error: "Unauthorized" }, 401);
     }
 
     try {
-        const page = parseInt(url.searchParams.get("page") || "1");
-        const pageSize = parseInt(url.searchParams.get("pageSize") || "50");
-        const typeFilter = url.searchParams.get("type") || "all";
-        const offset = (page - 1) * pageSize;
+        const { page, pageSize, typeFilter, offset } = parsePaginationParams(url.searchParams);
+        const queries = buildInquiryQueries(typeFilter, pageSize, offset);
+        const { rows, total } = await fetchInquiries(env, queries);
 
-        // Build query with optional type filter
-        let query = "SELECT * FROM inquiries";
-        let countQuery = "SELECT COUNT(*) as total FROM inquiries";
-        const bindings = [];
-        const countBindings = [];
-
-        if (typeFilter !== "all") {
-            query += " WHERE type = ?";
-            countQuery += " WHERE type = ?";
-            bindings.push(typeFilter);
-            countBindings.push(typeFilter);
-        }
-
-        query += " ORDER BY created_at DESC LIMIT ? OFFSET ?";
-        bindings.push(pageSize, offset);
-
-        const [result, countResult] = await Promise.all([
-            env.DB.prepare(query).bind(...bindings).all(),
-            env.DB.prepare(countQuery).bind(...countBindings).first(),
-        ]);
-
-        return new Response(
-            JSON.stringify({
-                data: result.results,
-                total: countResult.total,
-                page,
-                pageSize,
-            }),
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*",
-                },
-            }
-        );
+        return jsonResponse({ data: rows, total, page, pageSize });
     } catch (err) {
-        return new Response(JSON.stringify({ error: err.message }), {
-            status: 500,
-            headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-            },
-        });
+        return jsonResponse({ error: err.message }, 500);
     }
 }
