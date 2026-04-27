@@ -1,6 +1,9 @@
 import { parseCookies } from '../utils/cookies.js';
 import { getSession, markSessionMfa } from '../utils/sessions.js';
-import { jsonResponse } from './utils.js';
+const JSON_HEADERS = { "Content-Type": "application/json" };
+function jsonResponse(body, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
+}
 import { verifyTotpCode } from '../utils/totp.js';
 import { CSP_POLICY } from '../utils/security.js';
 import { logAudit } from '../utils/audit.js';
