@@ -91,7 +91,7 @@ export async function onRequestPost(context) {
       return jsonResponse({ error: 'Unauthorized' }, 401);
     }
     const token = auth.slice(7);
-    const claims = await verifyJwt(token, env.JWT_SECRET);
+  const claims = await verifyJwt(token, env);
     if (!claims || !claims.sub) {
       return jsonResponse({ error: 'Unauthorized' }, 401);
     }

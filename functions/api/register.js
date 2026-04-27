@@ -4,6 +4,9 @@ import { errorResponse } from '../utils/errors.js';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
+  if (env?.OIDC_ISSUER) {
+    return jsonResponse({ error: 'OIDC configured; register via IdP' }, 400);
+  }
   try {
     const body = await request.json();
   const userId = body?.user_id;

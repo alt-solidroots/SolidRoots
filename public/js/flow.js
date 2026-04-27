@@ -79,7 +79,7 @@ function renderQuestion(type) {
     const contentEl = getElementById(`${type}-question-content`);
 
     updateProgressBar(type, step);
-    contentEl.innerHTML = buildQuestionHTML(type, step, flowData);
+    contentEl.innerHTML = stripDangerousHTML(buildQuestionHTML(type, step, flowData));
     focusInputAfterRender(type, step);
 }
 
@@ -178,11 +178,30 @@ async function submitAndShowSuccess(type) {
     const progressEl = getElementById(`${type}-progress`);
 
     progressEl.style.width = "100%";
-    contentEl.innerHTML = buildSuccessHTML();
+    contentEl.innerHTML = stripDangerousHTML(buildSuccessHTML());
 
     try {
         await submitInquiry(type);
     } catch (err) {
         console.error("Inquiry submission error:", err.message);
     }
+}
+// Utility to strip dangerous content before injecting HTML into DOM
+function stripDangerousHTML(html) {
+  if (typeof html !== 'string' || !html) return html;
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  // Remove script-like elements
+  const toRemove = div.querySelectorAll('script, iframe, object, embed');
+  toRemove.forEach(n => n.parentNode && n.parentNode.removeChild(n));
+  // Remove inline event handlers
+  const all = div.querySelectorAll('*');
+  all.forEach(el => {
+    // Copy attributes to array to avoid live collection mutation
+    const attrs = Array.from(el.attributes);
+    for (const attr of attrs) {
+      if (/^on/i.test(attr.name)) el.removeAttribute(attr.name);
+    }
+  });
+  return div.innerHTML;
 }

@@ -12,6 +12,10 @@ function jsonResponse(body, status = 200) {
 
 export async function onRequestPost(context) {
   const { request, env } = context;
+  // If using a modern IdP (OIDC), login via IdP; local login is disabled to avoid weak auth.
+  if (env?.OIDC_ISSUER) {
+    return new Response(JSON.stringify({ error: 'OIDC is configured; login via IdP' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+  }
   // Server-side input validation
   try {
     const body = await request.json();
