@@ -5,11 +5,12 @@
 // ============================================================
 
 const INSERT_QUERY =
-    "INSERT INTO inquiries (type, email, phone, answers) VALUES (?, ?, ?, ?)";
+    "INSERT INTO inquiries (type, user_id, email, phone, answers) VALUES (?, ?, ?, ?, ?)";
 
 const JSON_HEADERS = { "Content-Type": "application/json" };
 
 import { sanitizeValue, validateSubmitPayload } from '../utils/validate.js';
+import { verifyJwt } from '../utils/auth.js';
 import { rateLimitKV } from '../utils/ratelimit.js';
 
 // Lightweight per-IP rate limiter for submit endpoint
@@ -56,9 +57,9 @@ function extractInquiryFields(data) {
     return { type, email, phone, answers };
 }
 
-async function saveInquiry(env, type, email, phone, answers) {
+async function saveInquiry(env, type, userId, email, phone, answers) {
     await env.DB.prepare(INSERT_QUERY)
-        .bind(type, email, phone, JSON.stringify(answers))
+        .bind(type, userId, email, phone, JSON.stringify(answers))
         .run();
 }
 
@@ -78,6 +79,18 @@ export async function onRequestPost(context) {
         return jsonResponse({ error: "Too Many Requests" }, 429);
     }
 
+    // JWT auth check
+    const auth = request.headers.get('Authorization') || '';
+    if (!auth.startsWith('Bearer ')) {
+      return jsonResponse({ error: 'Unauthorized' }, 401);
+    }
+    const token = auth.slice(7);
+    const claims = await verifyJwt(token, env.JWT_SECRET);
+    if (!claims || !claims.sub) {
+      return jsonResponse({ error: 'Unauthorized' }, 401);
+    }
+    const jwtUserId = claims.sub;
+
     try {
         const body = await request.json();
         const sanitized = sanitizeValue(body);
@@ -88,9 +101,9 @@ export async function onRequestPost(context) {
 
         // Normalize type to a consistent value before storage
         sanitized.type = String(sanitized.type).trim().toLowerCase();
+        // Use JWT user id for ownership
         const { type, email, phone, answers } = extractInquiryFields(sanitized);
-
-        await saveInquiry(env, type, email, phone, answers);
+        await saveInquiry(env, type, jwtUserId, email, phone, answers);
 
         return jsonResponse({ success: true });
     } catch (err) {
