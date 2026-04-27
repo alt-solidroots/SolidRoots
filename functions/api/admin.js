@@ -6,6 +6,8 @@
 
 import { sanitizeValue, validateAdminKey } from '../utils/validate.js';
 import { rateLimitKV } from '../utils/ratelimit.js';
+import { errorResponse } from '../utils/errors.js';
+import { parseAllowList, isIpAllowed } from '../utils/allowlist.js';
 
 // Rate limiter: prefer KV-based and fallback to in-memory per-instance for admin API.
 const RATE_LIMITER_ADMIN = new Map();
@@ -103,6 +105,13 @@ export async function onRequestGet(context) {
 
     // Rate limit check for admin API
     const ip = getClientIp(request);
+    // Enforce allow-list if configured
+    const adminAllowRaw = env?.ALLOWED_ADMIN_IPS;
+    const adminAllowList = adminAllowRaw ? parseAllowList(adminAllowRaw) : [];
+    if (!isIpAllowed(ip, adminAllowList)) {
+        return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { 'Content-Type': 'application/json' } });
+    }
+
     if (env.RATE_LIMIT_KV) {
         const rl = await rateLimitKV(env.RATE_LIMIT_KV, ip, '/admin', ADMIN_RATE_LIMIT, Math.ceil(ADMIN_RATE_WINDOW_MS / 1000));
         if (!rl.allowed) {
@@ -128,7 +137,7 @@ export async function onRequestGet(context) {
         const { rows, total } = await fetchInquiries(env, queries);
 
         return jsonResponse({ data: rows, total, page, pageSize });
-    } catch (err) {
-        return jsonResponse({ error: err.message }, 500);
+  } catch (err) {
+        return errorResponse(err, 500, env);
     }
 }

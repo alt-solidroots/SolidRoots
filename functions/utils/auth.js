@@ -65,6 +65,11 @@ export async function verifyJwt(token, secret) {
     // Decode payload
     const payloadJson = fromBase64Url(payloadB64);
     const payload = JSON.parse(payloadJson);
+    // Basic checks: expiration, issuer/audience can be added as needed
+    const now = Math.floor(Date.now() / 1000);
+    if (payload && typeof payload.exp === 'number' && now >= payload.exp) {
+      return null;
+    }
     return payload;
   } catch {
     return null;

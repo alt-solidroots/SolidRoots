@@ -8,3 +8,10 @@ CREATE TABLE IF NOT EXISTS inquiries (
     answers TEXT NOT NULL, -- JSON string of all responses
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS users (
+    user_id TEXT PRIMARY KEY,
+    password_hash TEXT NOT NULL,
+    password_salt TEXT NOT NULL,
+    email TEXT
+);

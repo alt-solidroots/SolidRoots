@@ -11,6 +11,7 @@ const JSON_HEADERS = { "Content-Type": "application/json" };
 
 import { sanitizeValue, validateSubmitPayload } from '../utils/validate.js';
 import { verifyJwt } from '../utils/auth.js';
+import { parseAllowList, isIpAllowed } from '../utils/allowlist.js';
 import { rateLimitKV } from '../utils/ratelimit.js';
 
 // Lightweight per-IP rate limiter for submit endpoint
@@ -70,6 +71,11 @@ export async function onRequestPost(context) {
 
     // Rate limit check for submit API
     const ip = getClientIp(request);
+    const submitAllowRaw = env?.ALLOWED_SUBMIT_IPS;
+    const submitAllowList = submitAllowRaw ? parseAllowList(submitAllowRaw) : [];
+    if (!isIpAllowed(ip, submitAllowList)) {
+        return jsonResponse({ error: 'Forbidden' }, 403);
+    }
     if (env.RATE_LIMIT_KV) {
         const rl = await rateLimitKV(env.RATE_LIMIT_KV, ip, '/api/submit', SUBMIT_RATE_LIMIT, Math.ceil(SUBMIT_RATE_WINDOW_MS / 1000));
         if (!rl.allowed) {
@@ -107,6 +113,6 @@ export async function onRequestPost(context) {
 
         return jsonResponse({ success: true });
     } catch (err) {
-        return jsonResponse({ error: err.message }, 500);
+        return errorResponse(err, 500, env);
     }
 }

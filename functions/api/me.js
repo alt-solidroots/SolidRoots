@@ -11,6 +11,7 @@ function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
 }
 
+import { errorResponse } from '../utils/errors.js';
 export async function onRequestGet(context) {
   const { request, env } = context;
   const auth = request.headers.get('Authorization') || '';
@@ -28,6 +29,6 @@ export async function onRequestGet(context) {
     const rows = await env.DB.prepare(dataQuery).bind(userId).all();
     return jsonResponse({ data: rows.results }, 200);
   } catch (err) {
-    return jsonResponse({ error: err.message }, 500);
+    return errorResponse(err, 500, env);
   }
 }
