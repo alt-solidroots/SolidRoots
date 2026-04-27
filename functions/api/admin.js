@@ -5,6 +5,8 @@
 // ============================================================
 
 import { sanitizeValue, validateAdminKey } from '../utils/validate.js';
+import { CSP_POLICY } from '../utils/security.js';
+import { logAudit } from '../utils/audit.js';
 import { rateLimitKV } from '../utils/ratelimit.js';
 import { errorResponse } from '../utils/errors.js';
 import { parseAllowList, isIpAllowed } from '../utils/allowlist.js';
@@ -52,6 +54,7 @@ const DEFAULT_PAGE = 1;
 const JSON_HEADERS = {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
+    "Content-Security-Policy": CSP_POLICY,
 };
 
 function jsonResponse(body, status = 200) {
@@ -135,6 +138,8 @@ export async function onRequestGet(context) {
         const { page, pageSize, typeFilter, offset } = parsePaginationParams(url.searchParams);
         const queries = buildInquiryQueries(typeFilter, pageSize, offset);
         const { rows, total } = await fetchInquiries(env, queries);
+        // Audit admin access success
+        try { await logAudit(env.DB, 'admin', 'admin_access', true, `key=${key}, page=${page}, pageSize=${pageSize}, filter=${typeFilter}`); } catch {}
 
         return jsonResponse({ data: rows, total, page, pageSize });
   } catch (err) {

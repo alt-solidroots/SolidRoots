@@ -1,8 +1,10 @@
 // Simple login endpoint to issue a JWT for a user_id
 import { signJwt } from '../utils/auth.js';
+import { CSP_POLICY } from '../utils/security.js';
+import { logAudit } from '../utils/audit.js';
 import { verifyPassword } from '../utils/password.js';
 import { errorResponse } from '../utils/errors.js';
-// (No local jsonResponse; centralized error responses handle output)
+import { createSession } from '../utils/sessions.js';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -50,7 +52,25 @@ export async function onRequestPost(context) {
     const now = Math.floor(Date.now() / 1000);
     const payload = { sub: userId, email: storedEmail || email, iat: now, exp: now + 60 * 60 * 24 };
     const token = await signJwt(payload, env.JWT_SECRET);
-    return new Response(JSON.stringify({ token }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    // Create a short-lived session and set secure cookies (sessid + CSRF)
+    try {
+      const sess = await createSession(env.DB, userId, 1800);
+      const remaining = Math.max(0, Math.floor((new Date(sess.expiresAt).getTime() - Date.now()) / 1000));
+      const cookieSess = `sessid=${sess.sessionId}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=${remaining}`;
+      const cookieCsrf = `csrf=${sess.csrfToken}; Path=/; Secure; SameSite=Strict; Max-Age=${remaining}`;
+      const headers = new Headers();
+      headers.set('Content-Type','application/json');
+      headers.set('Content-Security-Policy', CSP_POLICY);
+      headers.append('Set-Cookie', cookieSess);
+      headers.append('Set-Cookie', cookieCsrf);
+      // Audit login success
+      try { await logAudit(env.DB, userId, 'login', true, 'session created'); } catch {}
+      return new Response(JSON.stringify({ token }), { status: 200, headers: Object.fromEntries(headers.entries()) });
+    } catch {
+      // Fallback: still return token without session cookies
+      const headers = { 'Content-Type': 'application/json' };
+      return new Response(JSON.stringify({ token }), { status: 200, headers });
+    }
   } catch (err) {
     return errorResponse(err, 500, env);
   }

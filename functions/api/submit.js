@@ -7,11 +7,18 @@
 const INSERT_QUERY =
     "INSERT INTO inquiries (type, user_id, email, phone, answers) VALUES (?, ?, ?, ?, ?)";
 
-const JSON_HEADERS = { "Content-Type": "application/json" };
+import { CSP_POLICY } from '../utils/security.js';
+const JSON_HEADERS = {
+  "Content-Type": "application/json",
+  "Content-Security-Policy": CSP_POLICY,
+};
 
 import { sanitizeValue, validateSubmitPayload } from '../utils/validate.js';
 import { verifyJwt } from '../utils/auth.js';
 import { parseAllowList, isIpAllowed } from '../utils/allowlist.js';
+import { parseCookies } from '../utils/cookies.js';
+import { logAudit } from '../utils/audit.js';
+import { getSession } from '../utils/sessions.js';
 import { rateLimitKV } from '../utils/ratelimit.js';
 
 // Lightweight per-IP rate limiter for submit endpoint
@@ -69,8 +76,8 @@ async function saveInquiry(env, type, userId, email, phone, answers) {
 export async function onRequestPost(context) {
     const { request, env } = context;
 
-    // Rate limit check for submit API
-    const ip = getClientIp(request);
+  // Rate limit check for submit API
+  const ip = getClientIp(request);
     const submitAllowRaw = env?.ALLOWED_SUBMIT_IPS;
     const submitAllowList = submitAllowRaw ? parseAllowList(submitAllowRaw) : [];
     if (!isIpAllowed(ip, submitAllowList)) {
@@ -85,17 +92,59 @@ export async function onRequestPost(context) {
         return jsonResponse({ error: "Too Many Requests" }, 429);
     }
 
-    // JWT auth check
-    const auth = request.headers.get('Authorization') || '';
+  // Try cookie-based session first, then fallback to JWT
+  const cookieHeader = request.headers.get('Cookie') || '';
+  const cookies = parseCookies(cookieHeader);
+  if (cookies.sessid) {
+    const sess = await getSession(env.DB, cookies.sessid);
+    if (sess && sess.user_id) {
+      // Use session identity for ownership
+      // Normalize type to a consistent value before storage
+      // We'll recursively handle in the following code path by injecting a userId
+      // For simplicity, set a local override and bypass JWT-based ownership until session-driven flow is fully wired
+      const userIdFromSession = sess.user_id;
+      // fall through to use userIdFromSession below by replacing jwtUserId usage
+      // Note: we'll set a flag on jwtUserId later in this function
+      var sessionUserId = userIdFromSession;
+    }
+  }
+  // MFA gating and CSRF checks for submit operations
+  // CSRF + MFA gating with session (cookie-based) if session exists
+  const cookieHeader = request.headers.get('Cookie') || '';
+  const cookies = parseCookies(cookieHeader);
+  const sessId = cookies['sessid'];
+  if (sessId) {
+    const session = await getSession(env.DB, sessId);
+    if (session && session.user_id) {
+      const userRow = await env.DB.prepare('SELECT mfa_enabled FROM users WHERE user_id = ?').bind(session.user_id).first();
+      const mfaEnabled = userRow?.mfa_enabled ? 1 : 0;
+      if (mfaEnabled && session.mfa_passed !== 1) {
+        return jsonResponse({ error: 'MFA required' }, 403);
+      }
+      const csrfHeader = request.headers.get('X-CSRF-Token') || '';
+      const csrfCookie = cookies['csrf'] || '';
+      if (csrfCookie && csrfHeader !== csrfCookie) {
+        return jsonResponse({ error: 'CSRF token mismatch' }, 403);
+      }
+      // If MFA is not enabled, CSRF still applies for state-changing operation
+    }
+  }
+  // JWT auth check
+  const auth = request.headers.get('Authorization') || '';
     if (!auth.startsWith('Bearer ')) {
       return jsonResponse({ error: 'Unauthorized' }, 401);
     }
-    const token = auth.slice(7);
+  const token = auth.slice(7);
   const claims = await verifyJwt(token, env);
-    if (!claims || !claims.sub) {
-      return jsonResponse({ error: 'Unauthorized' }, 401);
-    }
-    const jwtUserId = claims.sub;
+  let jwtUserId = null;
+  if (claims && claims.sub) jwtUserId = claims.sub;
+  // If sessionUserId set, prefer it over JWT for ownership when session exists
+  if (typeof sessionUserId !== 'undefined' && sessionUserId) {
+    jwtUserId = sessionUserId;
+  }
+  if (!jwtUserId) {
+    return jsonResponse({ error: 'Unauthorized' }, 401);
+  }
 
     try {
         const body = await request.json();
@@ -110,6 +159,8 @@ export async function onRequestPost(context) {
         // Use JWT user id for ownership
         const { type, email, phone, answers } = extractInquiryFields(sanitized);
         await saveInquiry(env, type, jwtUserId, email, phone, answers);
+        // Audit submission
+        try { await logAudit(env.DB, jwtUserId, 'submit', true, `type=${type}`); } catch {}
 
         return jsonResponse({ success: true });
     } catch (err) {
