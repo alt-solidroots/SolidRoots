@@ -109,9 +109,6 @@ export async function onRequestPost(context) {
     }
   }
   // MFA gating and CSRF checks for submit operations
-  // CSRF + MFA gating with session (cookie-based) if session exists
-  const cookieHeader = request.headers.get('Cookie') || '';
-  const cookies = parseCookies(cookieHeader);
   const sessId = cookies['sessid'];
   if (sessId) {
     const session = await getSession(env.DB, sessId);
