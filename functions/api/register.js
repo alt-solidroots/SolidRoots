@@ -1,5 +1,8 @@
 import { hashPassword } from '../utils/password.js';
-import { jsonResponse } from './utils.js';
+const JSON_HEADERS = { "Content-Type": "application/json" };
+function jsonResponse(body, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
+}
 import { errorResponse } from '../utils/errors.js';
 
 export async function onRequestPost(context) {
