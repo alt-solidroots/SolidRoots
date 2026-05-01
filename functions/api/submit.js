@@ -22,6 +22,8 @@ import { parseCookies } from '../utils/cookies.js';
 import { logAudit } from '../utils/audit.js';
 import { getSession } from '../utils/sessions.js';
 import { rateLimitKV } from '../utils/ratelimit.js';
+import { validateCsrf } from '../utils/csrf.js';
+
 
 // Lightweight per-IP rate limiter for submit endpoint
 const RATE_LIMITER_SUBMIT = new Map();
@@ -126,12 +128,11 @@ export async function onRequestPost(context) {
       if (mfaEnabled && session.mfa_passed !== 1) {
         return jsonResponse({ error: 'MFA required' }, 403);
       }
-      const csrfHeader = request.headers.get('X-CSRF-Token') || '';
-      const csrfCookie = cookies['csrf'] || '';
-      if (csrfCookie && csrfHeader !== csrfCookie) {
+      if (!validateCsrf(request)) {
         return jsonResponse({ error: 'CSRF token mismatch' }, 403);
       }
       // If MFA is not enabled, CSRF still applies for state-changing operation
+
     }
   }
   // JWT auth check

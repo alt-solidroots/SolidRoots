@@ -3,6 +3,8 @@ import { getSession } from '../utils/sessions.js';
 import { generateSecret } from '../utils/totp.js';
 import { logAudit } from '../utils/audit.js';
 import { secureHeaders, corsHeaders } from '../utils/security.js';
+import { validateCsrf } from '../utils/csrf.js';
+
 
 
 const JSON_HEADERS = {
@@ -29,7 +31,13 @@ export async function onRequestPost(context) {
   if (!session || !session.user_id) {
     return jsonResponse({ error: 'Unauthorized' }, 401);
   }
+  
+  if (!validateCsrf(request)) {
+    return jsonResponse({ error: 'CSRF token mismatch' }, 403);
+  }
+  
   const userId = session.user_id;
+
 
   // Generate MFA secret and store it
   const secret = await generateSecret();

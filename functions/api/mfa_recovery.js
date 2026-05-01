@@ -2,6 +2,8 @@ import { parseCookies } from '../utils/cookies.js';
 import { getSession, markSessionMfa } from '../utils/sessions.js';
 import { logAudit } from '../utils/audit.js';
 import { secureHeaders, corsHeaders } from '../utils/security.js';
+import { validateCsrf } from '../utils/csrf.js';
+
 
 const JSON_HEADERS = {
   "Content-Type": "application/json",
@@ -22,7 +24,13 @@ export async function onRequestPost(context) {
   if (!sessId) return jsonResponse({ error: 'Unauthorized' }, 401);
   const session = await getSession(env.DB, sessId);
   if (!session || !session.user_id) return jsonResponse({ error: 'Unauthorized' }, 401);
+  
+  if (!validateCsrf(request)) {
+    return jsonResponse({ error: 'CSRF token mismatch' }, 403);
+  }
+  
   const userId = session.user_id;
+
   const body = await request.json();
   const code = body?.code;
   if (!code) return jsonResponse({ error: 'Missing code' }, 400);
