@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint functions public/js",
-    "test": "node tests/integration-tests.mjs"
+    "test": "node tests/integration-tests.mjs",
+    "monitor": "node tools/monitor-anomalies.mjs",
+    "scan": "npm audit && npx gitleaks detect --source . -v"
+
   },
   "repository": {
     "type": "git",
