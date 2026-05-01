@@ -1,6 +1,8 @@
 import { parseCookies } from '../utils/cookies.js';
 import { getSession, markSessionMfa } from '../utils/sessions.js';
+import { logAudit } from '../utils/audit.js';
 import { secureHeaders, corsHeaders } from '../utils/security.js';
+
 const JSON_HEADERS = {
   "Content-Type": "application/json",
   ...secureHeaders(),
@@ -25,8 +27,14 @@ export async function onRequestPost(context) {
   const code = body?.code;
   if (!code) return jsonResponse({ error: 'Missing code' }, 400);
   const ok = await consumeRecoveryCode(env.DB, userId, code);
-  if (!ok) return jsonResponse({ error: 'Invalid or used recovery code' }, 400);
+  if (!ok) {
+    await logAudit(env.DB, userId, 'mfa_recovery_failed', false, 'invalid or used code');
+    return jsonResponse({ error: 'Invalid or used recovery code' }, 400);
+  }
+
   // If recovery code used, consider MFA passed for this session
   try { await markSessionMfa(env.DB, sessId, true); } catch {}
+  await logAudit(env.DB, userId, 'mfa_recovery_success', true, 'recovery code used');
   return jsonResponse({ success: true }, 200);
+
 }

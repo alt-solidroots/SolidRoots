@@ -1,5 +1,9 @@
 import { parseCookies } from '../utils/cookies.js';
 import { getSession, markSessionMfa } from '../utils/sessions.js';
+import { verifyTotpCode } from '../utils/totp.js';
+import { logAudit } from '../utils/audit.js';
+import { secureHeaders, corsHeaders } from '../utils/security.js';
+
 const JSON_HEADERS = {
   'Content-Type': 'application/json',
   ...secureHeaders(),
