@@ -7,11 +7,13 @@
 const INSERT_QUERY =
     "INSERT INTO inquiries (type, user_id, email, phone, answers) VALUES (?, ?, ?, ?, ?)";
 
-import { CSP_POLICY } from '../utils/security.js';
+import { secureHeaders, corsHeaders } from '../utils/security.js';
 const JSON_HEADERS = {
   "Content-Type": "application/json",
-  "Content-Security-Policy": CSP_POLICY,
+  ...secureHeaders(),
+  ...corsHeaders(),
 };
+
 
 import { sanitizeValue, validateSubmitPayload } from '../utils/validate.js';
 import { verifyJwt } from '../utils/auth.js';

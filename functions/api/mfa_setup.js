@@ -2,12 +2,15 @@ import { parseCookies } from '../utils/cookies.js';
 import { getSession } from '../utils/sessions.js';
 import { generateSecret } from '../utils/totp.js';
 import { logAudit } from '../utils/audit.js';
-import { CSP_POLICY } from '../utils/security.js';
+import { secureHeaders, corsHeaders } from '../utils/security.js';
+
 
 const JSON_HEADERS = {
   'Content-Type': 'application/json',
-  'Content-Security-Policy': CSP_POLICY,
+  ...secureHeaders(),
+  ...corsHeaders(),
 };
+
 
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });

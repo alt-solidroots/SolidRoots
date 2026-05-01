@@ -1,12 +1,14 @@
 import { parseCookies } from '../utils/cookies.js';
 import { getSession, markSessionMfa } from '../utils/sessions.js';
-const JSON_HEADERS = { "Content-Type": "application/json" };
+const JSON_HEADERS = {
+  'Content-Type': 'application/json',
+  ...secureHeaders(),
+  ...corsHeaders(),
+};
+
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
 }
-import { verifyTotpCode } from '../utils/totp.js';
-import { CSP_POLICY } from '../utils/security.js';
-import { logAudit } from '../utils/audit.js';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -38,8 +40,13 @@ export async function onRequestPost(context) {
   }
   await env.DB.prepare('UPDATE users SET mfa_enabled = 1 WHERE user_id = ?').bind(userId).run();
   await markSessionMfa(env.DB, sessId, true);
-  const headers = { 'Content-Type': 'application/json', 'Content-Security-Policy': CSP_POLICY };
+  const headers = { 
+    'Content-Type': 'application/json', 
+    ...secureHeaders(),
+    ...corsHeaders() 
+  };
   // Audit MFA verify success
   try { await logAudit(env.DB, userId, 'mfa_verify', true, 'MFA verified'); } catch {}
   return new Response(JSON.stringify({ success: true }), { status: 200, headers });
+
 }

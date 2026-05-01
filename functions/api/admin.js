@@ -5,10 +5,12 @@
 // ============================================================
 
 import { sanitizeValue, validateAdminKey } from '../utils/validate.js';
-import { CSP_POLICY } from '../utils/security.js';
+
 import { logAudit } from '../utils/audit.js';
 import { rateLimitKV } from '../utils/ratelimit.js';
 import { errorResponse } from '../utils/errors.js';
+import { secureHeaders, corsHeaders } from '../utils/security.js';
+
 import { parseAllowList, isIpAllowed } from '../utils/allowlist.js';
 
 // Rate limiter: prefer KV-based and fallback to in-memory per-instance for admin API.
@@ -53,13 +55,14 @@ const DEFAULT_PAGE = 1;
 
 const JSON_HEADERS = {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Content-Security-Policy": CSP_POLICY,
+    ...secureHeaders(),
+    ...corsHeaders(),
 };
 
 function jsonResponse(body, status = 200) {
     return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
 }
+
 
 function isAuthorized(key, env) {
     const secret = env.ADMIN_SECRET;

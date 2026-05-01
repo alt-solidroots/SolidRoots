@@ -1,5 +1,11 @@
 import { hashPassword } from '../utils/password.js';
-const JSON_HEADERS = { "Content-Type": "application/json" };
+import { secureHeaders, corsHeaders } from '../utils/security.js';
+const JSON_HEADERS = {
+  "Content-Type": "application/json",
+  ...secureHeaders(),
+  ...corsHeaders(),
+};
+
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
 }
