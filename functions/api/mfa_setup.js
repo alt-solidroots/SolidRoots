@@ -36,9 +36,11 @@ export async function onRequestPost(context) {
   try {
     await env.DB.prepare('UPDATE users SET mfa_secret = ?, mfa_enabled = 0 WHERE user_id = ?').bind(secret, userId).run();
   } catch {
+    await logAudit(env.DB, userId, 'mfa_setup_failed', false, 'DB update error');
     // ignore DB errors, but raise 500
     return jsonResponse({ error: 'Failed to setup MFA' }, 500);
   }
+
   const otpauth = `otpauth://totp Solid Roots:${userId}?secret=${secret}&issuer=Solid Roots`;
   // Audit MFA setup
   try { await logAudit(env.DB, userId, 'mfa_setup', true, 'secret generated'); } catch {}

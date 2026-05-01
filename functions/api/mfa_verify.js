@@ -36,8 +36,10 @@ export async function onRequestPost(context) {
   }
   const ok = await verifyTotpCode(code, secret);
   if (!ok) {
+    await logAudit(env.DB, userId, 'mfa_verify_failed', false, 'invalid MFA code');
     return jsonResponse({ error: 'Invalid MFA code' }, 401);
   }
+
   await env.DB.prepare('UPDATE users SET mfa_enabled = 1 WHERE user_id = ?').bind(userId).run();
   await markSessionMfa(env.DB, sessId, true);
   const headers = { 

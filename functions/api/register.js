@@ -10,6 +10,8 @@ function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
 }
 import { errorResponse } from '../utils/errors.js';
+import { logAudit } from '../utils/audit.js';
+
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -35,13 +37,17 @@ export async function onRequestPost(context) {
   // Check if user exists
   const existing = await env.DB.prepare('SELECT 1 FROM users WHERE user_id = ?').bind(userId).first();
   if (existing) {
+    await logAudit(env.DB, userId, 'register_failed', false, 'user already exists');
     return jsonResponse({ error: 'User already exists' }, 409);
   }
+
   const { salt, hash } = await hashPassword(password);
   await env.DB.prepare('INSERT INTO users (user_id, password_hash, password_salt, email) VALUES (?, ?, ?, ?)')
     .bind(userId, hash, salt, email)
     .run();
+    await logAudit(env.DB, userId, 'register_success', true, `email=${email}`);
     return jsonResponse({ success: true, user_id: userId }, 201);
+
   } catch (err) {
     return errorResponse(err, 500, env);
   }

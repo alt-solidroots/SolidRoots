@@ -83,16 +83,22 @@ export async function onRequestPost(context) {
     const submitAllowRaw = env?.ALLOWED_SUBMIT_IPS;
     const submitAllowList = submitAllowRaw ? parseAllowList(submitAllowRaw) : [];
     if (!isIpAllowed(ip, submitAllowList)) {
+        await logAudit(env.DB, null, 'submit_forbidden', false, `IP=${ip}`);
         return jsonResponse({ error: 'Forbidden' }, 403);
     }
+
+
     if (env.RATE_LIMIT_KV) {
         const rl = await rateLimitKV(env.RATE_LIMIT_KV, ip, '/api/submit', SUBMIT_RATE_LIMIT, Math.ceil(SUBMIT_RATE_WINDOW_MS / 1000));
         if (!rl.allowed) {
+            await logAudit(env.DB, null, 'submit_ratelimit', false, `IP=${ip}`);
             return jsonResponse({ error: "Too Many Requests" }, 429);
         }
     } else if (!allowRequestInWindow(RATE_LIMITER_SUBMIT, ip, SUBMIT_RATE_LIMIT, SUBMIT_RATE_WINDOW_MS)) {
+        await logAudit(env.DB, null, 'submit_ratelimit', false, `IP=${ip}`);
         return jsonResponse({ error: "Too Many Requests" }, 429);
     }
+
 
   // Try cookie-based session first, then fallback to JWT
   const cookieHeader = request.headers.get('Cookie') || '';
@@ -142,8 +148,10 @@ export async function onRequestPost(context) {
     jwtUserId = sessionUserId;
   }
   if (!jwtUserId) {
+    await logAudit(env.DB, null, 'submit_unauthorized', false, `IP=${ip}`);
     return jsonResponse({ error: 'Unauthorized' }, 401);
   }
+
 
     try {
         const body = await request.json();

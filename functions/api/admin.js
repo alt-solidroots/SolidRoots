@@ -134,6 +134,7 @@ export async function onRequestGet(context) {
     }
 
     if (!isAuthorized(key, env)) {
+        await logAudit(env.DB, 'admin', 'admin_unauthorized', false, `IP=${ip}`);
         return jsonResponse({ error: "Unauthorized" }, 401);
     }
 
