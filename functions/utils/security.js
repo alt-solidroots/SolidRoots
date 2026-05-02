@@ -1,10 +1,10 @@
 // Central secure HTTP headers for production deployment
 export const CSP_POLICY =
   "default-src 'self'; " +
-  "script-src 'self' 'unsafe-inline'; " +
+  "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; " +
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
   "img-src 'self' data: https://images.unsplash.com; " +
-  "connect-src 'self'; " +
+  "connect-src 'self' https://cloudflareinsights.com; " +
   "font-src 'self' https://fonts.gstatic.com; " +
   "object-src 'none'; " +
   "frame-ancestors 'none'; " +
