@@ -8,7 +8,6 @@
     "test": "node tests/integration-tests.mjs",
     "monitor": "node tools/monitor-anomalies.mjs",
     "scan": "npm audit && npx gitleaks detect --source . -v"
-
   },
   "repository": {
     "type": "git",
@@ -24,7 +23,11 @@
   "homepage": "https://github.com/alt-solidroots/SolidRoots#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@tailwindcss/cli": "^4.2.4",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.11",
     "eslint": "^10.2.1",
-    "globals": "^17.5.0"
+    "globals": "^17.5.0",
+    "tailwindcss": "^4.2.4"
   }
 }
