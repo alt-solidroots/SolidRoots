@@ -4,6 +4,8 @@
   "description": "Solid Roots is a premium real estate marketplace designed to connect discerning buyers with extraordinary properties. Our platform offers a seamless, fee-free experience for buying and selling luxury homes, modern apartments, and prime land.",
   "main": "index.js",
   "scripts": {
+    "dev": "npx wrangler pages dev public --compatibility-date=2024-04-03 --d1 DB",
+    "build:css": "npx tailwindcss -i ./src/input.css -o ./public/styles.css --minify",
     "lint": "eslint functions public/js",
     "test": "node tests/integration-tests.mjs",
     "monitor": "node tools/monitor-anomalies.mjs",
