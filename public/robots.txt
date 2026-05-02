@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://solidroots.example.com/sitemap.xml
