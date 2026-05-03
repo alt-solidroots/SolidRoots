@@ -1,0 +1,16 @@
+# Gitleaks Configuration for Solid Roots
+# See: https://github.com/gitleaks/gitleaks#configuration
+
+title = "Solid Roots Gitleaks Config"
+
+[extend]
+# Extend the default gitleaks config
+useDefault = true
+
+[[allowlists]]
+description = "IndexNow API Key — intentionally public by design. The IndexNow protocol requires this key to be hosted in a public .txt file at the site root for domain ownership verification. It is NOT a secret."
+regexes = ['''94de5482596044cda1b6dd291ef8884b''']
+paths = [
+  '''tools/submit-indexnow\.mjs''',
+  '''public/94de5482596044cda1b6dd291ef8884b\.txt''',
+]
