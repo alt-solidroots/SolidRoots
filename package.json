@@ -9,6 +9,7 @@
     "lint": "eslint functions public/js",
     "test": "node tests/integration-tests.mjs",
     "monitor": "node tools/monitor-anomalies.mjs",
+    "indexnow": "node tools/submit-indexnow.mjs",
     "scan": "npm audit && npx gitleaks detect --source . -v"
   },
   "repository": {
