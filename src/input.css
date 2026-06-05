@@ -45,15 +45,15 @@
 }
 
 .logo-item {
-    width: calc((100cqw - 16px) / 5);
     flex-shrink: 0;
 }
 
 .animate-marquee {
     animation: marquee 30s linear infinite;
     display: flex;
+    align-items: center;
     width: max-content;
-    gap: 4px;
+    gap: 48px;
 }
 
 .animate-marquee:hover {
