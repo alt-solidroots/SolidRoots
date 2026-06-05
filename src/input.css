@@ -34,3 +34,29 @@
 .shake {
     animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
 }
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.logo-carousel-viewport {
+    container-type: inline-size;
+}
+
+.logo-item {
+    width: calc((100cqw - 16px) / 5);
+    flex-shrink: 0;
+}
+
+.animate-marquee {
+    animation: marquee 30s linear infinite;
+    display: flex;
+    width: max-content;
+    gap: 4px;
+}
+
+.animate-marquee:hover {
+    animation-play-state: paused;
+}
+
