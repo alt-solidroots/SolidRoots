@@ -290,7 +290,138 @@
 </div>
 </div>
 </section>
+
+<!-- Get in Touch Section -->
+<section id="contact" style="padding: 80px 0; background-color: #ffffff; border-top: 1px solid #e5e2e1;">
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 24px;">
+
+    <!-- Two-column grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: 560px; border: 1px solid #e5e2e1; overflow: hidden;">
+
+      <!-- LEFT: Form -->
+      <div style="padding: 56px 48px; background-color: #ffffff;">
+        <span style="display: block; font-family: 'Work Sans', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: #44474c; margin-bottom: 16px;">Direct Access</span>
+        <h2 style="font-family: 'Manrope', sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; color: #1b1b1b; margin: 0 0 8px 0;">Get in touch</h2>
+        <p style="font-family: 'Work Sans', sans-serif; font-size: 0.95rem; color: #44474c; margin: 0 0 36px 0; line-height: 1.6;">Our friendly team would love to hear from you.</p>
+
+        <form id="contact-form" onsubmit="handleContactSubmit(event)" style="display: flex; flex-direction: column; gap: 16px;">
+
+          <!-- Name row -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label style="display: block; font-family: 'Work Sans', sans-serif; font-size: 0.8rem; font-weight: 600; color: #1b1b1b; margin-bottom: 6px;">First name</label>
+              <input id="contact-fname" type="text" placeholder="First name" style="width: 100%; padding: 10px 14px; border: 1px solid #d5d7db; font-family: 'Work Sans', sans-serif; font-size: 0.9rem; color: #1b1b1b; outline: none; background: #fff; box-sizing: border-box; transition: border-color 0.2s;"
+                onfocus="this.style.borderColor='#101b30'" onblur="this.style.borderColor='#d5d7db'">
+            </div>
+            <div>
+              <label style="display: block; font-family: 'Work Sans', sans-serif; font-size: 0.8rem; font-weight: 600; color: #1b1b1b; margin-bottom: 6px;">Last name</label>
+              <input id="contact-lname" type="text" placeholder="Last name" style="width: 100%; padding: 10px 14px; border: 1px solid #d5d7db; font-family: 'Work Sans', sans-serif; font-size: 0.9rem; color: #1b1b1b; outline: none; background: #fff; box-sizing: border-box; transition: border-color 0.2s;"
+                onfocus="this.style.borderColor='#101b30'" onblur="this.style.borderColor='#d5d7db'">
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label style="display: block; font-family: 'Work Sans', sans-serif; font-size: 0.8rem; font-weight: 600; color: #1b1b1b; margin-bottom: 6px;">Email</label>
+            <input id="contact-email" type="email" placeholder="you@example.com" style="width: 100%; padding: 10px 14px; border: 1px solid #d5d7db; font-family: 'Work Sans', sans-serif; font-size: 0.9rem; color: #1b1b1b; outline: none; background: #fff; box-sizing: border-box; transition: border-color 0.2s;"
+              onfocus="this.style.borderColor='#101b30'" onblur="this.style.borderColor='#d5d7db'">
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label style="display: block; font-family: 'Work Sans', sans-serif; font-size: 0.8rem; font-weight: 600; color: #1b1b1b; margin-bottom: 6px;">Phone number</label>
+            <div style="display: flex; border: 1px solid #d5d7db; transition: border-color 0.2s;" id="phone-wrapper">
+              <span style="padding: 10px 12px; background: #f6f3f2; font-family: 'Work Sans', sans-serif; font-size: 0.9rem; color: #44474c; border-right: 1px solid #d5d7db; white-space: nowrap;">IN +91</span>
+              <input id="contact-phone" type="tel" placeholder="98765 43210" style="flex: 1; padding: 10px 14px; border: none; font-family: 'Work Sans', sans-serif; font-size: 0.9rem; color: #1b1b1b; outline: none; background: #fff; min-width: 0;"
+                onfocus="document.getElementById('phone-wrapper').style.borderColor='#101b30'" onblur="document.getElementById('phone-wrapper').style.borderColor='#d5d7db'">
+            </div>
+          </div>
+
+          <!-- Message -->
+          <div>
+            <label style="display: block; font-family: 'Work Sans', sans-serif; font-size: 0.8rem; font-weight: 600; color: #1b1b1b; margin-bottom: 6px;">Message</label>
+            <textarea id="contact-message" rows="4" placeholder="Tell us about the property you're looking for..." style="width: 100%; padding: 10px 14px; border: 1px solid #d5d7db; font-family: 'Work Sans', sans-serif; font-size: 0.9rem; color: #1b1b1b; outline: none; background: #fff; box-sizing: border-box; resize: vertical; transition: border-color 0.2s;"
+              onfocus="this.style.borderColor='#101b30'" onblur="this.style.borderColor='#d5d7db'"></textarea>
+          </div>
+
+          <!-- Privacy note -->
+          <p style="font-family: 'Work Sans', sans-serif; font-size: 0.78rem; color: #74777d; margin: 0;">You agree to our friendly <a href="privacy.html" style="color: #1b1b1b; text-decoration: underline;">privacy policy</a>.</p>
+
+          <!-- Submit -->
+          <button type="submit" style="width: 100%; padding: 14px; background-color: #101b30; color: #ffdea5; font-family: 'Manrope', sans-serif; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.02em; border: none; cursor: pointer; transition: background-color 0.2s, transform 0.1s;"
+            onmouseover="this.style.backgroundColor='#1a2d4a'" onmouseout="this.style.backgroundColor='#101b30'" onmousedown="this.style.transform='scale(0.99)'" onmouseup="this.style.transform='scale(1)'">
+            Send message →
+          </button>
+        </form>
+
+        <script>
+          function handleContactSubmit(e) {
+            e.preventDefault();
+            const fname = document.getElementById('contact-fname').value.trim();
+            const lname = document.getElementById('contact-lname').value.trim();
+            const email = document.getElementById('contact-email').value.trim();
+            const phone = document.getElementById('contact-phone').value.trim();
+            const message = document.getElementById('contact-message').value.trim();
+            const text = `Hello, I'd like to get in touch!\n\nName: ${fname} ${lname}\nEmail: ${email}\nPhone: ${phone}\n\nMessage: ${message}`;
+            window.open('https://wa.me/919034242724?text=' + encodeURIComponent(text), '_blank');
+          }
+        </script>
+      </div>
+
+      <!-- RIGHT: Typographic Panel -->
+      <div style="padding: 56px 48px; background-color: #101b30; color: white; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden;">
+
+        <!-- Decorative large number watermark -->
+        <div style="position: absolute; bottom: -20px; right: -10px; font-family: 'Manrope', sans-serif; font-size: 200px; font-weight: 900; color: rgba(255,222,165,0.05); line-height: 1; pointer-events: none; user-select: none;">SR</div>
+
+        <!-- Top content -->
+        <div>
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,222,165,0.1); border: 1px solid rgba(255,222,165,0.2); padding: 6px 14px; margin-bottom: 36px;">
+            <div style="width: 6px; height: 6px; background-color: #25D366; border-radius: 50%;"></div>
+            <span style="font-family: 'Work Sans', sans-serif; font-size: 0.75rem; font-weight: 600; color: #ffdea5; letter-spacing: 0.1em; text-transform: uppercase;">Available Now</span>
+          </div>
+
+          <h3 style="font-family: 'Manrope', sans-serif; font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; color: #ffffff; margin: 0 0 20px 0;">Your dream property<br>is one message away.</h3>
+          <p style="font-family: 'Work Sans', sans-serif; font-size: 0.9rem; color: rgba(255,255,255,0.55); line-height: 1.7; margin: 0; max-width: 340px;">Skip the endless searching. Tell us what you're looking for and we'll do the work — no brokerage, no middlemen, just results.</p>
+        </div>
+
+        <!-- Stats grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.08); margin-top: 48px; border: 1px solid rgba(255,255,255,0.08);">
+          <div style="padding: 24px; background-color: #101b30;">
+            <div style="font-family: 'Manrope', sans-serif; font-size: 2rem; font-weight: 900; color: #ffdea5; letter-spacing: -0.04em; line-height: 1;">500+</div>
+            <div style="font-family: 'Work Sans', sans-serif; font-size: 0.78rem; color: rgba(255,255,255,0.45); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em;">Verified Listings</div>
+          </div>
+          <div style="padding: 24px; background-color: #101b30;">
+            <div style="font-family: 'Manrope', sans-serif; font-size: 2rem; font-weight: 900; color: #ffdea5; letter-spacing: -0.04em; line-height: 1;">₹0</div>
+            <div style="font-family: 'Work Sans', sans-serif; font-size: 0.78rem; color: rgba(255,255,255,0.45); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em;">Brokerage Fees</div>
+          </div>
+          <div style="padding: 24px; background-color: #101b30;">
+            <div style="font-family: 'Manrope', sans-serif; font-size: 2rem; font-weight: 900; color: #ffdea5; letter-spacing: -0.04em; line-height: 1;">&lt; 10m</div>
+            <div style="font-family: 'Work Sans', sans-serif; font-size: 0.78rem; color: rgba(255,255,255,0.45); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em;">Avg. Response Time</div>
+          </div>
+          <div style="padding: 24px; background-color: #101b30;">
+            <div style="font-family: 'Manrope', sans-serif; font-size: 2rem; font-weight: 900; color: #ffdea5; letter-spacing: -0.04em; line-height: 1;">15+</div>
+            <div style="font-family: 'Work Sans', sans-serif; font-size: 0.78rem; color: rgba(255,255,255,0.45); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em;">Cities Covered</div>
+          </div>
+        </div>
+
+        <!-- Bottom quote -->
+        <div style="margin-top: 36px; padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.1);">
+          <p style="font-family: 'Manrope', sans-serif; font-size: 0.9rem; font-style: italic; color: rgba(255,255,255,0.5); margin: 0 0 12px 0;">"The most seamless property transaction I've ever experienced."</p>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 28px; height: 28px; background: linear-gradient(135deg, #ffdea5, #e9c176); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Manrope', sans-serif; font-size: 0.7rem; font-weight: 800; color: #261900;">RS</div>
+            <span style="font-family: 'Work Sans', sans-serif; font-size: 0.78rem; color: rgba(255,255,255,0.4);">Rohan S. — Gurugram</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
 </main>
+
 <!-- Footer -->
 <footer class="w-full border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950">
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 px-4 sm:px-6 md:px-8 py-10 md:py-16 lg:py-20 max-w-screen-2xl mx-auto font-work-sans leading-relaxed text-sm">
