@@ -194,14 +194,5 @@ function stripDangerousHTML(html) {
   // Remove script-like elements
   const toRemove = div.querySelectorAll('script, iframe, object, embed');
   toRemove.forEach(n => n.parentNode && n.parentNode.removeChild(n));
-  // Remove inline event handlers
-  const all = div.querySelectorAll('*');
-  all.forEach(el => {
-    // Copy attributes to array to avoid live collection mutation
-    const attrs = Array.from(el.attributes);
-    for (const attr of attrs) {
-      if (/^on/i.test(attr.name)) el.removeAttribute(attr.name);
-    }
-  });
   return div.innerHTML;
 }
