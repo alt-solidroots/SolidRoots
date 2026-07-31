@@ -51,19 +51,27 @@ function buildFormSelect(type, step, i, field) {
 }
 
 function buildFormInputs(type, step, fields) {
-    const inputs = fields.map((field, i) => field.type === "select"
-        ? buildFormSelect(type, step, i, field)
-        : `
+    const inputs = fields.map((field, i) => {
+        if (field.type === "select") return buildFormSelect(type, step, i, field);
+
+        const isTel = field.type === "tel";
+        const oninput = isTel
+            ? "this.value = this.value.replace(/[^0-9]/g, ''); this.classList.remove('border-error')"
+            : "this.classList.remove('border-error')";
+
+        return `
         <input
-            type="text"
+            type="${isTel ? "tel" : "text"}"
             id="${type}-input-${step}-${i}"
-            oninput="this.classList.remove('border-error')"
+            oninput="${oninput}"
+            ${isTel ? 'maxlength="10"' : ""}
             placeholder="${field.key}"
             class="w-full px-6 py-4 bg-black/40 backdrop-blur-md border-2 border-white/50
                    text-white placeholder-white/60 font-bold text-lg focus:outline-none
                    focus:bg-white focus:text-primary focus:border-white transition-all duration-300"
         >
-    `).join("");
+    `;
+    }).join("");
 
     return `
         <div class="space-y-4">

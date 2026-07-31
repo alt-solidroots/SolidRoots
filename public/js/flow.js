@@ -5,7 +5,7 @@
 // ============================================================
 
 /* global FLOW_TYPE, AGE_UNIT_LABELS, SUBMIT_ENDPOINT, FLOWS, BUY_QUESTIONS, BUY_TYPE_QUESTIONS */
-/* global getValidationError, showInputError, clearInputError */
+/* global getValidationError, showInputError, clearInputError, isPhoneValid */
 /* global buildQuestionHTML, buildSuccessHTML */
 
 const flowState = {
@@ -123,10 +123,12 @@ function saveFormAnswer(type) {
     const inputs = fields.map((field, i) => getElementById(`${type}-input-${step}-${i}`));
     const values = inputs.map((input) => input.value.trim());
 
-    const hasEmpty = values.some((value) => value === "");
-    if (hasEmpty) {
+    const isFieldInvalid = (field, value) => value === "" || (field.type === "tel" && !isPhoneValid(value));
+
+    const hasInvalid = fields.some((field, i) => isFieldInvalid(field, values[i]));
+    if (hasInvalid) {
         inputs.forEach((input, i) => {
-            if (values[i] === "") input.classList.add("border-error");
+            if (isFieldInvalid(fields[i], values[i])) input.classList.add("border-error");
         });
         return;
     }
