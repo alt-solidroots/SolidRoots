@@ -52,6 +52,16 @@ const BUY_TYPE_QUESTIONS = {
             { key: "Budget (approx)", placeholder: "e.g. 1 Crore" },
         ] },
     ],
+    "Land": [
+        { q: "Tell us about your requirement", type: "form", fields: [
+            { key: "Name", placeholder: "Full Name" },
+            { key: "Contact", placeholder: "10-digit Phone Number" },
+            { key: "Looking For", type: "select", options: ["Industrial Land", "Agricultural Land", "Commercial Land", "Residential"] },
+            { key: "Preferred Area in Acre", placeholder: "e.g. 2 Acres" },
+            { key: "City", placeholder: "e.g. Sonipat" },
+            { key: "Budget (approx)", placeholder: "e.g. 1 Crore" },
+        ] },
+    ],
 };
 
 const BUY_QUESTIONS = [
