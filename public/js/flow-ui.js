@@ -50,9 +50,26 @@ function buildFormSelect(type, step, i, field) {
     `;
 }
 
+function buildFormFile(type, step, i, field) {
+    return `
+        <label class="block text-white/80 font-bold text-sm">
+            ${field.key}
+            <input
+                type="file"
+                accept=".pdf,image/*"
+                id="${type}-input-${step}-${i}"
+                class="w-full mt-2 px-6 py-4 bg-black/40 backdrop-blur-md border-2 border-white/50
+                       text-white font-bold text-base focus:outline-none focus:border-white
+                       transition-all duration-300"
+            >
+        </label>
+    `;
+}
+
 function buildFormInputs(type, step, fields) {
     const inputs = fields.map((field, i) => {
         if (field.type === "select") return buildFormSelect(type, step, i, field);
+        if (field.type === "file") return buildFormFile(type, step, i, field);
 
         const isTel = field.type === "tel";
         const restoreBorder = "this.classList.remove('border-error'); this.classList.add('border-white/50')";

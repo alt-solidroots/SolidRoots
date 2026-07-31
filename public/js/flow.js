@@ -153,9 +153,13 @@ function saveFormAnswer(type) {
     const step = flowState.currentStep[type];
     const fields = getFlow(type)[step].fields;
     const inputs = fields.map((field, i) => getElementById(`${type}-input-${step}-${i}`));
-    const values = inputs.map((input) => input.value.trim());
+    const values = inputs.map((input, i) =>
+        fields[i].type === "file" ? (input.files[0] ? input.files[0].name : "") : input.value.trim()
+    );
 
-    const isFieldInvalid = (field, value) => value === "" || (field.type === "tel" && !isPhoneValid(value));
+    // File fields aren't uploaded anywhere yet, so they're optional and never block submission.
+    const isFieldInvalid = (field, value) =>
+        field.type !== "file" && (value === "" || (field.type === "tel" && !isPhoneValid(value)));
 
     const hasInvalid = fields.some((field, i) => isFieldInvalid(field, values[i]));
     if (hasInvalid) {

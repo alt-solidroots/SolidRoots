@@ -117,6 +117,34 @@ const SELL_TYPE_QUESTIONS = {
             { key: "Demand", placeholder: "e.g. 50 Lakhs" },
         ] },
     ],
+    "Industrial Plot": [
+        { q: "Tell us about your property", type: "form", fields: [
+            { key: "Name", placeholder: "Full Name" },
+            { key: "Contact", type: "tel", placeholder: "10-digit Phone Number" },
+            { key: "Plot Size", placeholder: "e.g. 500 sq yards" },
+            { key: "Society Name / City", placeholder: "e.g. Sonipat" },
+            { key: "Demand", placeholder: "e.g. 1 Crore" },
+        ] },
+    ],
+    "Land": [
+        { q: "Tell us about your property", type: "form", fields: [
+            { key: "Name", placeholder: "Full Name" },
+            { key: "Contact", type: "tel", placeholder: "10-digit Phone Number" },
+            { key: "Total Land in Acre", placeholder: "e.g. 5 Acres" },
+            { key: "Category", type: "select", options: ["Agriculture", "Residential", "Industrial", "Commercial"] },
+            { key: "Demand per Acre", placeholder: "e.g. 20 Lakhs" },
+            { key: "Upload Sijra / Map", type: "file" },
+        ] },
+    ],
+    "Floor / Flat": [
+        { q: "Tell us about your property", type: "form", fields: [
+            { key: "Name", placeholder: "Full Name" },
+            { key: "Contact", type: "tel", placeholder: "10-digit Phone Number" },
+            { key: "Floor Category", type: "select", options: ["2 BHK", "3 BHK", "4 BHK"] },
+            { key: "Society & City Name", placeholder: "e.g. Sector 21, Sonipat" },
+            { key: "Demand", placeholder: "e.g. 50 Lakhs" },
+        ] },
+    ],
 };
 
 const FLOWS = {
