@@ -90,7 +90,7 @@ const BUY_QUESTIONS = [
 ];
 
 const SELL_QUESTIONS = [
-    { q: "What type of property are you selling?", type: "choice", options: ["Apartment", "House", "Plot", "Commercial"] },
+    { q: "What are you looking to sell?", type: "choice", options: ["Residential Plot", "Industrial Plot", "Land", "Floor / Flat"] },
     { q: "Where is the property located?", type: "text", placeholder: "Area / City" },
     { q: "How many bedrooms and bathrooms does it have?", type: "text", placeholder: "e.g. 3BHK, 2 Bath" },
     { q: "What's the total area in sq ft / sq yards?", type: "text", placeholder: "sq ft / sq yards" },
