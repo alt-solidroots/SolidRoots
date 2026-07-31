@@ -34,8 +34,26 @@ function buildMultiSelectButtons(options) {
     return `<div class="grid grid-cols-2 gap-4 mb-8">${buttons}</div>`;
 }
 
+function buildFormSelect(type, step, i, field) {
+    const options = field.options.map((opt) => `<option value="${opt}">${opt}</option>`).join("");
+    return `
+        <select
+            id="${type}-input-${step}-${i}"
+            onchange="this.classList.remove('border-error')"
+            class="w-full px-6 py-4 bg-black/40 backdrop-blur-md border-2 border-white/50
+                   text-white font-bold text-lg focus:outline-none focus:bg-white
+                   focus:text-primary focus:border-white transition-all duration-300"
+        >
+            <option value="" disabled selected>${field.key}</option>
+            ${options}
+        </select>
+    `;
+}
+
 function buildFormInputs(type, step, fields) {
-    const inputs = fields.map((field, i) => `
+    const inputs = fields.map((field, i) => field.type === "select"
+        ? buildFormSelect(type, step, i, field)
+        : `
         <input
             type="text"
             id="${type}-input-${step}-${i}"

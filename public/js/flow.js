@@ -191,7 +191,7 @@ async function submitInquiry(type) {
     const payload = {
         type,
         email: pickAnswer(answers, ["What is your email address?"]),
-        phone: pickAnswer(answers, ["What is your phone number?", "Phone Number"]),
+        phone: pickAnswer(answers, ["What is your phone number?", "Phone Number", "Contact"]),
         answers,
     };
 
