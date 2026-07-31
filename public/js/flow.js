@@ -108,6 +108,26 @@ function saveTextAnswer(type) {
     saveAnswer(type, value);
 }
 
+function saveFormAnswer(type) {
+    const step = flowState.currentStep[type];
+    const fields = FLOWS[type][step].fields;
+    const inputs = fields.map((field, i) => getElementById(`${type}-input-${step}-${i}`));
+    const values = inputs.map((input) => input.value.trim());
+
+    const hasEmpty = values.some((value) => value === "");
+    if (hasEmpty) {
+        inputs.forEach((input, i) => {
+            if (values[i] === "") input.classList.add("border-error");
+        });
+        return;
+    }
+
+    fields.forEach((field, i) => {
+        flowState.answers[type][field.key] = values[i];
+    });
+    advanceStep(type);
+}
+
 function saveMultiAnswer(type) {
     const selectedButtons = document.querySelectorAll(".feature-btn.bg-tertiary-fixed");
     const selected = Array.from(selectedButtons).map((btn) => btn.innerText).join(", ");

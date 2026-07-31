@@ -26,7 +26,12 @@ const GMAIL_SUFFIX = "@gmail.com";
 
 const BUY_QUESTIONS = [
     { q: "What are you looking to buy?", type: "choice", options: ["Residential Plot", "Industrial Plot", "Land", "Floor / Flat"] },
-    { q: "Are you looking to buy or rent?", type: "choice", options: ["Buy", "Rent"] },
+    { q: "Tell us about your requirement", type: "form", fields: [
+        { key: "Name", placeholder: "Full Name" },
+        { key: "Preferred Size", placeholder: "e.g. 200 sq yards" },
+        { key: "Society Name / City", placeholder: "e.g. Sector 21, Sonipat" },
+        { key: "Budget (approx)", placeholder: "e.g. 50 Lakhs" },
+    ] },
     { q: "What type of property do you want?", type: "choice", options: ["Apartment", "House", "Villa", "Plot"] },
     { q: "Which city or area are you looking in?", type: "text", placeholder: "e.g. South Kensington, London" },
     { q: "What's your budget range?", type: "text", placeholder: "Budget Range (Financial)" },

@@ -34,6 +34,32 @@ function buildMultiSelectButtons(options) {
     return `<div class="grid grid-cols-2 gap-4 mb-8">${buttons}</div>`;
 }
 
+function buildFormInputs(type, step, fields) {
+    const inputs = fields.map((field, i) => `
+        <input
+            type="text"
+            id="${type}-input-${step}-${i}"
+            oninput="this.classList.remove('border-error')"
+            placeholder="${field.key}"
+            class="w-full px-6 py-4 bg-black/40 backdrop-blur-md border-2 border-white/50
+                   text-white placeholder-white/60 font-bold text-lg focus:outline-none
+                   focus:bg-white focus:text-primary focus:border-white transition-all duration-300"
+        >
+    `).join("");
+
+    return `
+        <div class="space-y-4">
+            ${inputs}
+            <button
+                onclick="saveFormAnswer('${type}')"
+                class="w-full py-4 md:py-5 bg-surface-container-lowest text-primary font-bold
+                       text-lg md:text-xl rounded-none hover:bg-primary hover:text-white
+                       transition-all duration-300 shadow-xl"
+            >Next</button>
+        </div>
+    `;
+}
+
 function buildTextInput(type, step, flowData) {
     const isAgeQuestion = flowData.q.includes("How old is the property?");
     const inputType = flowData.inputType || "text";
@@ -95,6 +121,7 @@ function buildQuestionHTML(type, step, flowData) {
                           font-bold text-lg md:text-xl rounded-none hover:bg-white transition-all"
                >Next</button>`,
         text: () => buildTextInput(type, step, flowData),
+        form: () => buildFormInputs(type, step, flowData.fields),
     };
 
     const body = bodyMap[flowData.type] ? bodyMap[flowData.type]() : "";
