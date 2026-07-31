@@ -25,6 +25,7 @@ const PHONE_REGEX = /^\d{10}$/;
 const GMAIL_SUFFIX = "@gmail.com";
 
 const BUY_QUESTIONS = [
+    { q: "What are you looking to buy?", type: "choice", options: ["Residential Plot", "Industrial Plot", "Land", "Floor / Flat"] },
     { q: "Are you looking to buy or rent?", type: "choice", options: ["Buy", "Rent"] },
     { q: "What type of property do you want?", type: "choice", options: ["Apartment", "House", "Villa", "Plot"] },
     { q: "Which city or area are you looking in?", type: "text", placeholder: "e.g. South Kensington, London" },
