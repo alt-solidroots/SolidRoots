@@ -4,7 +4,7 @@
 // Depends on: flow-config.js, flow-ui.js, flow-validation.js
 // ============================================================
 
-/* global FLOW_TYPE, AGE_UNIT_LABELS, SUBMIT_ENDPOINT, FLOWS */
+/* global FLOW_TYPE, AGE_UNIT_LABELS, SUBMIT_ENDPOINT, FLOWS, BUY_QUESTIONS, BUY_TYPE_QUESTIONS */
 /* global getValidationError, showInputError, clearInputError */
 /* global buildQuestionHTML, buildSuccessHTML */
 
@@ -19,6 +19,15 @@ function getElementById(id) {
     return document.getElementById(id);
 }
 
+// Buy flow branches after the property-type question based on the answer given.
+function getFlow(type) {
+    if (type !== FLOW_TYPE.BUY) return FLOWS[type];
+
+    const propertyType = flowState.answers.buy[BUY_QUESTIONS[0].q];
+    const override = BUY_TYPE_QUESTIONS[propertyType];
+    return override ? [BUY_QUESTIONS[0], ...override] : BUY_QUESTIONS;
+}
+
 function focusInputAfterRender(type, step) {
     setTimeout(() => {
         const input = getElementById(`${type}-input-${step}`);
@@ -28,7 +37,7 @@ function focusInputAfterRender(type, step) {
 
 function updateProgressBar(type, step) {
     const progress = getElementById(`${type}-progress`);
-    const percentage = (step / FLOWS[type].length) * 100;
+    const percentage = (step / getFlow(type).length) * 100;
     progress.style.width = `${percentage}%`;
 }
 
@@ -63,7 +72,7 @@ function expandActiveSection(activeType, otherType) {
 function advanceStep(type) {
     flowState.currentStep[type]++;
 
-    const hasMoreSteps = flowState.currentStep[type] < FLOWS[type].length;
+    const hasMoreSteps = flowState.currentStep[type] < getFlow(type).length;
     if (hasMoreSteps) {
         renderQuestion(type);
     } else {
@@ -75,7 +84,7 @@ function advanceStep(type) {
 
 function renderQuestion(type) {
     const step = flowState.currentStep[type];
-    const flowData = FLOWS[type][step];
+    const flowData = getFlow(type)[step];
     const contentEl = getElementById(`${type}-question-content`);
 
     updateProgressBar(type, step);
@@ -86,14 +95,14 @@ function renderQuestion(type) {
 // ── Answer Saving ────────────────────────────────────────────
 
 function saveAnswer(type, value) {
-    const questionText = FLOWS[type][flowState.currentStep[type]].q;
+    const questionText = getFlow(type)[flowState.currentStep[type]].q;
     flowState.answers[type][questionText] = value;
     advanceStep(type);
 }
 
 function saveTextAnswer(type) {
     const step = flowState.currentStep[type];
-    const flowData = FLOWS[type][step];
+    const flowData = getFlow(type)[step];
     const input = getElementById(`${type}-input-${step}`);
     const value = input.value.trim();
 
@@ -110,7 +119,7 @@ function saveTextAnswer(type) {
 
 function saveFormAnswer(type) {
     const step = flowState.currentStep[type];
-    const fields = FLOWS[type][step].fields;
+    const fields = getFlow(type)[step].fields;
     const inputs = fields.map((field, i) => getElementById(`${type}-input-${step}-${i}`));
     const values = inputs.map((input) => input.value.trim());
 
@@ -158,7 +167,7 @@ function toggleAgeUnit() {
 function handleEnter(event, type) {
     if (event.key !== "Enter") return;
 
-    const isAgeQuestion = FLOWS[type][flowState.currentStep[type]].q.includes("How old is the property?");
+    const isAgeQuestion = getFlow(type)[flowState.currentStep[type]].q.includes("How old is the property?");
     if (isAgeQuestion) {
         saveAgeAnswer(type);
     } else {

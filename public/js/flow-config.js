@@ -24,14 +24,28 @@ const ERROR_MESSAGES = {
 const PHONE_REGEX = /^\d{10}$/;
 const GMAIL_SUFFIX = "@gmail.com";
 
+const CONTACT_QUESTIONS = [
+    { q: "What is your email address?", type: "text", inputType: "email", placeholder: "Email Address" },
+    { q: "What is your phone number?", type: "text", inputType: "tel", placeholder: "Phone Number" },
+];
+
+// Full question list to use (after the property-type question) once a specific
+// type is chosen. Add an entry per option as they're defined; types without an
+// entry here fall back to the generic BUY_QUESTIONS tail.
+const BUY_TYPE_QUESTIONS = {
+    "Residential Plot": [
+        { q: "Tell us about your requirement", type: "form", fields: [
+            { key: "Name", placeholder: "Full Name" },
+            { key: "Preferred Size", placeholder: "e.g. 200 sq yards" },
+            { key: "Society Name / City", placeholder: "e.g. Sector 21, Sonipat" },
+            { key: "Budget (approx)", placeholder: "e.g. 50 Lakhs" },
+        ] },
+        ...CONTACT_QUESTIONS,
+    ],
+};
+
 const BUY_QUESTIONS = [
     { q: "What are you looking to buy?", type: "choice", options: ["Residential Plot", "Industrial Plot", "Land", "Floor / Flat"] },
-    { q: "Tell us about your requirement", type: "form", fields: [
-        { key: "Name", placeholder: "Full Name" },
-        { key: "Preferred Size", placeholder: "e.g. 200 sq yards" },
-        { key: "Society Name / City", placeholder: "e.g. Sector 21, Sonipat" },
-        { key: "Budget (approx)", placeholder: "e.g. 50 Lakhs" },
-    ] },
     { q: "What type of property do you want?", type: "choice", options: ["Apartment", "House", "Villa", "Plot"] },
     { q: "Which city or area are you looking in?", type: "text", placeholder: "e.g. South Kensington, London" },
     { q: "What's your budget range?", type: "text", placeholder: "Budget Range (Financial)" },
@@ -43,8 +57,7 @@ const BUY_QUESTIONS = [
     { q: "When do you need to move in?", type: "text", placeholder: "e.g. Within 3 months" },
     { q: "Is this for personal use or investment?", type: "choice", options: ["Personal Use", "Investment"] },
     { q: "Are you open to seeing properties online or only in-person?", type: "choice", options: ["Online & In-person", "In-person Only"] },
-    { q: "What is your email address?", type: "text", inputType: "email", placeholder: "Email Address" },
-    { q: "What is your phone number?", type: "text", inputType: "tel", placeholder: "Phone Number" },
+    ...CONTACT_QUESTIONS,
 ];
 
 const SELL_QUESTIONS = [
