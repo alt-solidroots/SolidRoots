@@ -62,6 +62,15 @@ const BUY_TYPE_QUESTIONS = {
             { key: "Budget (approx)", placeholder: "e.g. 1 Crore" },
         ] },
     ],
+    "Floor / Flat": [
+        { q: "Tell us about your requirement", type: "form", fields: [
+            { key: "Name", placeholder: "Full Name" },
+            { key: "Contact", placeholder: "10-digit Phone Number" },
+            { key: "Preferred Size", type: "select", options: ["2 BHK", "3 BHK", "4 BHK"] },
+            { key: "City", placeholder: "e.g. Sonipat" },
+            { key: "Budget (approx)", placeholder: "e.g. 1 Crore" },
+        ] },
+    ],
 };
 
 const BUY_QUESTIONS = [
