@@ -62,15 +62,19 @@ export function validateSubmitPayload(payload) {
 
   const email = payload.email ? String(payload.email).trim() : '';
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!email || !emailRegex.test(email)) {
+  const hasValidEmail = email !== '' && emailRegex.test(email);
+  if (email !== '' && !hasValidEmail) {
     errors.push('Invalid email');
   }
 
-  const phone = payload.phone;
-  if (phone != null && typeof phone === 'string' && phone.trim() !== '') {
-    if (!/^[\d\s+\-()]+$/.test(phone)) {
-      errors.push('Invalid phone');
-    }
+  const phone = payload.phone ? String(payload.phone).trim() : '';
+  const hasValidPhone = phone !== '' && /^[\d\s+\-()]+$/.test(phone);
+  if (phone !== '' && !hasValidPhone) {
+    errors.push('Invalid phone');
+  }
+
+  if (!hasValidEmail && !hasValidPhone) {
+    errors.push('Email or phone required');
   }
 
   if (payload.answers != null && typeof payload.answers !== 'object') {

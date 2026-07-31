@@ -182,12 +182,17 @@ function clearError(type, step, input) {
 
 // ── Submission ───────────────────────────────────────────────
 
+function pickAnswer(answers, keys) {
+    return keys.map((key) => answers[key]).find((value) => value);
+}
+
 async function submitInquiry(type) {
+    const answers = flowState.answers[type];
     const payload = {
         type,
-        email: flowState.answers[type]["What is your email address?"],
-        phone: flowState.answers[type]["What is your phone number?"],
-        answers: flowState.answers[type],
+        email: pickAnswer(answers, ["What is your email address?"]),
+        phone: pickAnswer(answers, ["What is your phone number?", "Phone Number"]),
+        answers,
     };
 
     const response = await fetch(SUBMIT_ENDPOINT, {

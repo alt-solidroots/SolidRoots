@@ -39,8 +39,8 @@ const BUY_TYPE_QUESTIONS = {
             { key: "Preferred Size", placeholder: "e.g. 200 sq yards" },
             { key: "Society Name / City", placeholder: "e.g. Sector 21, Sonipat" },
             { key: "Budget (approx)", placeholder: "e.g. 50 Lakhs" },
+            { key: "Phone Number", placeholder: "10-digit Phone Number" },
         ] },
-        ...CONTACT_QUESTIONS,
     ],
 };
 
