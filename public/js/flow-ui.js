@@ -39,7 +39,7 @@ function buildFormSelect(type, step, i, field) {
     return `
         <select
             id="${type}-input-${step}-${i}"
-            onchange="this.classList.remove('border-error')"
+            onchange="this.classList.remove('border-error'); this.classList.add('border-white/50')"
             class="w-full px-6 py-4 bg-black/40 backdrop-blur-md border-2 border-white/50
                    text-white font-bold text-lg focus:outline-none focus:bg-white
                    focus:text-primary focus:border-white transition-all duration-300"
@@ -55,9 +55,10 @@ function buildFormInputs(type, step, fields) {
         if (field.type === "select") return buildFormSelect(type, step, i, field);
 
         const isTel = field.type === "tel";
+        const restoreBorder = "this.classList.remove('border-error'); this.classList.add('border-white/50')";
         const oninput = isTel
-            ? "this.value = this.value.replace(/[^0-9]/g, ''); this.classList.remove('border-error')"
-            : "this.classList.remove('border-error')";
+            ? `this.value = this.value.replace(/[^0-9]/g, ''); ${restoreBorder}`
+            : restoreBorder;
 
         return `
         <input

@@ -4,7 +4,7 @@
 // Depends on: flow-config.js, flow-ui.js, flow-validation.js
 // ============================================================
 
-/* global FLOW_TYPE, AGE_UNIT_LABELS, SUBMIT_ENDPOINT, FLOWS, BUY_QUESTIONS, BUY_TYPE_QUESTIONS */
+/* global FLOW_TYPE, AGE_UNIT_LABELS, SUBMIT_ENDPOINT, FLOWS, TYPE_QUESTIONS, ERROR_MESSAGES */
 /* global getValidationError, showInputError, clearInputError, isPhoneValid */
 /* global buildQuestionHTML, buildSuccessHTML */
 
@@ -19,13 +19,45 @@ function getElementById(id) {
     return document.getElementById(id);
 }
 
-// Buy flow branches after the property-type question based on the answer given.
+// Flow branches after the property-type question based on the answer given.
 function getFlow(type) {
-    if (type !== FLOW_TYPE.BUY) return FLOWS[type];
+    const questions = FLOWS[type];
+    const propertyType = flowState.answers[type][questions[0].q];
+    const override = TYPE_QUESTIONS[type][propertyType];
+    return override ? [questions[0], ...override] : questions;
+}
 
-    const propertyType = flowState.answers.buy[BUY_QUESTIONS[0].q];
-    const override = BUY_TYPE_QUESTIONS[propertyType];
-    return override ? [BUY_QUESTIONS[0], ...override] : BUY_QUESTIONS;
+// Styled inline (not via Tailwind classes) since public/styles.css is a prebuilt
+// static file that isn't recompiled when JS changes — classes used only here
+// would silently have no effect until someone reruns `npm run build:css`.
+function showPopup(message) {
+    let popup = getElementById("flow-popup");
+    if (!popup) {
+        popup = document.createElement("div");
+        popup.id = "flow-popup";
+        Object.assign(popup.style, {
+            position: "fixed",
+            top: "24px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: "1000",
+            pointerEvents: "none",
+            background: "rgba(0,0,0,0.85)",
+            color: "#fff",
+            fontWeight: "700",
+            padding: "16px 24px",
+            border: "2px solid #ba1a1a",
+            boxShadow: "0 20px 25px -5px rgba(0,0,0,0.3)",
+            opacity: "0",
+            transition: "opacity 0.3s",
+        });
+        document.body.appendChild(popup);
+    }
+
+    popup.textContent = message;
+    popup.style.opacity = "1";
+    clearTimeout(popup._hideTimeout);
+    popup._hideTimeout = setTimeout(() => { popup.style.opacity = "0"; }, 2500);
 }
 
 function focusInputAfterRender(type, step) {
@@ -128,8 +160,13 @@ function saveFormAnswer(type) {
     const hasInvalid = fields.some((field, i) => isFieldInvalid(field, values[i]));
     if (hasInvalid) {
         inputs.forEach((input, i) => {
-            if (isFieldInvalid(fields[i], values[i])) input.classList.add("border-error");
+            if (isFieldInvalid(fields[i], values[i])) {
+                input.classList.remove("border-white/50");
+                input.classList.add("border-error");
+            }
         });
+        const hasBadPhone = fields.some((field, i) => field.type === "tel" && values[i] !== "" && !isPhoneValid(values[i]));
+        if (hasBadPhone) showPopup(ERROR_MESSAGES.INVALID_PHONE);
         return;
     }
 

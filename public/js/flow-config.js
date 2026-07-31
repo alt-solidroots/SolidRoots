@@ -18,7 +18,7 @@ const SUBMIT_ENDPOINT = "/api/submit";
 const ERROR_MESSAGES = {
     REQUIRED: "This field is required",
     INVALID_EMAIL: "Please enter a valid Gmail address ending with @gmail.com",
-    INVALID_PHONE: "Phone number must be exactly 10 digits",
+    INVALID_PHONE: "Please make sure you entered 10 digits",
 };
 
 const PHONE_REGEX = /^\d{10}$/;
@@ -106,7 +106,25 @@ const SELL_QUESTIONS = [
     { q: "What is your phone number?", type: "text", inputType: "tel", placeholder: "Phone Number" },
 ];
 
+const SELL_TYPE_QUESTIONS = {
+    "Residential Plot": [
+        { q: "Tell us about your property", type: "form", fields: [
+            { key: "Name", placeholder: "Full Name" },
+            { key: "Contact", type: "tel", placeholder: "10-digit Phone Number" },
+            { key: "Size of Plot", placeholder: "e.g. 200 sq yards" },
+            { key: "Society Name / Sector", placeholder: "e.g. Sector 21, Sonipat" },
+            { key: "City", placeholder: "e.g. Sonipat" },
+            { key: "Demand", placeholder: "e.g. 50 Lakhs" },
+        ] },
+    ],
+};
+
 const FLOWS = {
     [FLOW_TYPE.BUY]: BUY_QUESTIONS,
     [FLOW_TYPE.SELL]: SELL_QUESTIONS,
+};
+
+const TYPE_QUESTIONS = {
+    [FLOW_TYPE.BUY]: BUY_TYPE_QUESTIONS,
+    [FLOW_TYPE.SELL]: SELL_TYPE_QUESTIONS,
 };
