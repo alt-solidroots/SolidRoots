@@ -135,22 +135,17 @@ export async function onRequestPost(context) {
 
     }
   }
-  // JWT auth check
+  // Optional JWT auth: logged-in users get their inquiry tied to their account,
+  // anonymous visitors (the public buy/sell quiz) submit with a null user_id.
   const auth = request.headers.get('Authorization') || '';
-    if (!auth.startsWith('Bearer ')) {
-      return jsonResponse({ error: 'Unauthorized' }, 401);
-    }
-  const token = auth.slice(7);
-  const claims = await verifyJwt(token, env);
   let jwtUserId = null;
-  if (claims && claims.sub) jwtUserId = claims.sub;
+  if (auth.startsWith('Bearer ')) {
+    const claims = await verifyJwt(auth.slice(7), env);
+    if (claims && claims.sub) jwtUserId = claims.sub;
+  }
   // If sessionUserId set, prefer it over JWT for ownership when session exists
   if (typeof sessionUserId !== 'undefined' && sessionUserId) {
     jwtUserId = sessionUserId;
-  }
-  if (!jwtUserId) {
-    await logAudit(env.DB, null, 'submit_unauthorized', false, `IP=${ip}`);
-    return jsonResponse({ error: 'Unauthorized' }, 401);
   }
 
 

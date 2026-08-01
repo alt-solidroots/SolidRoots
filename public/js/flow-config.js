@@ -14,6 +14,8 @@ const AGE_UNIT_LABELS = {
 };
 
 const SUBMIT_ENDPOINT = "/api/submit";
+const CLOUDINARY_CLOUD_NAME = "qhmaijbh";
+const CLOUDINARY_UPLOAD_PRESET = "House-maps";
 
 const ERROR_MESSAGES = {
     REQUIRED: "This field is required",
@@ -115,6 +117,7 @@ const SELL_TYPE_QUESTIONS = {
             { key: "Society Name / Sector", placeholder: "e.g. Sector 21, Sonipat" },
             { key: "City", placeholder: "e.g. Sonipat" },
             { key: "Demand", placeholder: "e.g. 50 Lakhs" },
+            { key: "Upload House Map", type: "file" },
         ] },
     ],
     "Industrial Plot": [
@@ -143,6 +146,7 @@ const SELL_TYPE_QUESTIONS = {
             { key: "Floor Category", type: "select", options: ["2 BHK", "3 BHK", "4 BHK"] },
             { key: "Society & City Name", placeholder: "e.g. Sector 21, Sonipat" },
             { key: "Demand", placeholder: "e.g. 50 Lakhs" },
+            { key: "Upload House Map", type: "file" },
         ] },
     ],
 };

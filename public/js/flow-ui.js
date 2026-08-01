@@ -95,6 +95,7 @@ function buildFormInputs(type, step, fields) {
         <div class="space-y-4">
             ${inputs}
             <button
+                id="${type}-form-next-${step}"
                 onclick="saveFormAnswer('${type}')"
                 class="w-full py-4 md:py-5 bg-surface-container-lowest text-primary font-bold
                        text-lg md:text-xl rounded-none hover:bg-primary hover:text-white

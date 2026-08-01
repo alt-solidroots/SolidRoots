@@ -5,6 +5,7 @@
 // ============================================================
 
 /* global FLOW_TYPE, AGE_UNIT_LABELS, SUBMIT_ENDPOINT, FLOWS, TYPE_QUESTIONS, ERROR_MESSAGES */
+/* global CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET */
 /* global getValidationError, showInputError, clearInputError, isPhoneValid */
 /* global buildQuestionHTML, buildSuccessHTML */
 
@@ -149,15 +150,27 @@ function saveTextAnswer(type) {
     saveAnswer(type, value);
 }
 
-function saveFormAnswer(type) {
+async function uploadToCloudinary(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, {
+        method: "POST",
+        body: formData,
+    });
+    if (!response.ok) throw new Error("Upload failed");
+    const data = await response.json();
+    return data.secure_url;
+}
+
+async function saveFormAnswer(type) {
     const step = flowState.currentStep[type];
     const fields = getFlow(type)[step].fields;
     const inputs = fields.map((field, i) => getElementById(`${type}-input-${step}-${i}`));
-    const values = inputs.map((input, i) =>
-        fields[i].type === "file" ? (input.files[0] ? input.files[0].name : "") : input.value.trim()
-    );
+    const values = inputs.map((input, i) => (fields[i].type === "file" ? "" : input.value.trim()));
 
-    // File fields aren't uploaded anywhere yet, so they're optional and never block submission.
+    // File fields are optional and never block submission.
     const isFieldInvalid = (field, value) =>
         field.type !== "file" && (value === "" || (field.type === "tel" && !isPhoneValid(value)));
 
@@ -172,6 +185,26 @@ function saveFormAnswer(type) {
         const hasBadPhone = fields.some((field, i) => field.type === "tel" && values[i] !== "" && !isPhoneValid(values[i]));
         if (hasBadPhone) showPopup(ERROR_MESSAGES.INVALID_PHONE);
         return;
+    }
+
+    const button = getElementById(`${type}-form-next-${step}`);
+    const fileUploads = fields
+        .map((field, i) => ({ i, file: field.type === "file" && inputs[i].files[0] }))
+        .filter((entry) => entry.file);
+
+    if (fileUploads.length > 0) {
+        button.disabled = true;
+        button.textContent = "Uploading...";
+        try {
+            for (const { i, file } of fileUploads) {
+                values[i] = await uploadToCloudinary(file);
+            }
+        } catch (err) {
+            showPopup("File upload failed, please try again");
+            button.disabled = false;
+            button.textContent = "Next";
+            return;
+        }
     }
 
     fields.forEach((field, i) => {
