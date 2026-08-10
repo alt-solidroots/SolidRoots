@@ -85,8 +85,9 @@ const session = new Function('sessionStorage', 'SESSION_STORE', 'SESSION_HOURS',
   `${sessionSrc}; return { saveSession, loadSession, clearSession };`
 )(fakeStorage, 'sr_admin_session', 4)
 
-session.saveSession('Solidroot-Aakash-2026')
-assert.strictEqual(session.loadSession(), 'Solidroot-Aakash-2026', 'key must survive a refresh')
+// Deliberately not a real-looking credential — this file is public.
+session.saveSession('dummy-key-for-tests')
+assert.strictEqual(session.loadSession(), 'dummy-key-for-tests', 'key must survive a refresh')
 
 session.clearSession()
 assert.strictEqual(session.loadSession(), null, 'sign out must drop the key')

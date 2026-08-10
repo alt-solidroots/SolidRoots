@@ -25,7 +25,7 @@ There is no user login, JWT, or MFA — inquiries are stored without an account.
 - A D1 database (a lightweight in-repo mock is used in tests)
 - Familiarity with the environment variables:
   - `ADMIN_SECRET`: secret for admin endpoints (required)
-  - `RATE_LIMIT_KV`: optional KV binding for distributed rate limiting
+  - (rate limiting needs no variable — it uses the existing `DB` binding)
   - `ALLOWED_ADMIN_IPS` / `ALLOWED_SUBMIT_IPS`: optional comma-separated IP allow-lists
 
 ## Environment setup
@@ -33,7 +33,7 @@ There is no user login, JWT, or MFA — inquiries are stored without an account.
 - Secrets never live in a tracked file. For local development copy `.dev.vars.example` to `.dev.vars` (gitignored) — wrangler loads it automatically for `npm run dev`.
 - For production, set them on the Cloudflare side and nowhere else:
   `npx wrangler pages secret put ADMIN_SECRET`, or Dashboard → Pages → Settings → Environment variables.
-- Bindings (`DB`, `RATE_LIMIT_KV`) are configured in the Cloudflare dashboard, not in a file.
+- The `DB` binding is configured in the Cloudflare dashboard, not in a file.
 
 ## Database schema
 
@@ -61,7 +61,7 @@ There is no user login, JWT, or MFA — inquiries are stored without an account.
 
 ## Operational notes
 
-- For multiple instances, bind `RATE_LIMIT_KV` for a consistent rate limit across them.
+- Rate limiting is consistent across instances automatically: counters live in D1 (`rate_limits`), updated by one atomic upsert, rather than in per-isolate memory.
 - Consider Cloudflare edge rate limiting to catch abuse before it reaches the workers.
 - Rotate `ADMIN_SECRET` regularly and store it in a secure secret store.
 - Record incidents and remediation in `docs/security/incident-response.md`.

@@ -19,16 +19,18 @@ import { sanitizeValue, validateSubmitPayload } from '../utils/validate.js';
 import { errorResponse } from '../utils/errors.js';
 import { parseAllowList, isIpAllowed } from '../utils/allowlist.js';
 import { logAudit } from '../utils/audit.js';
-import { rateLimitKV, getClientIp, allowRequestInWindow } from '../utils/ratelimit.js';
+import { rateLimit, getClientIp } from '../utils/ratelimit.js';
 
 
-// Lightweight per-IP rate limiter for submit endpoint
-const RATE_LIMITER_SUBMIT = new Map();
-const SUBMIT_RATE_LIMIT = 60; // 60 requests
-const SUBMIT_RATE_WINDOW_MS = 60 * 1000; // per 1 minute
+// Per-IP rate limit for the public submit endpoint
+const SUBMIT_RATE_LIMIT = 60;       // 60 requests
+const SUBMIT_RATE_WINDOW_SEC = 60;  // per 1 minute
 
-function jsonResponse(body, status = 200) {
-    return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
+function jsonResponse(body, status = 200, extraHeaders) {
+    return new Response(JSON.stringify(body), {
+        status,
+        headers: extraHeaders ? { ...JSON_HEADERS, ...extraHeaders } : JSON_HEADERS,
+    });
 }
 
 function extractInquiryFields(data) {
@@ -57,15 +59,11 @@ export async function onRequestPost(context) {
     }
 
 
-    if (env.RATE_LIMIT_KV) {
-        const rl = await rateLimitKV(env.RATE_LIMIT_KV, ip, '/api/submit', SUBMIT_RATE_LIMIT, Math.ceil(SUBMIT_RATE_WINDOW_MS / 1000));
-        if (!rl.allowed) {
-            await logAudit(env.DB, null, 'submit_ratelimit', false, `IP=${ip}`);
-            return jsonResponse({ error: "Too Many Requests" }, 429);
-        }
-    } else if (!allowRequestInWindow(RATE_LIMITER_SUBMIT, ip, SUBMIT_RATE_LIMIT, SUBMIT_RATE_WINDOW_MS)) {
+    const rl = await rateLimit(env.DB, ip, '/api/submit', SUBMIT_RATE_LIMIT, SUBMIT_RATE_WINDOW_SEC);
+    if (!rl.allowed) {
         await logAudit(env.DB, null, 'submit_ratelimit', false, `IP=${ip}`);
-        return jsonResponse({ error: "Too Many Requests" }, 429);
+        return jsonResponse({ error: "Too Many Requests" }, 429,
+            { 'Retry-After': String(rl.retryAfter) });
     }
 
     // A syntax error in the body is the caller's fault, not a server fault —
@@ -88,7 +86,7 @@ export async function onRequestPost(context) {
         sanitized.type = String(sanitized.type).trim().toLowerCase();
         const { type, email, phone, answers } = extractInquiryFields(sanitized);
         await saveInquiry(env, type, email, phone, answers);
-        try { await logAudit(env.DB, null, 'submit', true, `type=${type}`); } catch {}
+        await logAudit(env.DB, null, 'submit', true, `type=${type}`);
 
         return jsonResponse({ success: true });
     } catch (err) {

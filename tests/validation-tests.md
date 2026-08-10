@@ -11,9 +11,16 @@ Note: These tests are described for manual/CI integration. If you want automated
   6. Confirm the response carries no Access-Control-Allow-Origin header (admin data must not be cross-origin readable).
 
 - Submit API Validation
+  The API accepts type "buy" or "sell" — the values the form posts. "buyer"/"seller" are rejected.
   1. Invalid payload type: POST /api/submit with { type: "foo" } -> 400 (Invalid type)
   2. Missing type: payload {} -> 400 (Missing type)
-  3. Invalid email: { type: "buyer", email: "not-an-email" } -> 400 (Invalid email)
-  4. Invalid phone: { type: "buyer", email: "a@b.com", phone: "abc" } -> 400 (Invalid phone)
-  5. Valid payload: { type: "buyer", email: "a@example.com", phone: "+1 555-1212", answers: { note: "hello" } } -> 200 and sanitized storage
-  6. Malicious payload: HTML/JS in strings; ensure storage contains escaped values
+  3. Invalid email: { type: "buy", email: "not-an-email" } -> 400 (Invalid email)
+  4. Invalid phone: { type: "buy", email: "a@b.com", phone: "abc" } -> 400 (Invalid phone)
+  5. Unreachable phone: { type: "buy", phone: "+++++" } -> 400 (Invalid phone) — a contact must
+     hold a real 10-digit number, so punctuation alone no longer satisfies "email or phone required".
+  6. Valid payload: { type: "buy", email: "a@example.com", phone: "9876543210", answers: { note: "hello" } } -> 200
+  7. Malformed JSON body -> 400 (Invalid JSON body), not 500.
+  8. Oversized input: an answer over 2000 chars, or over 60 answers -> 400.
+  9. Storage fidelity: submit a name containing & ' " < > and confirm the admin panel displays it
+     exactly as typed. Values are stored raw and escaped only at render, so entities such as
+     &amp; appearing on screen mean something is escaping twice.

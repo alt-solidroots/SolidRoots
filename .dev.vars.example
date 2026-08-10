@@ -7,7 +7,7 @@
 # PRODUCTION SECRETS DO NOT LIVE IN ANY FILE. Set them on the Cloudflare side:
 #   npx wrangler pages secret put ADMIN_SECRET
 # or via Cloudflare Dashboard → Pages → Settings → Environment variables.
-# Bindings (DB, RATE_LIMIT_KV) are configured in the dashboard, not here.
+# The DB binding is configured in the dashboard, not here.
 
 # Required. Gates /api/admin. Only letters, digits, dot, underscore, hyphen
 # (see validateAdminKey) and at most 128 characters.

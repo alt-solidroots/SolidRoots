@@ -9,6 +9,15 @@ CREATE TABLE IF NOT EXISTS inquiries (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Fixed-window rate-limit counters, one row per "<ip>:<path>".
+-- Rows are swept opportunistically once their window has expired.
+CREATE TABLE IF NOT EXISTS rate_limits (
+  key TEXT PRIMARY KEY,
+  window_start INTEGER NOT NULL,
+  count INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_rate_limits_window ON rate_limits(window_start);
+
 CREATE TABLE IF NOT EXISTS audits (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id TEXT,

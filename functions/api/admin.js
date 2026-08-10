@@ -9,16 +9,14 @@
 import { validateAdminKey } from '../utils/validate.js';
 
 import { logAudit } from '../utils/audit.js';
-import { rateLimitKV, getClientIp, allowRequestInWindow } from '../utils/ratelimit.js';
+import { rateLimit, getClientIp } from '../utils/ratelimit.js';
 import { errorResponse } from '../utils/errors.js';
 import { secureHeaders } from '../utils/security.js';
 
 import { parseAllowList, isIpAllowed } from '../utils/allowlist.js';
 
-// Rate limiter: prefer KV-based and fallback to in-memory per-instance for admin API.
-const RATE_LIMITER_ADMIN = new Map();
-const ADMIN_RATE_LIMIT = 20; // max requests
-const ADMIN_RATE_WINDOW_MS = 60 * 1000; // per 1 minute
+const ADMIN_RATE_LIMIT = 20;        // max requests
+const ADMIN_RATE_WINDOW_SEC = 60;   // per 1 minute
 
 // Admin key validation handled by shared module (validateAdminKey)
 const DEFAULT_PAGE_SIZE = 50;
@@ -33,8 +31,11 @@ const JSON_HEADERS = {
     ...secureHeaders(),
 };
 
-function jsonResponse(body, status = 200) {
-    return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
+function jsonResponse(body, status = 200, extraHeaders) {
+    return new Response(JSON.stringify(body), {
+        status,
+        headers: extraHeaders ? { ...JSON_HEADERS, ...extraHeaders } : JSON_HEADERS,
+    });
 }
 
 // The admin secret arrives as "Authorization: Bearer <secret>".
@@ -103,13 +104,13 @@ async function authorizeAdmin(request, env, key) {
         return { ok: false, response: jsonResponse({ error: 'Forbidden' }, 403) };
     }
 
-    if (env.RATE_LIMIT_KV) {
-        const rl = await rateLimitKV(env.RATE_LIMIT_KV, ip, '/admin', ADMIN_RATE_LIMIT, Math.ceil(ADMIN_RATE_WINDOW_MS / 1000));
-        if (!rl.allowed) {
-            return { ok: false, response: jsonResponse({ error: "Too Many Requests" }, 429) };
-        }
-    } else if (!allowRequestInWindow(RATE_LIMITER_ADMIN, ip, ADMIN_RATE_LIMIT, ADMIN_RATE_WINDOW_MS)) {
-        return { ok: false, response: jsonResponse({ error: "Too Many Requests" }, 429) };
+    const rl = await rateLimit(env.DB, ip, '/api/admin', ADMIN_RATE_LIMIT, ADMIN_RATE_WINDOW_SEC);
+    if (!rl.allowed) {
+        return {
+            ok: false,
+            response: jsonResponse({ error: "Too Many Requests" }, 429,
+                { 'Retry-After': String(rl.retryAfter) }),
+        };
     }
 
     // Validate input before authorization
@@ -138,7 +139,7 @@ export async function onRequestGet(context) {
         const queries = buildInquiryQueries(typeFilter, pageSize, offset);
         const { rows, total } = await fetchInquiries(env, queries);
         // Audit admin access success
-        try { await logAudit(env.DB, 'admin', 'admin_access', true, `page=${page}, pageSize=${pageSize}, filter=${typeFilter}`); } catch {}
+        await logAudit(env.DB, 'admin', 'admin_access', true, `page=${page}, pageSize=${pageSize}, filter=${typeFilter}`);
 
         return jsonResponse({ data: rows, total, page, pageSize });
   } catch (err) {
@@ -165,7 +166,8 @@ export async function onRequestDelete(context) {
             return jsonResponse({ error: "Not found" }, 404);
         }
         // Deletions are irreversible, so always leave a trail.
-        try { await logAudit(env.DB, 'admin', 'admin_delete_inquiry', true, `id=${id}, IP=${guard.ip}`); } catch {}
+        // logAudit never throws — it swallows its own failures.
+        await logAudit(env.DB, 'admin', 'admin_delete_inquiry', true, `id=${id}, IP=${guard.ip}`);
 
         return jsonResponse({ success: true, id });
     } catch (err) {

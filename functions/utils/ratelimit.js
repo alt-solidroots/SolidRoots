@@ -1,6 +1,6 @@
 // CF-Connecting-IP is set by the Cloudflare edge and cannot be forged. The
 // remaining headers are caller-supplied, so the result is length-capped before
-// it becomes a KV key or an audit-log field.
+// it becomes a storage key or an audit-log field.
 const MAX_IP_LEN = 45; // an IPv6 address at its longest
 
 export function getClientIp(request) {
@@ -12,44 +12,67 @@ export function getClientIp(request) {
   return fallback ? fallback.slice(0, MAX_IP_LEN) : "unknown";
 }
 
-// Per-instance in-memory limiter (fallback when RATE_LIMIT_KV is unbound).
-export function allowRequestInWindow(map, key, limit, windowMs) {
-  const now = Date.now();
-  const rec = map.get(key) || { start: now, count: 0 };
-  if (now - rec.start > windowMs) {
-    rec.start = now;
-    rec.count = 0;
-  }
-  if (rec.count >= limit) {
-    map.set(key, rec);
-    return false;
-  }
-  rec.count += 1;
-  map.set(key, rec);
-  return true;
-}
+// Fixed-window rate limiter backed by D1.
+//
+// This replaces two implementations that could not enforce a limit:
+//
+//   KV: the read-modify-write was not atomic, so concurrent requests each read
+//   the same count and each wrote count+1 — only one increment survived. KV
+//   reads are also eventually consistent (up to ~60s between locations), so a
+//   caller spreading requests across regions saw a stale count. Cloudflare
+//   documents KV as unsuitable for counters.
+//
+//   In-memory Map: one Map per isolate. Cloudflare runs many isolates per
+//   deployment, so the real ceiling was the limit multiplied by however many
+//   happened to be warm, and the Map only ever reset entries, never evicted
+//   them.
+//
+// D1 is already bound, is strongly consistent, and does the whole
+// read-reset-increment in one atomic statement.
+//
+// ponytail: fixed window, not sliding — a burst straddling a window boundary
+// can see up to 2x the limit briefly. Move to a Durable Object if that margin
+// ever matters. Edge/WAF rate limiting is the right first line either way.
 
-export async function rateLimitKV(kv, ip, path, limit, windowSec) {
-  if (!kv) return { allowed: true, remaining: limit };
+const CLEANUP_ODDS = 0.01; // ~1 request in 100 also sweeps expired rows
+
+export async function rateLimit(db, ip, path, limit, windowSec) {
+  if (!db) return { allowed: true, remaining: limit, retryAfter: 0 };
+
   const key = `${ip}:${path}`;
   const now = Math.floor(Date.now() / 1000);
+  const cutoff = now - windowSec;
+
   try {
-    const raw = await kv.get(key);
-    let rec = raw ? JSON.parse(raw) : null;
-    if (!rec) rec = { window: now, count: 0 };
-    if (now - rec.window >= windowSec) {
-      rec.window = now;
-      rec.count = 0;
+    // One statement: insert at 1, or — if the stored window has expired —
+    // restart at 1, otherwise increment. Atomic, so no lost updates.
+    const row = await db.prepare(
+      `INSERT INTO rate_limits (key, window_start, count) VALUES (?, ?, 1)
+       ON CONFLICT(key) DO UPDATE SET
+         count = CASE WHEN rate_limits.window_start <= ? THEN 1
+                      ELSE rate_limits.count + 1 END,
+         window_start = CASE WHEN rate_limits.window_start <= ? THEN ?
+                             ELSE rate_limits.window_start END
+       RETURNING count, window_start`
+    ).bind(key, now, cutoff, cutoff, now).first();
+
+    const count = row?.count ?? 1;
+    const windowStart = row?.window_start ?? now;
+    const allowed = count <= limit;
+
+    if (Math.random() < CLEANUP_ODDS) {
+      await db.prepare('DELETE FROM rate_limits WHERE window_start < ?').bind(cutoff).run();
     }
-    if (rec.count >= limit) {
-      await kv.put(key, JSON.stringify(rec), { expirationTtl: windowSec });
-      return { allowed: false, remaining: 0 };
-    }
-    rec.count += 1;
-    await kv.put(key, JSON.stringify(rec), { expirationTtl: windowSec });
-    return { allowed: true, remaining: limit - rec.count };
+
+    return {
+      allowed,
+      remaining: Math.max(0, limit - count),
+      retryAfter: allowed ? 0 : Math.max(1, windowStart + windowSec - now),
+    };
   } catch {
-    // On KV failure, opt to allow traffic to avoid service disruption
-    return { allowed: true, remaining: limit };
+    // A counter-store failure must not take the form or the admin panel down.
+    // On /api/admin the secret is still the real gate; this only removes the
+    // throttle, and admin_unauthorized events remain audited.
+    return { allowed: true, remaining: limit, retryAfter: 0 };
   }
 }

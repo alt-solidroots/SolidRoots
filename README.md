@@ -31,7 +31,7 @@ Solid Roots is a premium real estate marketplace designed to connect discerning 
 
 - Injection safety: All DB interactions use parameterized queries. User input is validated and sanitized before storage (`functions/utils/validate.js`).
 - Admin access: `/api/admin` (read + delete) is gated by a server-side `ADMIN_SECRET`; there is no client-trusted check.
-- Rate limiting: Admin and Submit routes are rate limited — KV-based when `RATE_LIMIT_KV` is bound, with an in-memory per-instance fallback for development.
+- Rate limiting: Admin and Submit routes are rate limited per IP using a fixed window stored in D1 (`rate_limits` table). The counter is incremented by a single atomic upsert, so concurrent requests cannot slip past it. 429 responses carry a `Retry-After` header. Configure Cloudflare WAF/edge rate limiting as the first line of defence — this is the application-level backstop.
 - Allow-lists for sensitive routes: configure `ALLOWED_ADMIN_IPS` / `ALLOWED_SUBMIT_IPS` (comma-separated). When set, only listed IPs may reach those routes; when unset, access is open (convenient for dev — set them in production).
 - Audit log: sensitive actions (admin access, deletes, submissions) are recorded in the `audits` table; monitor with `npm run monitor`.
 - Tests: `npm test` runs the submit-contract and admin field-extractor checks.
