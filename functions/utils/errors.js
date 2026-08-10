@@ -1,9 +1,12 @@
 // Centralized error response helpers with production-safe output
 import { secureHeaders } from './security.js';
 
+// Default to production: Cloudflare Pages sets none of these by default, so an
+// unset environment must not be what turns internal error details into a
+// public response body. Verbose errors are opt-in via NODE_ENV=development.
 function isProduction(env) {
-  const v = ((env && (env.NODE_ENV || env.APP_ENV || env.ENV)) || 'development').toString().toLowerCase();
-  return v === 'production';
+  const v = ((env && (env.NODE_ENV || env.APP_ENV || env.ENV)) || 'production').toString().toLowerCase();
+  return v !== 'development';
 }
 
 export function errorResponse(err, status = 500, env) {

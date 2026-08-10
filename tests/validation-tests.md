@@ -2,10 +2,13 @@ Validation Tests (documentation)
 Note: These tests are described for manual/CI integration. If you want automated tests, we can wire up a test runner later.
 
 - Admin API Validation
-  1. Missing admin secret: point to /api/admin?key=anything; expect 400 (Missing admin key) or 401 depending on flow.
-  2. Invalid key format: /api/admin?key=; expect 400 with 'Missing admin key' or similar.
-  3. Valid secret but no type query: /api/admin?key=VALID -- expect 200 with data or 401 depending on data store.
-  4. Valid secret with invalid key format (special chars): expect 400.
+  The secret is sent as `Authorization: Bearer <secret>`, never as a query parameter.
+  1. No Authorization header: GET /api/admin -- expect 400 (Missing admin key).
+  2. Empty bearer value: `Authorization: Bearer ` -- expect 400 (Missing admin key).
+  3. Wrong secret: `Authorization: Bearer wrong-secret` -- expect 401 (Unauthorized).
+  4. Secret with invalid characters (e.g. `Bearer a b$c`): expect 400 (Admin key has invalid characters).
+  5. Valid secret: `Authorization: Bearer VALID` -- expect 200 with data.
+  6. Confirm the response carries no Access-Control-Allow-Origin header (admin data must not be cross-origin readable).
 
 - Submit API Validation
   1. Invalid payload type: POST /api/submit with { type: "foo" } -> 400 (Invalid type)

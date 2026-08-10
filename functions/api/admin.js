@@ -1,15 +1,17 @@
 // ============================================================
 // Solid Roots — Admin API
-// GET /api/admin?key=YOUR_ADMIN_SECRET
-// Protected by ADMIN_SECRET environment variable.
+// GET /api/admin        (Authorization: Bearer YOUR_ADMIN_SECRET)
+// DELETE /api/admin?id=123
+// Protected by ADMIN_SECRET environment variable. The secret travels in the
+// Authorization header, never the URL — query strings land in browser history.
 // ============================================================
 
-import { sanitizeValue, validateAdminKey } from '../utils/validate.js';
+import { validateAdminKey } from '../utils/validate.js';
 
 import { logAudit } from '../utils/audit.js';
 import { rateLimitKV, getClientIp, allowRequestInWindow } from '../utils/ratelimit.js';
 import { errorResponse } from '../utils/errors.js';
-import { secureHeaders, corsHeaders } from '../utils/security.js';
+import { secureHeaders } from '../utils/security.js';
 
 import { parseAllowList, isIpAllowed } from '../utils/allowlist.js';
 
@@ -23,21 +25,33 @@ const DEFAULT_PAGE_SIZE = 50;
 const DEFAULT_PAGE = 1;
 // Removed fallback admin secret. Admin access requires explicit environment-provided secret.
 
+// No CORS headers: the admin panel is served from this same origin, so it needs
+// none, and a wildcard would let any site read this data.
 const JSON_HEADERS = {
     "Content-Type": "application/json",
     ...secureHeaders(),
-    ...corsHeaders(),
 };
 
 function jsonResponse(body, status = 200) {
     return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
 }
 
+// The admin secret arrives as "Authorization: Bearer <secret>".
+function readAdminKey(request) {
+    const auth = request.headers.get('Authorization') || '';
+    return auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+}
 
 function isAuthorized(key, env) {
     const secret = env.ADMIN_SECRET;
     if (!secret) return false;
-    return key === secret;
+    // Constant-time compare so a wrong guess can't be narrowed down by timing.
+    if (key.length !== secret.length) return false;
+    let diff = 0;
+    for (let i = 0; i < key.length; i++) {
+        diff |= key.charCodeAt(i) ^ secret.charCodeAt(i);
+    }
+    return diff === 0;
 }
 
 function parsePaginationParams(searchParams) {
@@ -111,9 +125,8 @@ async function authorizeAdmin(request, env, key) {
 export async function onRequestGet(context) {
     const { request, env } = context;
     const url = new URL(request.url);
-    const key = sanitizeValue(url.searchParams.get("key") ?? "");
 
-    const guard = await authorizeAdmin(request, env, key);
+    const guard = await authorizeAdmin(request, env, readAdminKey(request));
     if (!guard.ok) return guard.response;
 
     try {
@@ -129,13 +142,12 @@ export async function onRequestGet(context) {
     }
 }
 
-// DELETE /api/admin?key=SECRET&id=123 — removes a single inquiry.
+// DELETE /api/admin?id=123 — removes a single inquiry.
 export async function onRequestDelete(context) {
     const { request, env } = context;
     const url = new URL(request.url);
-    const key = sanitizeValue(url.searchParams.get("key") ?? "");
 
-    const guard = await authorizeAdmin(request, env, key);
+    const guard = await authorizeAdmin(request, env, readAdminKey(request));
     if (!guard.ok) return guard.response;
 
     const id = Number(url.searchParams.get("id"));

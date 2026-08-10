@@ -217,6 +217,12 @@ const LOGIN_ERRORS = {
     429: "Too many attempts. Wait a minute, then try again.",
 };
 
+// The secret goes in the Authorization header, never the URL — a query string
+// would be written into browser history on every request.
+function authHeaders(key) {
+    return { Authorization: `Bearer ${key}` };
+}
+
 async function attemptLogin() {
     const pw = pwInput.value.trim();
     if (!pw) return;
@@ -225,7 +231,7 @@ async function attemptLogin() {
     loginBtn.disabled = true;
     errorMsg.style.display = "none";
     try {
-        const res = await fetch(`/api/admin?key=${encodeURIComponent(pw)}&pageSize=1`);
+        const res = await fetch(`/api/admin?pageSize=1`, { headers: authHeaders(pw) });
         if (res.ok) {
             adminKey = pw;
             saveSession(pw);
@@ -253,7 +259,7 @@ document.getElementById("logout-btn").addEventListener("click", () => {
 async function loadData() {
     showSkeleton();
     try {
-        const res = await fetch(`/api/admin?key=${encodeURIComponent(adminKey)}&pageSize=1000`);
+        const res = await fetch(`/api/admin?pageSize=1000`, { headers: authHeaders(adminKey) });
         if (res.status === 401 || res.status === 403) {
             // Key no longer valid (rotated or blocked) — don't show an empty table.
             showLogin();
@@ -456,7 +462,7 @@ deleteBtn.addEventListener("click", async () => {
     deleteBtn.disabled = true;
     deleteBtn.textContent = "Deleting…";
     try {
-        const res = await fetch(`/api/admin?key=${encodeURIComponent(adminKey)}&id=${id}`, { method: "DELETE" });
+        const res = await fetch(`/api/admin?id=${id}`, { method: "DELETE", headers: authHeaders(adminKey) });
         if (!res.ok) {
             const body = await res.json().catch(() => ({}));
             throw new Error(body.error || `Failed (${res.status})`);
