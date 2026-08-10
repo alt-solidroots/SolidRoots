@@ -68,8 +68,16 @@ export async function onRequestPost(context) {
         return jsonResponse({ error: "Too Many Requests" }, 429);
     }
 
+    // A syntax error in the body is the caller's fault, not a server fault —
+    // parse it outside the 500 handler so it reports as 400.
+    let body;
     try {
-        const body = await request.json();
+        body = await request.json();
+    } catch {
+        return jsonResponse({ error: 'Invalid JSON body' }, 400);
+    }
+
+    try {
         const sanitized = sanitizeValue(body);
         const validation = validateSubmitPayload(sanitized);
         if (!validation.valid) {

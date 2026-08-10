@@ -23,6 +23,7 @@ const ADMIN_RATE_WINDOW_MS = 60 * 1000; // per 1 minute
 // Admin key validation handled by shared module (validateAdminKey)
 const DEFAULT_PAGE_SIZE = 50;
 const DEFAULT_PAGE = 1;
+const MAX_PAGE_SIZE = 1000; // the admin panel pulls 1000 and paginates client-side
 // Removed fallback admin secret. Admin access requires explicit environment-provided secret.
 
 // No CORS headers: the admin panel is served from this same origin, so it needs
@@ -59,6 +60,7 @@ function parsePaginationParams(searchParams) {
     if (Number.isNaN(page) || page < 1) page = DEFAULT_PAGE;
     let pageSize = parseInt(searchParams.get("pageSize") || DEFAULT_PAGE_SIZE, 10);
     if (Number.isNaN(pageSize) || pageSize < 1) pageSize = DEFAULT_PAGE_SIZE;
+    if (pageSize > MAX_PAGE_SIZE) pageSize = MAX_PAGE_SIZE;
     const typeFilter = searchParams.get("type") || "all";
     const offset = (page - 1) * pageSize;
     return { page, pageSize, typeFilter, offset };

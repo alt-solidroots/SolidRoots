@@ -10,7 +10,7 @@ const read = p => fs.readFileSync(path.resolve(p), 'utf8')
 
 // validate.js is ESM but package.json says commonjs, so load it as a data module.
 const validateSrc = read('functions/utils/validate.js')
-const { validateSubmitPayload } = await import(
+const { validateSubmitPayload, sanitizeValue, normalizePhone } = await import(
   'data:text/javascript,' + encodeURIComponent(validateSrc))
 
 // The values the form actually posts, taken from the form's own config.
@@ -37,6 +37,40 @@ assert.ok(!validateSubmitPayload({ type: 'buy', answers: {} }).valid,
 // Junk must still be refused.
 assert.ok(!validateSubmitPayload({ type: 'hacker', phone: '9876543210' }).valid)
 assert.ok(!validateSubmitPayload({ phone: '9876543210' }).valid, 'missing type must be rejected')
+
+// ── Storage must keep the customer's real text ──
+// Escaping here as well as at render turned "Ram & Sons" into "Ram &amp; Sons"
+// on the admin's screen. Values are stored raw; admin.html escapes at render.
+assert.strictEqual(sanitizeValue("O'Brien"), "O'Brien", 'apostrophes must survive storage')
+assert.strictEqual(sanitizeValue('Ram & Sons'), 'Ram & Sons', 'ampersands must survive storage')
+assert.strictEqual(sanitizeValue('  padded  '), 'padded', 'strings are still trimmed')
+assert.strictEqual(sanitizeValue({ ' Name ': ' Asha ' }).Name, 'Asha', 'keys are trimmed too')
+
+// Recursion must not run away on a hostile payload.
+let deep = 'leaf'
+for (let i = 0; i < 50; i++) deep = { next: deep }
+assert.doesNotThrow(() => sanitizeValue(deep), 'deeply nested input must not blow the stack')
+
+// ── A stored contact must actually be reachable ──
+// The form demands 10 digits; the server used to accept any run of punctuation,
+// so "+++++" satisfied "email or phone required" and produced a dead lead.
+for (const junk of ['+++++', '(((---)))', '123', '12345678901234']) {
+  assert.ok(!validateSubmitPayload({ type: 'buy', phone: junk }).valid,
+    `unreachable phone "${junk}" must be rejected`)
+}
+// The formats people actually type all resolve to the same number.
+for (const good of ['9876543210', '+91 98765 43210', '(98765) 43210', '09876543210']) {
+  assert.strictEqual(normalizePhone(good), '9876543210', `"${good}" must normalise`)
+  assert.ok(validateSubmitPayload({ type: 'buy', phone: good }).valid, `"${good}" must be accepted`)
+}
+// A real 10-digit number that happens to start with 91 must not lose digits.
+assert.strictEqual(normalizePhone('9187654321'), '9187654321', 'leading 91 is not a country code here')
+
+// Oversized fields must be refused rather than stored.
+assert.ok(!validateSubmitPayload({ type: 'buy', email: 'a'.repeat(300) + '@b.com' }).valid,
+  'an over-long email must be rejected')
+assert.ok(!validateSubmitPayload({ type: 'buy', phone: '9876543210', answers: { note: 'x'.repeat(25000) } }).valid,
+  'an over-large answers blob must be rejected')
 
 // submit.js must import everything it calls — a missing errorResponse import
 // turned every caught error into a ReferenceError 500.
