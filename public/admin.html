@@ -28,7 +28,7 @@
     <div class="login-box">
         <h1 style="color: var(--ps-white); margin-bottom: 32px; font-size: 35px; font-weight: 300;">Admin Access</h1>
         <div class="input-group">
-            <input type="password" id="password-input" placeholder="Enter admin password"/>
+            <input type="password" id="password-input" placeholder="Enter admin password" autocomplete="current-password"/>
         </div>
         <button class="btn-primary" id="login-btn" style="width: 100%;">Sign In</button>
         <div class="login-error" id="login-error">Incorrect password.</div>
@@ -47,40 +47,56 @@
 
     <div class="section-dark">
         <div class="container">
-            <h1 class="hero-display">Inquiries Overview</h1>
+            <h1 class="hero-display">Inquiries</h1>
+            <p class="hero-sub">Every buyer &amp; seller request captured from the site.</p>
         </div>
     </div>
 
     <div class="section-light">
         <div class="container">
             <div class="data-card">
-                
+
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-value" id="stat-total">-</div>
+                        <div class="stat-value" id="stat-total">–</div>
                         <div class="stat-label">Total Inquiries</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="stat-buy">-</div>
+                        <div class="stat-value" id="stat-buy">–</div>
                         <div class="stat-label">Buy Requests</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="stat-sell">-</div>
+                        <div class="stat-value" id="stat-sell">–</div>
                         <div class="stat-label">Sell Requests</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-week">–</div>
+                        <div class="stat-label">Last 7 Days</div>
                     </div>
                 </div>
 
                 <div class="toolbar">
                     <div class="toolbar-left">
-                        <input type="text" id="search-input" class="search-input" placeholder="Search email, phone..."/>
-                        <button class="btn-pill active" data-type="all">All</button>
-                        <button class="btn-pill" data-type="buy">Buy</button>
-                        <button class="btn-pill" data-type="sell">Sell</button>
+                        <input type="text" id="search-input" class="search-input" placeholder="Search name, phone, email, city…"/>
                     </div>
-                    <div style="display:flex; gap:8px;">
-                        <button class="btn-primary" id="csv-buy-btn" style="padding: 8px 16px; font-size: 14px; background:var(--ps-blue);">⬇ Buy CSV</button>
-                        <button class="btn-primary" id="csv-sell-btn" style="padding: 8px 16px; font-size: 14px; background:var(--ps-text-charcoal);">⬇ Sell CSV</button>
+                    <div class="toolbar-right">
+                        <button class="btn-ghost-line" id="refresh-btn" title="Reload data">↻ Refresh</button>
+                        <button class="btn-primary btn-sm" id="csv-buy-btn" style="background:var(--ps-blue);">⬇ Buy CSV</button>
+                        <button class="btn-primary btn-sm" id="csv-sell-btn" style="background:var(--ps-text-charcoal);">⬇ Sell CSV</button>
                     </div>
+                </div>
+
+                <div class="filter-row" id="type-filters">
+                    <button class="btn-pill active" data-type="all">All</button>
+                    <button class="btn-pill" data-type="buy">Buy</button>
+                    <button class="btn-pill" data-type="sell">Sell</button>
+                </div>
+                <div class="filter-row filter-row-sub" id="prop-filters">
+                    <button class="btn-pill active" data-prop="all">All Property Types</button>
+                    <button class="btn-pill" data-prop="Residential Plot">Residential Plot</button>
+                    <button class="btn-pill" data-prop="Industrial Plot">Industrial Plot</button>
+                    <button class="btn-pill" data-prop="Land">Land</button>
+                    <button class="btn-pill" data-prop="Floor / Flat">Floor / Flat</button>
                 </div>
 
                 <div class="table-wrapper">
@@ -88,20 +104,21 @@
                         <thead>
                             <tr>
                                 <th>Type</th>
-                                <th>Contact</th>
-                                <th>Submission Details</th>
-                                <th>Date</th>
+                                <th>Name</th>
+                                <th>Property</th>
+                                <th>Location</th>
+                                <th>Budget / Demand</th>
+                                <th>Phone</th>
+                                <th>Received</th>
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody id="table-body">
-                            <tr><td colspan="5" class="td-small" style="text-align:center;">Loading...</td></tr>
-                        </tbody>
+                        <tbody id="table-body"></tbody>
                     </table>
                 </div>
 
                 <div class="pagination">
-                    <div class="caption-text" id="pag-info">Showing - records</div>
+                    <div class="caption-text" id="pag-info">–</div>
                     <div class="pag-buttons">
                         <button class="btn-pill" id="prev-btn" disabled>Prev</button>
                         <button class="btn-pill" id="next-btn" disabled>Next</button>
@@ -111,20 +128,24 @@
             </div>
         </div>
     </div>
-    
+
     <footer class="footer">
         © 2026 Solid Roots. Secure Admin Portal.
     </footer>
 </div>
 
-<!-- Modal -->
-<div class="modal-overlay" id="modal-bg">
-    <div class="modal-content">
-        <button class="modal-close" id="modal-close">&times;</button>
-        <h2 class="mid-display" style="margin-bottom: 32px;" id="modal-title">Inquiry Details</h2>
-        <div id="modal-body"></div>
+<!-- Detail Drawer -->
+<div class="drawer-scrim" id="drawer-scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <div class="drawer-head">
+        <div>
+            <span class="type-tag" id="drawer-badge"></span>
+            <h2 class="mid-display" id="drawer-title" style="margin-top:8px;">Inquiry</h2>
+        </div>
+        <button class="drawer-close" id="drawer-close" aria-label="Close">&times;</button>
     </div>
-</div>
+    <div class="drawer-body" id="drawer-body"></div>
+</aside>
 
 <script>
 let adminKey = "";
@@ -133,6 +154,7 @@ let filtered = [];
 let currentPage = 1;
 const PAGE_SIZE = 10;
 let currentType = "all";
+let currentProp = "all";
 
 // Elements
 const loginScreen = document.getElementById("login-screen");
@@ -142,15 +164,24 @@ const pwInput = document.getElementById("password-input");
 const errorMsg = document.getElementById("login-error");
 const tbody = document.getElementById("table-body");
 
-// Login
+// ── Login ────────────────────────────────────────────────────
 loginBtn.addEventListener("click", attemptLogin);
 pwInput.addEventListener("keydown", e => { if (e.key === "Enter") attemptLogin(); });
+
+const LOGIN_ERRORS = {
+    400: "That password contains characters the server rejects. Use only letters, numbers, . _ or -.",
+    401: "Incorrect password.",
+    403: "Access blocked from your network (your IP isn't on the allow-list).",
+    429: "Too many attempts. Wait a minute, then try again.",
+};
 
 async function attemptLogin() {
     const pw = pwInput.value.trim();
     if (!pw) return;
-    
-    loginBtn.textContent = "Verifying...";
+
+    loginBtn.textContent = "Verifying…";
+    loginBtn.disabled = true;
+    errorMsg.style.display = "none";
     try {
         const res = await fetch(`/api/admin?key=${encodeURIComponent(pw)}&pageSize=1`);
         if (res.ok) {
@@ -159,50 +190,109 @@ async function attemptLogin() {
             dashboard.style.display = "flex";
             loadData();
         } else {
+            errorMsg.textContent = LOGIN_ERRORS[res.status] || `Sign-in failed (${res.status}).`;
             errorMsg.style.display = "block";
         }
     } catch (e) {
-        errorMsg.textContent = "Connection error.";
+        errorMsg.textContent = "Connection error. Check your internet and try again.";
         errorMsg.style.display = "block";
     }
     loginBtn.textContent = "Sign In";
+    loginBtn.disabled = false;
 }
 
 document.getElementById("logout-btn").addEventListener("click", () => {
     adminKey = "";
+    allData = [];
     pwInput.value = "";
     dashboard.style.display = "none";
     loginScreen.style.display = "flex";
 });
 
-// Data
+// ── Data ─────────────────────────────────────────────────────
 async function loadData() {
+    showSkeleton();
     try {
         const res = await fetch(`/api/admin?key=${encodeURIComponent(adminKey)}&pageSize=1000`);
         const json = await res.json();
-        allData = json.data || [];
+        allData = (json.data || []).map(row => ({ ...row, _answers: parseAnswers(row.answers) }));
         updateStats();
         applyFilter();
     } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="5" class="td-small">Failed to load data.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="table-empty">Failed to load data. Try Refresh.</td></tr>`;
     }
 }
+document.getElementById("refresh-btn").addEventListener("click", loadData);
 
-function updateStats() {
-    document.getElementById("stat-total").textContent = allData.length;
-    document.getElementById("stat-buy").textContent = allData.filter(d => d.type === 'buy').length;
-    document.getElementById("stat-sell").textContent = allData.filter(d => d.type === 'sell').length;
+function parseAnswers(raw) {
+    try {
+        const a = JSON.parse(raw);
+        if (Array.isArray(a)) { const o = {}; a.forEach((v, i) => o[`Response ${i + 1}`] = v); return o; }
+        return (a && typeof a === "object") ? a : { "Answer": String(raw) };
+    } catch (e) { return raw ? { "Answer": String(raw) } : {}; }
 }
 
+// ── Field extractors (keys vary by flow / property type) ─────
+const LOCATION_KEYS = ["Society Name / City", "Society Name / Sector", "Society & City Name", "City",
+    "Which city or area are you looking in?", "Where is the property located?"];
+const BUDGET_KEYS = ["Budget (approx)", "Demand", "Demand per Acre", "What's your budget range?", "What price are you expecting?"];
+
+function pick(ans, keys) { for (const k of keys) { if (ans[k]) return ans[k]; } return ""; }
+function getName(ans) { return ans["Name"] || ""; }
+function getProperty(ans) { return ans["What are you looking to buy?"] || ans["What are you looking to sell?"] || ""; }
+function getLocation(ans) { return pick(ans, LOCATION_KEYS); }
+function getBudget(ans) { return pick(ans, BUDGET_KEYS); }
+function getPhone(row) { return row.phone || row._answers["Phone Number"] || row._answers["Contact"] || ""; }
+function getEmail(row) { return row.email || row._answers["What is your email address?"] || ""; }
+function isUrl(v) { return typeof v === "string" && /^https?:\/\//i.test(v); }
+function hasFiles(ans) { return Object.values(ans).some(isUrl); }
+
+// ── Stats ────────────────────────────────────────────────────
+function updateStats() {
+    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    document.getElementById("stat-total").textContent = allData.length;
+    document.getElementById("stat-buy").textContent = allData.filter(d => d.type === "buy").length;
+    document.getElementById("stat-sell").textContent = allData.filter(d => d.type === "sell").length;
+    document.getElementById("stat-week").textContent = allData.filter(d => parseDate(d.created_at) >= weekAgo).length;
+}
+
+// ── Filtering ────────────────────────────────────────────────
 function applyFilter() {
-    const q = document.getElementById("search-input").value.toLowerCase();
+    const q = document.getElementById("search-input").value.toLowerCase().trim();
     filtered = allData.filter(r => {
-        const typeMatch = currentType === "all" || r.type === currentType;
-        const qMatch = !q || (r.email || "").toLowerCase().includes(q) || (r.phone || "").includes(q) || (r.answers || "").toLowerCase().includes(q);
-        return typeMatch && qMatch;
+        if (currentType !== "all" && r.type !== currentType) return false;
+        if (currentProp !== "all" && getProperty(r._answers) !== currentProp) return false;
+        if (!q) return true;
+        const hay = [getName(r._answers), getPhone(r), getEmail(r), getLocation(r._answers),
+            getProperty(r._answers), getBudget(r._answers)].join(" ").toLowerCase();
+        return hay.includes(q);
     });
     currentPage = 1;
     renderTable();
+}
+
+document.getElementById("type-filters").addEventListener("click", e => {
+    const btn = e.target.closest("[data-type]"); if (!btn) return;
+    setActive("type-filters", btn); currentType = btn.dataset.type; applyFilter();
+});
+document.getElementById("prop-filters").addEventListener("click", e => {
+    const btn = e.target.closest("[data-prop]"); if (!btn) return;
+    setActive("prop-filters", btn); currentProp = btn.dataset.prop; applyFilter();
+});
+function setActive(containerId, btn) {
+    document.querySelectorAll(`#${containerId} .btn-pill`).forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+}
+
+let searchTimer;
+document.getElementById("search-input").addEventListener("input", () => {
+    clearTimeout(searchTimer); searchTimer = setTimeout(applyFilter, 250);
+});
+
+// ── Table ────────────────────────────────────────────────────
+function showSkeleton() {
+    tbody.innerHTML = Array.from({ length: 6 }).map(() =>
+        `<tr class="skeleton-row">${"<td><span class=\"sk-bar\"></span></td>".repeat(8)}</tr>`).join("");
 }
 
 function renderTable() {
@@ -210,168 +300,142 @@ function renderTable() {
     const pageData = filtered.slice(start, start + PAGE_SIZE);
 
     if (pageData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="td-small" style="text-align:center;">No records found.</td></tr>`;
-        document.getElementById("pag-info").textContent = "No records";
+        const msg = allData.length === 0
+            ? "No inquiries yet. New buyer &amp; seller submissions from the site will appear here automatically."
+            : "No inquiries match these filters. Try clearing the search or switching property type.";
+        tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">
+            <div class="empty-icon">◎</div><div class="empty-title">${msg}</div></div></td></tr>`;
+        document.getElementById("pag-info").textContent = allData.length === 0 ? "No records" : "0 matches";
         document.getElementById("prev-btn").disabled = true;
         document.getElementById("next-btn").disabled = true;
         return;
     }
 
     tbody.innerHTML = pageData.map(row => {
-        const date = row.created_at ? new Date(row.created_at).toLocaleDateString() : "-";
-        let answersPreview = "No details";
-        try {
-            const ans = JSON.parse(row.answers);
-            if(Array.isArray(ans) && ans.length > 0) answersPreview = ans[0];
-            else if (typeof ans === 'object') answersPreview = Object.values(ans)[0] || "";
-        } catch(e) {}
-
-        return `<tr>
-            <td><span class="type-tag" style="color: ${row.type === 'buy' ? 'var(--ps-blue)' : 'var(--ps-text-ink)'}">${row.type}</span></td>
+        const a = row._answers;
+        const phone = getPhone(row);
+        return `<tr class="data-row" data-id="${row.id}">
+            <td><span class="type-tag ${row.type === "buy" ? "buy" : "sell"}">${esc(row.type)}</span></td>
             <td>
-                <div class="body-text">${esc(row.email || "-")}</div>
-                <div class="td-meta">${esc(row.phone || "-")}</div>
+                <div class="cell-name">${esc(getName(a) || "—")}${hasFiles(a) ? ' <span class="attach-dot" title="Has file upload">📎</span>' : ""}</div>
+                ${getEmail(row) ? `<div class="td-meta">${esc(getEmail(row))}</div>` : ""}
             </td>
-            <td class="answers-preview">${esc(answersPreview)}...</td>
-            <td class="td-meta">${date}</td>
-            <td><button class="btn-pill" onclick="openModal(${row.id})">View</button></td>
+            <td>${esc(getProperty(a) || "—")}</td>
+            <td class="td-wrap">${esc(getLocation(a) || "—")}</td>
+            <td>${esc(getBudget(a) || "—")}</td>
+            <td>${phone ? `<a class="link-contact" href="tel:${esc(phone)}" onclick="event.stopPropagation()">${esc(phone)}</a>` : "—"}</td>
+            <td class="td-meta">${fmtDate(row.created_at)}</td>
+            <td><button class="btn-pill btn-view">View</button></td>
         </tr>`;
     }).join("");
 
     const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-    document.getElementById("pag-info").textContent = `Showing ${start + 1}-${Math.min(start + PAGE_SIZE, filtered.length)} of ${filtered.length}`;
+    document.getElementById("pag-info").textContent =
+        `Showing ${start + 1}–${Math.min(start + PAGE_SIZE, filtered.length)} of ${filtered.length}`;
     document.getElementById("prev-btn").disabled = currentPage === 1;
     document.getElementById("next-btn").disabled = currentPage >= totalPages;
 }
 
-// Modal
-function openModal(id) {
-    const row = allData.find(r => r.id === id);
-    if (!row) return;
-    
-    document.getElementById("modal-title").textContent = `Inquiry: ${row.type.toUpperCase()}`;
-    
-    let answersHtml = "";
-    try {
-        const ans = JSON.parse(row.answers);
-        if (Array.isArray(ans)) {
-            answersHtml = ans.map((a,i) => `<div class="answer-block"><div class="answer-q">Response ${i+1}</div><div class="answer-a">${esc(a)}</div></div>`).join("");
-        } else {
-            answersHtml = Object.entries(ans).map(([q, a]) => `<div class="answer-block"><div class="answer-q">${esc(q)}</div><div class="answer-a">${esc(a)}</div></div>`).join("");
-        }
-    } catch(e) {
-        answersHtml = `<div class="answer-block"><div class="answer-a">${esc(row.answers)}</div></div>`;
-    }
+tbody.addEventListener("click", e => {
+    const tr = e.target.closest(".data-row"); if (!tr) return;
+    openDrawer(Number(tr.dataset.id));
+});
 
-    document.getElementById("modal-body").innerHTML = `
-        <div style="margin-bottom: 32px;">
-            <div class="answer-q">Contact Info</div>
-            <div class="body-text">${esc(row.email || "-")}</div>
-            <div class="body-text">${esc(row.phone || "-")}</div>
+// ── Drawer ───────────────────────────────────────────────────
+const drawer = document.getElementById("drawer");
+const scrim = document.getElementById("drawer-scrim");
+
+function openDrawer(id) {
+    const row = allData.find(r => r.id === id); if (!row) return;
+    const a = row._answers;
+    const phone = getPhone(row), email = getEmail(row);
+
+    document.getElementById("drawer-badge").className = `type-tag ${row.type === "buy" ? "buy" : "sell"}`;
+    document.getElementById("drawer-badge").textContent = row.type;
+    document.getElementById("drawer-title").textContent = getName(a) || getProperty(a) || `Inquiry #${row.id}`;
+
+    const contact = `
+        <div class="drawer-contact">
+            ${phone ? `<a class="contact-btn" href="tel:${esc(phone)}">📞 ${esc(phone)}</a>` : ""}
+            ${email ? `<a class="contact-btn" href="mailto:${esc(email)}">✉ ${esc(email)}</a>` : ""}
         </div>
-        <div>${answersHtml}</div>
-    `;
-    document.getElementById("modal-bg").classList.add("active");
+        <div class="td-meta" style="margin-bottom:24px;">Received ${fmtDate(row.created_at)}</div>`;
+
+    const details = Object.entries(a)
+        .filter(([, v]) => v !== "" && v != null)
+        .map(([q, v]) => `<div class="answer-block">
+            <div class="answer-q">${esc(q)}</div>
+            <div class="answer-a">${isUrl(v) ? fileHtml(v) : esc(v)}</div>
+        </div>`).join("") || `<div class="td-meta">No further details captured.</div>`;
+
+    document.getElementById("drawer-body").innerHTML = contact + details;
+    drawer.classList.add("open");
+    scrim.classList.add("open");
+    document.getElementById("drawer-close").focus();
 }
 
-document.getElementById("modal-close").addEventListener("click", () => document.getElementById("modal-bg").classList.remove("active"));
-document.getElementById("modal-bg").addEventListener("click", e => { if(e.target.id === "modal-bg") document.getElementById("modal-bg").classList.remove("active"); });
+function closeDrawer() { drawer.classList.remove("open"); scrim.classList.remove("open"); }
+document.getElementById("drawer-close").addEventListener("click", closeDrawer);
+scrim.addEventListener("click", closeDrawer);
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
 
-// Filters
-document.querySelectorAll(".toolbar-left .btn-pill").forEach(btn => {
-    btn.addEventListener("click", () => {
-        document.querySelectorAll(".toolbar-left .btn-pill").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        currentType = btn.dataset.type;
-        applyFilter();
-    });
-});
+function fileHtml(url) {
+    const isImg = /\.(png|jpe?g|gif|webp|svg|avif)(\?|$)/i.test(url);
+    return `<a class="file-link" href="${esc(url)}" target="_blank" rel="noopener">
+        ${isImg ? `<img class="file-thumb" src="${esc(url)}" alt="Uploaded file" loading="lazy">` : ""}
+        <span>Open file ↗</span></a>`;
+}
 
-let searchTimer;
-document.getElementById("search-input").addEventListener("input", () => {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(applyFilter, 300);
-});
-
-// Pagination
-document.getElementById("prev-btn").addEventListener("click", () => { if(currentPage > 1) { currentPage--; renderTable(); } });
+// ── Pagination ───────────────────────────────────────────────
+document.getElementById("prev-btn").addEventListener("click", () => { if (currentPage > 1) { currentPage--; renderTable(); } });
 document.getElementById("next-btn").addEventListener("click", () => { currentPage++; renderTable(); });
 
-// CSV — shared helper
-function forceText(val) {
-    return `\t${val}`; // Tab prefix: forces Excel/Sheets to treat as text, not number
+// ── Helpers ──────────────────────────────────────────────────
+function parseDate(s) {
+    if (!s) return 0;
+    const d = new Date(s.includes("T") ? s : s.replace(" ", "T") + "Z");
+    return isNaN(d) ? 0 : d.getTime();
 }
+function fmtDate(s) {
+    const t = parseDate(s); if (!t) return "—";
+    return new Date(t).toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+
+// ── CSV export (per type, only that type's question columns) ──
+function forceText(val) { return `\t${val}`; }
 
 function generateCSV(type) {
-    // 1. Filter to only this type's rows (from ALL data, not just current filter)
     const typeRows = allData.filter(r => r.type === type);
-    if (typeRows.length === 0) {
-        alert(`No ${type} inquiries found.`);
-        return;
-    }
+    if (typeRows.length === 0) { alert(`No ${type} inquiries found.`); return; }
 
-    // 2. Parse answers and collect only columns relevant to this type
     const questionKeys = new Set();
-    const parsedRowsData = typeRows.map(r => {
-        let parsedAnswers = {};
-        try {
-            const ansObj = JSON.parse(r.answers);
-            if (typeof ansObj === 'object' && ansObj !== null && !Array.isArray(ansObj)) {
-                parsedAnswers = ansObj;
-                Object.keys(ansObj).forEach(k => questionKeys.add(k));
-            } else if (Array.isArray(ansObj)) {
-                ansObj.forEach((a, i) => {
-                    const key = `Response ${i+1}`;
-                    parsedAnswers[key] = a;
-                    questionKeys.add(key);
-                });
-            } else if (r.answers) {
-                parsedAnswers["Raw Answer"] = r.answers;
-                questionKeys.add("Raw Answer");
-            }
-        } catch(e) {
-            if (r.answers) {
-                parsedAnswers["Raw Answer"] = r.answers;
-                questionKeys.add("Raw Answer");
-            }
-        }
-        return { ...r, parsedAnswers };
+    const parsed = typeRows.map(r => {
+        const ans = r._answers || {};
+        Object.keys(ans).forEach(k => questionKeys.add(k));
+        return { ...r, parsedAnswers: ans };
     });
+    const questions = Array.from(questionKeys);
+    const rows = [["ID", "Name", "Email", "Phone", "Date", ...questions]];
 
-    const questionsArray = Array.from(questionKeys);
-
-    // 3. Build header row — base columns + only THIS type's questions
-    const rows = [["ID", "Email", "Phone", "Date", ...questionsArray]];
-
-    // 4. Build data rows
-    parsedRowsData.forEach(r => {
-        const row = [
-            forceText(r.id),
-            r.email || "",
-            forceText(r.phone || ""),
-            r.created_at || ""
-        ];
-        questionsArray.forEach(q => {
-            row.push(r.parsedAnswers[q] !== undefined ? r.parsedAnswers[q] : "");
-        });
+    parsed.forEach(r => {
+        const row = [forceText(r.id), getName(r.parsedAnswers), getEmail(r), forceText(getPhone(r) || ""), r.created_at || ""];
+        questions.forEach(q => row.push(r.parsedAnswers[q] !== undefined ? r.parsedAnswers[q] : ""));
         rows.push(row);
     });
 
-    // 5. Download
     const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `solidroots-${type}-inquiries-${new Date().toISOString().slice(0,10)}.csv`;
-    a.click();
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `solidroots-${type}-inquiries-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
     URL.revokeObjectURL(url);
 }
 
 document.getElementById("csv-buy-btn").addEventListener("click", () => generateCSV("buy"));
 document.getElementById("csv-sell-btn").addEventListener("click", () => generateCSV("sell"));
-
-function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 </script>
 </body>
 </html>
