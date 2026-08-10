@@ -1,3 +1,28 @@
+export function getClientIp(request) {
+  const cf = request.headers.get("CF-Connecting-IP");
+  if (cf) return cf;
+  const xf = request.headers.get("X-Forwarded-For");
+  if (xf) return xf.split(",")[0].trim();
+  return request.headers.get("X-Real-IP") || request.headers.get("Remote-Addr") || "unknown";
+}
+
+// Per-instance in-memory limiter (fallback when RATE_LIMIT_KV is unbound).
+export function allowRequestInWindow(map, key, limit, windowMs) {
+  const now = Date.now();
+  const rec = map.get(key) || { start: now, count: 0 };
+  if (now - rec.start > windowMs) {
+    rec.start = now;
+    rec.count = 0;
+  }
+  if (rec.count >= limit) {
+    map.set(key, rec);
+    return false;
+  }
+  rec.count += 1;
+  map.set(key, rec);
+  return true;
+}
+
 export async function rateLimitKV(kv, ip, path, limit, windowSec) {
   if (!kv) return { allowed: true, remaining: limit };
   const key = `${ip}:${path}`;

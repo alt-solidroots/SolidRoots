@@ -5,20 +5,17 @@ This document outlines the steps to take in the event of a security incident or 
 ## 1. Preparation
 *   **Audit Logs**: Ensure `audits` table is being populated and monitored via `npm run monitor`.
 *   **Backups**: Run `node tools/backup-db.mjs` weekly.
-*   **Secrets**: Keep `ADMIN_SECRET` and `JWT_SECRET` in a secure password manager.
+*   **Secrets**: Keep `ADMIN_SECRET` in a secure password manager.
 
 ## 2. Detection
 Incidents may be detected via:
-*   High volume of `login_failed` or `admin_unauthorized` events in audit logs.
-*   User reports of unauthorized account changes.
+*   High volume of `admin_unauthorized`, `submit_forbidden`, or `submit_ratelimit` events in audit logs.
+*   Unexpected spikes in inquiry submissions or admin deletions.
 *   Automated GitHub Security Action alerts (vulnerable dependencies).
 
 ## 3. Immediate Action (Containment)
 1.  **Isolate**: If an IP is attacking, add it to `ALLOWED_ADMIN_IPS` (to exclude it) or block it via the Cloudflare WAF (Web Application Firewall).
-2.  **Rotate Secrets**: If a secret is leaked:
-    *   Change `JWT_SECRET` in the Cloudflare Dashboard. (Note: This will log out all users).
-    *   Change `ADMIN_SECRET`.
-3.  **Disable MFA Recovery**: If recovery codes are being abused, temporarily disable the MFA recovery endpoint in `functions/api/mfa_recovery.js`.
+2.  **Rotate Secrets**: If `ADMIN_SECRET` is leaked, change it in the Cloudflare Dashboard.
 
 ## 4. Recovery
 1.  **Restore Data**: If data was corrupted, use the latest backup:

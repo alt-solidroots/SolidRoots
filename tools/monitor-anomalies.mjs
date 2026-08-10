@@ -9,13 +9,6 @@ import { execSync } from 'child_process';
 const DB_NAME = process.argv[2] || 'solid-roots-db';
 
 const QUERIES = {
-  FAILED_LOGINS_BY_USER: `
-    SELECT user_id, COUNT(*) as count, GROUP_CONCAT(DISTINCT details) as reasons
-    FROM audits
-    WHERE action = 'login_failed' AND timestamp > datetime('now', '-24 hours')
-    GROUP BY user_id
-    HAVING count > 5;
-  `,
   UNAUTHORIZED_ADMIN_BY_IP: `
     SELECT details as ip, COUNT(*) as count
     FROM audits
@@ -23,19 +16,12 @@ const QUERIES = {
     GROUP BY details
     HAVING count > 3;
   `,
-  BRUTE_FORCE_MFA: `
-    SELECT user_id, COUNT(*) as count
+  SUBMIT_RATE_LIMITED_BY_IP: `
+    SELECT details as ip, COUNT(*) as count
     FROM audits
-    WHERE action = 'mfa_verify_failed' AND timestamp > datetime('now', '-24 hours')
-    GROUP BY user_id
+    WHERE action IN ('submit_ratelimit', 'submit_forbidden') AND timestamp > datetime('now', '-24 hours')
+    GROUP BY details
     HAVING count > 10;
-  `,
-  SUBMISSION_FLOODING: `
-    SELECT user_id, COUNT(*) as count
-    FROM audits
-    WHERE action = 'submit' AND timestamp > datetime('now', '-24 hours')
-    GROUP BY user_id
-    HAVING count > 30;
   `
 };
 

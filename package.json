@@ -7,7 +7,7 @@
     "dev": "npx wrangler pages dev public --compatibility-date=2024-04-03 --d1 DB",
     "build:css": "npx tailwindcss -i ./src/input.css -o ./public/styles.css --minify",
     "lint": "eslint functions public/js",
-    "test": "node tests/integration-tests.mjs",
+    "test": "node tests/submit-contract.test.mjs && node tests/admin-fields.test.mjs",
     "monitor": "node tools/monitor-anomalies.mjs",
     "indexnow": "node tools/submit-indexnow.mjs",
     "scan": "npm audit && npx gitleaks detect --source . -v"

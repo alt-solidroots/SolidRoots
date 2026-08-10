@@ -7,7 +7,7 @@
 import { sanitizeValue, validateAdminKey } from '../utils/validate.js';
 
 import { logAudit } from '../utils/audit.js';
-import { rateLimitKV } from '../utils/ratelimit.js';
+import { rateLimitKV, getClientIp, allowRequestInWindow } from '../utils/ratelimit.js';
 import { errorResponse } from '../utils/errors.js';
 import { secureHeaders, corsHeaders } from '../utils/security.js';
 
@@ -17,36 +17,6 @@ import { parseAllowList, isIpAllowed } from '../utils/allowlist.js';
 const RATE_LIMITER_ADMIN = new Map();
 const ADMIN_RATE_LIMIT = 20; // max requests
 const ADMIN_RATE_WINDOW_MS = 60 * 1000; // per 1 minute
-
-function getClientIp(request) {
-  try {
-    const cf = request.headers.get("CF-Connecting-IP");
-    if (cf) return cf;
-    const xf = request.headers.get("X-Forwarded-For");
-    if (xf) return xf.split(",")[0].trim();
-  } catch (e) {
-    // fall through
-  }
-  return (
-    request.headers.get("X-Real-IP") || request.headers.get("Remote-Addr") || "unknown"
-  );
-}
-
-function allowRequestInWindow(map, key, limit, windowMs) {
-  const now = Date.now();
-  const rec = map.get(key) || { start: now, count: 0 };
-  if (now - rec.start > windowMs) {
-    rec.start = now;
-    rec.count = 0;
-  }
-  if (rec.count >= limit) {
-    map.set(key, rec);
-    return false;
-  }
-  rec.count += 1;
-  map.set(key, rec);
-  return true;
-}
 
 // Admin key validation handled by shared module (validateAdminKey)
 const DEFAULT_PAGE_SIZE = 50;
