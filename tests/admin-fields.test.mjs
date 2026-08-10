@@ -73,4 +73,32 @@ assert.deepStrictEqual(ctx.parseAnswers('not json'), { Answer: 'not json' })
 assert.deepStrictEqual(ctx.parseAnswers(''), {})
 assert.strictEqual(ctx.getName(ctx.parseAnswers('')), '')
 
+// ── Session persistence: survives refresh, expires, never returns a stale key ──
+const sessionSrc = ['saveSession', 'loadSession', 'clearSession'].map(extract).join('\n')
+const store = new Map()
+const fakeStorage = {
+  getItem: k => (store.has(k) ? store.get(k) : null),
+  setItem: (k, v) => store.set(k, v),
+  removeItem: k => store.delete(k),
+}
+const session = new Function('sessionStorage', 'SESSION_STORE', 'SESSION_HOURS',
+  `${sessionSrc}; return { saveSession, loadSession, clearSession };`
+)(fakeStorage, 'sr_admin_session', 4)
+
+session.saveSession('Solidroot-Aakash-2026')
+assert.strictEqual(session.loadSession(), 'Solidroot-Aakash-2026', 'key must survive a refresh')
+
+session.clearSession()
+assert.strictEqual(session.loadSession(), null, 'sign out must drop the key')
+
+// An expired entry must not log you in, and must be purged.
+store.set('sr_admin_session', JSON.stringify({ key: 'old', exp: Date.now() - 1000 }))
+assert.strictEqual(session.loadSession(), null, 'expired session must be rejected')
+assert.strictEqual(store.has('sr_admin_session'), false, 'expired session must be removed')
+
+// Corrupt / empty storage must not throw.
+store.set('sr_admin_session', 'not json')
+assert.strictEqual(session.loadSession(), null)
+assert.strictEqual(session.loadSession(), null)
+
 console.log('admin-fields: all assertions passed')

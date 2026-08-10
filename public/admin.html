@@ -164,6 +164,44 @@ const pwInput = document.getElementById("password-input");
 const errorMsg = document.getElementById("login-error");
 const tbody = document.getElementById("table-body");
 
+// ── Session ──────────────────────────────────────────────────
+// sessionStorage keeps the key across refreshes but drops it when the tab or
+// browser closes; the timestamp caps a long-lived tab at SESSION_HOURS.
+const SESSION_STORE = "sr_admin_session";
+const SESSION_HOURS = 4;
+
+function saveSession(key) {
+    try {
+        sessionStorage.setItem(SESSION_STORE, JSON.stringify({ key, exp: Date.now() + SESSION_HOURS * 3600 * 1000 }));
+    } catch (e) { /* private mode — session just won't persist */ }
+}
+
+function loadSession() {
+    try {
+        const s = JSON.parse(sessionStorage.getItem(SESSION_STORE));
+        if (s && s.key && s.exp > Date.now()) return s.key;
+    } catch (e) { /* fall through */ }
+    clearSession();
+    return null;
+}
+
+function clearSession() {
+    try { sessionStorage.removeItem(SESSION_STORE); } catch (e) { /* ignore */ }
+}
+
+function showDashboard() {
+    loginScreen.style.display = "none";
+    dashboard.style.display = "flex";
+}
+
+function showLogin() {
+    adminKey = "";
+    allData = [];
+    clearSession();
+    dashboard.style.display = "none";
+    loginScreen.style.display = "flex";
+}
+
 // ── Login ────────────────────────────────────────────────────
 loginBtn.addEventListener("click", attemptLogin);
 pwInput.addEventListener("keydown", e => { if (e.key === "Enter") attemptLogin(); });
@@ -186,8 +224,8 @@ async function attemptLogin() {
         const res = await fetch(`/api/admin?key=${encodeURIComponent(pw)}&pageSize=1`);
         if (res.ok) {
             adminKey = pw;
-            loginScreen.style.display = "none";
-            dashboard.style.display = "flex";
+            saveSession(pw);
+            showDashboard();
             loadData();
         } else {
             errorMsg.textContent = LOGIN_ERRORS[res.status] || `Sign-in failed (${res.status}).`;
@@ -202,18 +240,23 @@ async function attemptLogin() {
 }
 
 document.getElementById("logout-btn").addEventListener("click", () => {
-    adminKey = "";
-    allData = [];
     pwInput.value = "";
-    dashboard.style.display = "none";
-    loginScreen.style.display = "flex";
+    showLogin();
 });
+
 
 // ── Data ─────────────────────────────────────────────────────
 async function loadData() {
     showSkeleton();
     try {
         const res = await fetch(`/api/admin?key=${encodeURIComponent(adminKey)}&pageSize=1000`);
+        if (res.status === 401 || res.status === 403) {
+            // Key no longer valid (rotated or blocked) — don't show an empty table.
+            showLogin();
+            errorMsg.textContent = "Your session ended. Please sign in again.";
+            errorMsg.style.display = "block";
+            return;
+        }
         const json = await res.json();
         allData = (json.data || []).map(row => ({ ...row, _answers: parseAnswers(row.answers) }));
         updateStats();
@@ -436,6 +479,15 @@ function generateCSV(type) {
 
 document.getElementById("csv-buy-btn").addEventListener("click", () => generateCSV("buy"));
 document.getElementById("csv-sell-btn").addEventListener("click", () => generateCSV("sell"));
+
+// ── Restore session (last: everything above must be initialised) ──
+// Keeps you signed in across refreshes until the tab closes or the key expires.
+const savedKey = loadSession();
+if (savedKey) {
+    adminKey = savedKey;
+    showDashboard();
+    loadData();
+}
 </script>
 </body>
 </html>
