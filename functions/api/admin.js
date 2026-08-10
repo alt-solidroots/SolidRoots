@@ -104,49 +104,85 @@ async function fetchInquiries(env, queries) {
     return { rows: result.results, total: countResult.total };
 }
 
-export async function onRequestGet(context) {
-    const { request, env } = context;
-    const url = new URL(request.url);
-    const key = sanitizeValue(url.searchParams.get("key") ?? "");
-
-    // Rate limit check for admin API
+// Shared gate for every admin route: allow-list, rate limit, key validation, auth.
+// Returns { ok: true, ip } or { ok: false, response } for the caller to return.
+async function authorizeAdmin(request, env, key) {
     const ip = getClientIp(request);
-    // Enforce allow-list if configured
+
     const adminAllowRaw = env?.ALLOWED_ADMIN_IPS;
     const adminAllowList = adminAllowRaw ? parseAllowList(adminAllowRaw) : [];
     if (!isIpAllowed(ip, adminAllowList)) {
-        return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { 'Content-Type': 'application/json' } });
+        return { ok: false, response: jsonResponse({ error: 'Forbidden' }, 403) };
     }
 
     if (env.RATE_LIMIT_KV) {
         const rl = await rateLimitKV(env.RATE_LIMIT_KV, ip, '/admin', ADMIN_RATE_LIMIT, Math.ceil(ADMIN_RATE_WINDOW_MS / 1000));
         if (!rl.allowed) {
-            return jsonResponse({ error: "Too Many Requests" }, 429);
+            return { ok: false, response: jsonResponse({ error: "Too Many Requests" }, 429) };
         }
     } else if (!allowRequestInWindow(RATE_LIMITER_ADMIN, ip, ADMIN_RATE_LIMIT, ADMIN_RATE_WINDOW_MS)) {
-        return jsonResponse({ error: "Too Many Requests" }, 429);
+        return { ok: false, response: jsonResponse({ error: "Too Many Requests" }, 429) };
     }
 
     // Validate input before authorization
     const validation = validateAdminKey(key);
     if (!validation.valid) {
-        return jsonResponse({ error: validation.errors[0] }, 400);
+        return { ok: false, response: jsonResponse({ error: validation.errors[0] }, 400) };
     }
 
     if (!isAuthorized(key, env)) {
         await logAudit(env.DB, 'admin', 'admin_unauthorized', false, `IP=${ip}`);
-        return jsonResponse({ error: "Unauthorized" }, 401);
+        return { ok: false, response: jsonResponse({ error: "Unauthorized" }, 401) };
     }
+
+    return { ok: true, ip };
+}
+
+export async function onRequestGet(context) {
+    const { request, env } = context;
+    const url = new URL(request.url);
+    const key = sanitizeValue(url.searchParams.get("key") ?? "");
+
+    const guard = await authorizeAdmin(request, env, key);
+    if (!guard.ok) return guard.response;
 
     try {
         const { page, pageSize, typeFilter, offset } = parsePaginationParams(url.searchParams);
         const queries = buildInquiryQueries(typeFilter, pageSize, offset);
         const { rows, total } = await fetchInquiries(env, queries);
         // Audit admin access success
-        try { await logAudit(env.DB, 'admin', 'admin_access', true, `key=${key}, page=${page}, pageSize=${pageSize}, filter=${typeFilter}`); } catch {}
+        try { await logAudit(env.DB, 'admin', 'admin_access', true, `page=${page}, pageSize=${pageSize}, filter=${typeFilter}`); } catch {}
 
         return jsonResponse({ data: rows, total, page, pageSize });
   } catch (err) {
+        return errorResponse(err, 500, env);
+    }
+}
+
+// DELETE /api/admin?key=SECRET&id=123 — removes a single inquiry.
+export async function onRequestDelete(context) {
+    const { request, env } = context;
+    const url = new URL(request.url);
+    const key = sanitizeValue(url.searchParams.get("key") ?? "");
+
+    const guard = await authorizeAdmin(request, env, key);
+    if (!guard.ok) return guard.response;
+
+    const id = Number(url.searchParams.get("id"));
+    if (!Number.isInteger(id) || id < 1) {
+        return jsonResponse({ error: "Invalid id" }, 400);
+    }
+
+    try {
+        const result = await env.DB.prepare("DELETE FROM inquiries WHERE id = ?").bind(id).run();
+        if ((result.meta?.changes ?? 0) === 0) {
+            return jsonResponse({ error: "Not found" }, 404);
+        }
+        // Deletions are irreversible, so always leave a trail.
+        try { await logAudit(env.DB, 'admin', 'admin_delete_inquiry', true, `id=${id}, IP=${guard.ip}`); } catch {}
+
+        return jsonResponse({ success: true, id });
+    } catch (err) {
         return errorResponse(err, 500, env);
     }
 }

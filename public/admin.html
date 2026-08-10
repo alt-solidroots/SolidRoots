@@ -145,6 +145,10 @@
         <button class="drawer-close" id="drawer-close" aria-label="Close">&times;</button>
     </div>
     <div class="drawer-body" id="drawer-body"></div>
+    <div class="drawer-foot">
+        <button class="btn-danger" id="delete-btn">Delete this inquiry</button>
+        <div class="delete-hint" id="delete-hint">This cannot be undone.</div>
+    </div>
 </aside>
 
 <script>
@@ -412,12 +416,66 @@ function openDrawer(id) {
         </div>`).join("") || `<div class="td-meta">No further details captured.</div>`;
 
     document.getElementById("drawer-body").innerHTML = contact + details;
+    drawer.dataset.id = id;
+    resetDeleteBtn();
     drawer.classList.add("open");
     scrim.classList.add("open");
     document.getElementById("drawer-close").focus();
 }
 
-function closeDrawer() { drawer.classList.remove("open"); scrim.classList.remove("open"); }
+// ── Delete (two-step confirm — irreversible) ─────────────────
+const deleteBtn = document.getElementById("delete-btn");
+const deleteHint = document.getElementById("delete-hint");
+let deleteArmed = false;
+let deleteTimer;
+
+function resetDeleteBtn() {
+    clearTimeout(deleteTimer);
+    deleteArmed = false;
+    deleteBtn.disabled = false;
+    deleteBtn.classList.remove("armed");
+    deleteBtn.textContent = "Delete this inquiry";
+    deleteHint.textContent = "This cannot be undone.";
+}
+
+deleteBtn.addEventListener("click", async () => {
+    const id = Number(drawer.dataset.id);
+    if (!id) return;
+
+    // First click arms it; a second click within 5s actually deletes.
+    if (!deleteArmed) {
+        deleteArmed = true;
+        deleteBtn.classList.add("armed");
+        deleteBtn.textContent = "Click again to delete permanently";
+        deleteHint.textContent = "Cancels in 5 seconds.";
+        deleteTimer = setTimeout(resetDeleteBtn, 5000);
+        return;
+    }
+
+    clearTimeout(deleteTimer);
+    deleteBtn.disabled = true;
+    deleteBtn.textContent = "Deleting…";
+    try {
+        const res = await fetch(`/api/admin?key=${encodeURIComponent(adminKey)}&id=${id}`, { method: "DELETE" });
+        if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            throw new Error(body.error || `Failed (${res.status})`);
+        }
+        allData = allData.filter(r => r.id !== id);
+        resetDeleteBtn();
+        closeDrawer();
+        updateStats();
+        applyFilter();
+    } catch (err) {
+        deleteArmed = false;
+        deleteBtn.disabled = false;
+        deleteBtn.classList.remove("armed");
+        deleteBtn.textContent = "Delete this inquiry";
+        deleteHint.textContent = err.message;
+    }
+});
+
+function closeDrawer() { drawer.classList.remove("open"); scrim.classList.remove("open"); resetDeleteBtn(); }
 document.getElementById("drawer-close").addEventListener("click", closeDrawer);
 scrim.addEventListener("click", closeDrawer);
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });

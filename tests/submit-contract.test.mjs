@@ -48,4 +48,24 @@ for (const fn of ['errorResponse', 'sanitizeValue', 'validateSubmitPayload', 'lo
   }
 }
 
+// ── Admin delete: destructive, so guard the dangerous regressions ──
+const adminSrc = read('functions/api/admin.js')
+const deleteHandler = adminSrc.slice(adminSrc.indexOf('export async function onRequestDelete'))
+
+assert.ok(deleteHandler.length > 0, 'admin.js must expose onRequestDelete')
+assert.ok(/authorizeAdmin\(/.test(deleteHandler),
+  'delete must go through authorizeAdmin (auth + rate limit + allow-list)')
+assert.ok(/Number\.isInteger\(id\)/.test(deleteHandler),
+  'delete must reject a non-integer id')
+assert.ok(/DELETE FROM inquiries WHERE id = \?/.test(deleteHandler),
+  'delete must use a parameterised query, never string interpolation')
+assert.ok(/\.bind\(id\)/.test(deleteHandler), 'the id must be bound, not inlined')
+assert.ok(/admin_delete_inquiry/.test(deleteHandler), 'deletions must be audit logged')
+assert.ok(!/DELETE FROM inquiries[^?]*\$\{/.test(adminSrc),
+  'never interpolate values into a DELETE statement')
+
+// The admin key must never be written into the audit trail.
+assert.ok(!/logAudit\([^)]*key=\$\{key\}/.test(adminSrc),
+  'the admin secret must not be logged to the audits table')
+
 console.log('submit-contract: all assertions passed')

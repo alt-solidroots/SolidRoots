@@ -312,6 +312,30 @@
 }
 .admin-page .drawer-close:hover { color: var(--ps-text-ink); }
 .admin-page .drawer-body { padding: 32px; overflow-y: auto; flex: 1; }
+
+/* Destructive action — quiet by default, loud only once armed */
+.admin-page .drawer-foot {
+    padding: 20px 32px;
+    border-top: 1px solid var(--ps-divider);
+    background: var(--ps-white);
+}
+.admin-page .btn-danger {
+    width: 100%;
+    background: transparent;
+    color: var(--ps-red);
+    border: 1px solid var(--ps-red);
+    border-radius: 999px;
+    padding: 12px 20px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 160ms ease, color 160ms ease;
+}
+.admin-page .btn-danger:hover:not(:disabled) { background: rgba(200, 27, 58, 0.08); }
+.admin-page .btn-danger.armed { background: var(--ps-red); color: var(--ps-white); border-color: var(--ps-red); }
+.admin-page .btn-danger:disabled { opacity: 0.6; cursor: default; }
+.admin-page .delete-hint { font-size: 13px; color: var(--ps-text-gray); text-align: center; margin-top: 8px; }
 .admin-page .drawer-contact { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
 .admin-page .contact-btn {
     display: inline-flex; align-items: center; gap: 8px;
