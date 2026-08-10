@@ -5,6 +5,9 @@ node_modules/
 .wrangler
 .dev.vars*
 !.dev.vars.example
+# local-only dev config (production uses dashboard bindings) — do NOT commit
+wrangler.jsonc
+wrangler.toml
 .env*
 !.env.example
 
