@@ -1,9 +1,15 @@
+// CF-Connecting-IP is set by the Cloudflare edge and cannot be forged. The
+// remaining headers are caller-supplied, so the result is length-capped before
+// it becomes a KV key or an audit-log field.
+const MAX_IP_LEN = 45; // an IPv6 address at its longest
+
 export function getClientIp(request) {
   const cf = request.headers.get("CF-Connecting-IP");
-  if (cf) return cf;
+  if (cf) return cf.slice(0, MAX_IP_LEN);
   const xf = request.headers.get("X-Forwarded-For");
-  if (xf) return xf.split(",")[0].trim();
-  return request.headers.get("X-Real-IP") || request.headers.get("Remote-Addr") || "unknown";
+  if (xf) return xf.split(",")[0].trim().slice(0, MAX_IP_LEN);
+  const fallback = request.headers.get("X-Real-IP") || request.headers.get("Remote-Addr");
+  return fallback ? fallback.slice(0, MAX_IP_LEN) : "unknown";
 }
 
 // Per-instance in-memory limiter (fallback when RATE_LIMIT_KV is unbound).

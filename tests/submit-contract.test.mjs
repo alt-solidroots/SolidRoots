@@ -71,6 +71,24 @@ assert.ok(!validateSubmitPayload({ type: 'buy', email: 'a'.repeat(300) + '@b.com
   'an over-long email must be rejected')
 assert.ok(!validateSubmitPayload({ type: 'buy', phone: '9876543210', answers: { note: 'x'.repeat(25000) } }).valid,
   'an over-large answers blob must be rejected')
+assert.ok(!validateSubmitPayload({ type: 'buy', phone: '9876543210', answers: { note: 'x'.repeat(3000) } }).valid,
+  'a single over-long answer must be rejected even when the total fits')
+assert.ok(!validateSubmitPayload({
+  type: 'buy', phone: '9876543210',
+  answers: Object.fromEntries(Array.from({ length: 200 }, (_, i) => [`q${i}`, 'a'])),
+}).valid, 'an absurd number of answers must be rejected')
+
+// A realistic submission must still sail through — these limits exist to stop
+// abuse, not to reject the form's own output.
+assert.ok(validateSubmitPayload({
+  type: 'sell', phone: '9876543210',
+  answers: { Name: "O'Brien & Sons", 'Total Land in Acre': '5 Acres', Category: 'Agriculture' },
+}).valid, 'a normal sell submission must be accepted')
+
+// The admin type filter must be whitelisted, never passed through as given.
+const adminFilterSrc = read('functions/api/admin.js')
+assert.ok(/\["buy",\s*"sell",\s*"all"\]\.includes\(/.test(adminFilterSrc),
+  'admin.js must whitelist the type filter')
 
 // submit.js must import everything it calls — a missing errorResponse import
 // turned every caught error into a ReferenceError 500.

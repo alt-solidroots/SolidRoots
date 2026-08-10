@@ -61,7 +61,9 @@ function parsePaginationParams(searchParams) {
     let pageSize = parseInt(searchParams.get("pageSize") || DEFAULT_PAGE_SIZE, 10);
     if (Number.isNaN(pageSize) || pageSize < 1) pageSize = DEFAULT_PAGE_SIZE;
     if (pageSize > MAX_PAGE_SIZE) pageSize = MAX_PAGE_SIZE;
-    const typeFilter = searchParams.get("type") || "all";
+    // Whitelist rather than trust: anything unrecognised falls back to "all".
+    const rawType = searchParams.get("type") || "all";
+    const typeFilter = ["buy", "sell", "all"].includes(rawType) ? rawType : "all";
     const offset = (page - 1) * pageSize;
     return { page, pageSize, typeFilter, offset };
 }

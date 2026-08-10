@@ -52,7 +52,9 @@ export function validateAdminKey(key) {
 
 const MAX_EMAIL = 254;   // RFC 5321 maximum
 const MAX_PHONE = 32;    // generous room for "+91 (98765) 43210"
-const MAX_ANSWERS = 20000; // serialised size; the real form sends well under 2KB
+const MAX_ANSWERS = 20000;      // serialised size; the real form sends well under 2KB
+const MAX_ANSWER_VALUE = 2000;  // one reply; the longest real answer is an address
+const MAX_ANSWER_KEYS = 60;     // longest flow asks ~12 questions
 
 // A phone is only useful if someone can actually ring it. The form asks for a
 // 10-digit number, so require that underneath whatever spacing people type —
@@ -102,6 +104,17 @@ export function validateSubmitPayload(payload) {
       errors.push('Invalid answers');
     } else if (JSON.stringify(payload.answers).length > MAX_ANSWERS) {
       errors.push('Answers too large');
+    } else {
+      // Bound the shape too, not just the total: one huge reply fits inside the
+      // overall budget but still wrecks the admin table.
+      const entries = Object.entries(payload.answers);
+      if (entries.length > MAX_ANSWER_KEYS) {
+        errors.push('Too many answers');
+      } else if (entries.some(([k, v]) =>
+        k.length > MAX_ANSWER_VALUE ||
+        (typeof v === 'string' && v.length > MAX_ANSWER_VALUE))) {
+        errors.push('Answer too long');
+      }
     }
   }
 

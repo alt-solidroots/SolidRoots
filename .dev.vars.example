@@ -1,0 +1,23 @@
+# Solid Roots — local development variables
+#
+# Copy to `.dev.vars` and fill in real values. `.dev.vars` is gitignored and
+# must never be committed. Wrangler loads this file automatically for
+# `npm run dev`; it is the Cloudflare equivalent of a .env file.
+#
+# PRODUCTION SECRETS DO NOT LIVE IN ANY FILE. Set them on the Cloudflare side:
+#   npx wrangler pages secret put ADMIN_SECRET
+# or via Cloudflare Dashboard → Pages → Settings → Environment variables.
+# Bindings (DB, RATE_LIMIT_KV) are configured in the dashboard, not here.
+
+# Required. Gates /api/admin. Only letters, digits, dot, underscore, hyphen
+# (see validateAdminKey) and at most 128 characters.
+ADMIN_SECRET=choose-a-long-random-value
+
+# Optional. Set to "development" to return full error detail in API responses.
+# Anything else — including leaving it unset — means production-safe errors.
+NODE_ENV=development
+
+# Optional. Comma-separated IP allow-lists. When empty, all IPs are allowed
+# (convenient for dev). Set these in production to restrict the endpoints.
+ALLOWED_ADMIN_IPS=
+ALLOWED_SUBMIT_IPS=

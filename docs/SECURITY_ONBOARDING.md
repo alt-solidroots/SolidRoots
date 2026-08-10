@@ -30,8 +30,10 @@ There is no user login, JWT, or MFA — inquiries are stored without an account.
 
 ## Environment setup
 
-- Secrets must never be committed; use `wrangler secret` or an environment manager.
-- See `.env.example` for the required variables.
+- Secrets never live in a tracked file. For local development copy `.dev.vars.example` to `.dev.vars` (gitignored) — wrangler loads it automatically for `npm run dev`.
+- For production, set them on the Cloudflare side and nowhere else:
+  `npx wrangler pages secret put ADMIN_SECRET`, or Dashboard → Pages → Settings → Environment variables.
+- Bindings (`DB`, `RATE_LIMIT_KV`) are configured in the Cloudflare dashboard, not in a file.
 
 ## Database schema
 
@@ -67,4 +69,4 @@ There is no user login, JWT, or MFA — inquiries are stored without an account.
 ## Contributing
 
 - Ensure `npm test` passes and review security-sensitive changes with a teammate.
-- Keep secrets out of the codebase; use `.env.example` as the reference for required variables.
+- Keep secrets out of the codebase; use `.dev.vars.example` as the reference for required variables.
