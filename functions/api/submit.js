@@ -16,6 +16,7 @@ const JSON_HEADERS = {
 
 
 import { sanitizeValue, validateSubmitPayload } from '../utils/validate.js';
+import { errorResponse } from '../utils/errors.js';
 import { verifyJwt } from '../utils/auth.js';
 import { parseAllowList, isIpAllowed } from '../utils/allowlist.js';
 import { parseCookies } from '../utils/cookies.js';
@@ -66,7 +67,9 @@ function jsonResponse(body, status = 200) {
 
 function extractInquiryFields(data) {
     const { type, email, phone, answers } = data;
-    return { type, email, phone, answers };
+    // The branched buy/sell forms don't ask every contact field, so these can be
+    // absent. D1 rejects undefined bindings, so normalise before storing.
+    return { type, email: email ?? '', phone: phone ?? '', answers: answers ?? {} };
 }
 
 async function saveInquiry(env, type, userId, email, phone, answers) {

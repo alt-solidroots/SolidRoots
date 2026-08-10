@@ -56,7 +56,7 @@ export function validateSubmitPayload(payload) {
   const t = payload.type ? String(payload.type).trim().toLowerCase() : '';
   if (!t) {
     errors.push('Missing type');
-  } else if (!['buyer', 'seller'].includes(t)) {
+  } else if (!['buy', 'sell'].includes(t)) {
     errors.push('Invalid type');
   }
 
