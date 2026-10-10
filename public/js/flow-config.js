@@ -39,7 +39,7 @@ const BUY_TYPE_QUESTIONS = {
         { q: "Tell us about your requirement", type: "form", fields: [
             { key: "Name", placeholder: "Full Name" },
             { key: "Phone Number", type: "tel", placeholder: "10-digit Phone Number" },
-            { key: "Preferred Size", placeholder: "e.g. 200 sq yards" },
+            { key: "Preferred Size (sq yards)", placeholder: "e.g. 200 sq yards" },
             { key: "Society Name / City", placeholder: "e.g. Sector 21, Sonipat" },
             { key: "Budget (approx)", placeholder: "e.g. 50 Lakhs" },
         ] },
@@ -48,7 +48,7 @@ const BUY_TYPE_QUESTIONS = {
         { q: "Tell us about your requirement", type: "form", fields: [
             { key: "Name", placeholder: "Full Name" },
             { key: "Contact", type: "tel", placeholder: "10-digit Phone Number" },
-            { key: "Preferred Size of Plot", placeholder: "e.g. 500 sq yards" },
+            { key: "Preferred Size of Plot (sq yards)", placeholder: "e.g. 500 sq yards" },
             { key: "Zone", type: "select", options: ["Free", "CLU", "Hrera approved"] },
             { key: "City", placeholder: "e.g. Sonipat" },
             { key: "Budget (approx)", placeholder: "e.g. 1 Crore" },
