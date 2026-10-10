@@ -125,6 +125,7 @@ const SELL_TYPE_QUESTIONS = {
             { key: "Name", placeholder: "Full Name" },
             { key: "Contact", type: "tel", placeholder: "10-digit Phone Number" },
             { key: "Plot Size", placeholder: "e.g. 500 sq yards" },
+            { key: "Zone", type: "select", options: ["Free", "CLU", "Hrera approved"] },
             { key: "Society Name / City", placeholder: "e.g. Sonipat" },
             { key: "Demand", placeholder: "e.g. 1 Crore" },
         ] },
