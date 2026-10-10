@@ -122,13 +122,61 @@ function renderQuestion(type) {
 
     updateProgressBar(type, step);
     contentEl.innerHTML = stripDangerousHTML(buildQuestionHTML(type, step, flowData));
+    restoreAnswers(type, step, flowData);
     focusInputAfterRender(type, step);
+}
+
+// Text inputs on a step (form fields, or a plain text question). The age question
+// stores "N Years" and file inputs can't be set, so both are left out.
+function getRestorableInputs(type, step, flowData) {
+    if (flowData.type === "form") {
+        return flowData.fields
+            .map((field, i) => ({ key: field.key, input: field.type !== "file" && getElementById(`${type}-input-${step}-${i}`) }))
+            .filter((entry) => entry.input);
+    }
+    if (flowData.type === "text" && !flowData.q.includes("How old is the property?")) {
+        return [{ key: flowData.q, input: getElementById(`${type}-input-${step}`) }];
+    }
+    return [];
+}
+
+// Refill what the user already typed when they come back to a step.
+// File inputs can't be prefilled; saveFormAnswer keeps the earlier upload instead.
+function restoreAnswers(type, step, flowData) {
+    const answers = flowState.answers[type];
+    getRestorableInputs(type, step, flowData).forEach(({ key, input }) => {
+        if (answers[key]) input.value = answers[key];
+    });
+}
+
+// Step back one question; from the first question, return to the Buy/Sell intro.
+// Whatever is typed on the current step is kept (unvalidated) so it's there on return;
+// Next re-validates it before anything is submitted.
+function goBack(type) {
+    const step = flowState.currentStep[type];
+    getRestorableInputs(type, step, getFlow(type)[step]).forEach(({ key, input }) => {
+        flowState.answers[type][key] = input.value.trim();
+    });
+
+    if (step === 0) {
+        resetSideToIntro(type);
+        Object.values(FLOW_TYPE).forEach((t) => { getElementById(`${t}-section`).style.flex = ""; });
+        return;
+    }
+    flowState.currentStep[type]--;
+    renderQuestion(type);
 }
 
 // ── Answer Saving ────────────────────────────────────────────
 
 function saveAnswer(type, value) {
-    const questionText = getFlow(type)[flowState.currentStep[type]].q;
+    const step = flowState.currentStep[type];
+    const questionText = getFlow(type)[step].q;
+    // Changing the property type switches to a different form; drop the old form's answers
+    // so they aren't submitted alongside the new ones.
+    if (step === 0 && flowState.answers[type][questionText] !== value) {
+        flowState.answers[type] = {};
+    }
     flowState.answers[type][questionText] = value;
     advanceStep(type);
 }
@@ -168,7 +216,9 @@ async function saveFormAnswer(type) {
     const step = flowState.currentStep[type];
     const fields = getFlow(type)[step].fields;
     const inputs = fields.map((field, i) => getElementById(`${type}-input-${step}-${i}`));
-    const values = inputs.map((input, i) => (fields[i].type === "file" ? "" : input.value.trim()));
+    // A file field keeps its earlier upload (if the user came back) unless a new file is picked below.
+    const values = inputs.map((input, i) =>
+        (fields[i].type === "file" ? flowState.answers[type][fields[i].key] || "" : input.value.trim()));
 
     // File fields are optional and never block submission.
     const isFieldInvalid = (field, value) =>

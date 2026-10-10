@@ -152,6 +152,9 @@ function buildTextInput(type, step, flowData) {
 
 function buildQuestionHTML(type, step, flowData) {
     const heading = `
+        <button onclick="goBack('${type}')" aria-label="Go back"
+                class="flex items-center gap-2 mb-4 text-white font-bold text-sm uppercase tracking-widest"
+        ><span aria-hidden="true" class="text-xl">&larr;</span> Back</button>
         <p class="text-white font-headline text-xl md:text-2xl lg:text-3xl font-bold
                   tracking-tight text-shadow-premium mb-6 md:mb-8">
             ${step + 1}. ${flowData.q}
