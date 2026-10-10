@@ -38,10 +38,10 @@ const BUY_TYPE_QUESTIONS = {
     "Residential Plot": [
         { q: "Tell us about your requirement", type: "form", fields: [
             { key: "Name", placeholder: "Full Name" },
+            { key: "Phone Number", type: "tel", placeholder: "10-digit Phone Number" },
             { key: "Preferred Size", placeholder: "e.g. 200 sq yards" },
             { key: "Society Name / City", placeholder: "e.g. Sector 21, Sonipat" },
             { key: "Budget (approx)", placeholder: "e.g. 50 Lakhs" },
-            { key: "Phone Number", type: "tel", placeholder: "10-digit Phone Number" },
         ] },
     ],
     "Industrial Plot": [
