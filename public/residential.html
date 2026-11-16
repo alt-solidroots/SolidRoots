@@ -201,7 +201,7 @@
 <!-- Card: Majestic Green -->
 <div class="group bg-surface rounded-2xl overflow-hidden shadow-sm border border-neutral-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col">
   <div class="relative overflow-hidden" style="aspect-ratio:1/1">
-    <img loading="lazy" decoding="async" src="images/majestic-green.jpg" alt="Majestic Green view" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+    <img loading="lazy" decoding="async" src="images/magestic-green-2.jpeg" alt="Majestic Green view" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
   </div>
   <div class="p-5 flex flex-col flex-1">
     <div class="mb-4">
@@ -340,9 +340,100 @@
   </div>
 </div>
 
+<!-- Card: Rritam Peace Valley -->
+<div class="group bg-surface rounded-2xl overflow-hidden shadow-sm border border-neutral-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col">
+  <div class="relative overflow-hidden" style="aspect-ratio:1/1">
+    <img loading="lazy" decoding="async" src="images/rritam-peace-valley-bahalgarh.jpeg" alt="Rritam Peace Valley view" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+  </div>
+  <div class="p-5 flex flex-col flex-1">
+    <div class="mb-4">
+      <h3 class="text-lg font-headline font-bold text-on-surface leading-tight mb-1">Rritam Peace Valley</h3>
+      <p class="text-[10px] text-on-surface-variant font-mono tracking-wide">HRERA-PKL-SNP-741-2025</p>
+    </div>
+    <div class="mt-auto pt-3 border-t border-neutral-100 grid grid-cols-2 gap-2 text-xs text-on-surface-variant">
+      <div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-sm text-primary" style="font-size:14px">location_on</span><span>Sector 80, Bahalgarh, Sonipat</span></div>
+      <div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-sm text-primary" style="font-size:14px">straighten</span><span>130 – 170 SQYD</span></div>
+      <div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-sm text-primary" style="font-size:14px">stadium</span><span>5 Acres</span></div>
+    </div>
+    <div class="mt-3 flex gap-2">
+      <button onclick="openSiteMap('images/rritam-peace-valley-sitemap.jpg', 'Rritam Peace Valley Site Map')" class="flex-1 py-2 bg-surface-container-high hover:bg-surface-container-highest text-neutral-800 text-xs font-bold rounded-lg transition-colors text-center cursor-pointer">Site Map</button>
+      <a href="https://wa.me/919034242724?text=I%20am%20interested%20in%20Rritam%20Peace%20Valley" target="_blank" rel="noopener noreferrer" class="flex-1 py-2 bg-primary text-on-primary text-xs font-bold rounded-lg transition-colors text-center">Enquire</a>
+    </div>
+  </div>
+</div>
+
+<!-- Card: Craft Homes Sonipat -->
+<div class="group bg-surface rounded-2xl overflow-hidden shadow-sm border border-neutral-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col">
+  <div class="relative overflow-hidden" style="aspect-ratio:1/1">
+    <img loading="lazy" decoding="async" src="images/crafts-home-sonipat.jpeg" alt="Craft Homes Sonipat view" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+  </div>
+  <div class="p-5 flex flex-col flex-1">
+    <div class="mb-4">
+      <h3 class="text-lg font-headline font-bold text-on-surface leading-tight mb-1">Craft Homes Sonipat</h3>
+      <p class="text-[10px] text-on-surface-variant font-mono tracking-wide">HRERA-PKL-SNP-537-2024</p>
+    </div>
+    <div class="mt-auto pt-3 border-t border-neutral-100 grid grid-cols-2 gap-2 text-xs text-on-surface-variant">
+      <div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-sm text-primary" style="font-size:14px">location_on</span><span>Village Ahmadpur, Sector 27, Sonipat</span></div>
+      <div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-sm text-primary" style="font-size:14px">straighten</span><span>179 SQYD</span></div>
+      <div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-sm text-primary" style="font-size:14px">stadium</span><span>6.34 Acres</span></div>
+    </div>
+    <a href="https://wa.me/919034242724?text=I%20am%20interested%20in%20Craft%20Homes%20Sonipat" target="_blank" rel="noopener noreferrer" class="mt-3 block w-full py-2 bg-primary text-on-primary text-xs font-bold rounded-lg transition-colors text-center">Enquire</a>
+  </div>
+</div>
+
 </div>
 </div>
     </section>
+
+    <!-- Site Map Lightbox Modal (same as industrial.html) -->
+    <div id="sitemap-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 transition-all duration-300">
+        <div class="relative max-w-4xl w-full bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-neutral-100 dark:border-neutral-800 flex justify-between items-center bg-white dark:bg-neutral-900">
+                <h3 id="modal-title" class="text-lg font-headline font-bold text-neutral-900 dark:text-neutral-50">Site Map</h3>
+                <button onclick="closeSiteMap()" class="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 flex items-center justify-center text-neutral-600 dark:text-neutral-400 transition-colors cursor-pointer">
+                    <span class="material-symbols-outlined text-lg" style="font-size: 20px;">close</span>
+                </button>
+            </div>
+            <div class="flex-1 overflow-auto p-6 flex items-center justify-center bg-neutral-900">
+                <img id="modal-img" src="" alt="Site Map" class="max-h-[60vh] max-w-full object-contain rounded-lg shadow-md">
+            </div>
+            <div class="px-6 py-4 border-t border-neutral-100 dark:border-neutral-800 flex flex-col sm:flex-row justify-between items-center gap-4 bg-neutral-50 dark:bg-neutral-950">
+                <span class="text-xs text-neutral-500 dark:text-neutral-400 font-medium">Solid Roots Realty Premium Residential Listings</span>
+                <div class="flex gap-3 w-full sm:w-auto">
+                    <a id="modal-download" href="" download class="flex-1 sm:flex-initial px-4 py-2 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm" style="font-size:16px">download</span> Download Map
+                    </a>
+                    <a id="modal-whatsapp" href="" target="_blank" class="flex-1 sm:flex-initial px-4 py-2 bg-primary hover:bg-primary-container text-on-primary text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5">
+                        Enquire on WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openSiteMap(imgSrc, title) {
+            document.getElementById('modal-img').src = imgSrc;
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-download').href = imgSrc;
+            document.getElementById('modal-whatsapp').href = "https://wa.me/919034242724?text=" + encodeURIComponent("Hello, I am interested in details and site map of " + title);
+            document.getElementById('sitemap-modal').classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeSiteMap() {
+            document.getElementById('sitemap-modal').classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        document.getElementById('sitemap-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeSiteMap();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeSiteMap();
+        });
+    </script>
 </main>
 
 <!-- Footer -->
