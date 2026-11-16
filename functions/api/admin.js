@@ -1,5 +1,5 @@
 // ============================================================
-// Solid Roots — Admin API
+// Solid Roots Realty — Admin API
 // GET /api/admin        (Authorization: Bearer YOUR_ADMIN_SECRET)
 // DELETE /api/admin?id=123
 // Protected by ADMIN_SECRET environment variable. The secret travels in the

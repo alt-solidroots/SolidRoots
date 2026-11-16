@@ -1,6 +1,6 @@
-# Solid Roots
+# Solid Roots Realty
 
-Solid Roots is a premium real estate marketplace designed to connect discerning buyers with extraordinary properties. Our platform offers a seamless, fee-free experience for buying and selling luxury homes, modern apartments, and prime land.
+Solid Roots Realty is a premium real estate marketplace designed to connect discerning buyers with extraordinary properties. Our platform offers a seamless, fee-free experience for buying and selling luxury homes, modern apartments, and prime land.
 
 ## Features
 
@@ -12,7 +12,7 @@ Solid Roots is a premium real estate marketplace designed to connect discerning 
 ## Pages
 
 - `index.html`: The home page featuring our portfolio, marketplace edge, and testimonials.
-- `about.html`: Learn more about our journey, vision, and why you should choose Solid Roots.
+- `about.html`: Learn more about our journey, vision, and why you should choose Solid Roots Realty.
 - `select-your-path.html`: A split-screen portal for users to choose whether they want to buy or sell.
 
 ## Tech Stack

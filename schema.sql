@@ -1,4 +1,4 @@
--- Schema for Solid Roots Inquiries
+-- Schema for Solid Roots Realty Inquiries
 CREATE TABLE IF NOT EXISTS inquiries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     type TEXT NOT NULL, -- 'buy' or 'sell'

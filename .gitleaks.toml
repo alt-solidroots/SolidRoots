@@ -1,7 +1,7 @@
-# Gitleaks Configuration for Solid Roots
+# Gitleaks Configuration for Solid Roots Realty
 # See: https://github.com/gitleaks/gitleaks#configuration
 
-title = "Solid Roots Gitleaks Config"
+title = "Solid Roots Realty Gitleaks Config"
 
 [extend]
 # Extend the default gitleaks config

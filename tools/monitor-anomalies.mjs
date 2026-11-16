@@ -1,5 +1,5 @@
 /**
- * Monitor Solid Roots Audit Logs for Anomalies
+ * Monitor Solid Roots Realty Audit Logs for Anomalies
  * This tool scans the 'audits' table for suspicious patterns in the last 24 hours.
  * Usage: node tools/monitor-anomalies.mjs <db-name>
  */

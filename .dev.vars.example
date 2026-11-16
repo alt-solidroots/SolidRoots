@@ -1,4 +1,4 @@
-# Solid Roots — local development variables
+# Solid Roots Realty — local development variables
 #
 # Copy to `.dev.vars` and fill in real values. `.dev.vars` is gitignored and
 # must never be committed. Wrangler loads this file automatically for

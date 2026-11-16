@@ -1,7 +1,7 @@
 {
   "name": "solid-roots",
   "version": "1.0.0",
-  "description": "Solid Roots is a premium real estate marketplace designed to connect discerning buyers with extraordinary properties. Our platform offers a seamless, fee-free experience for buying and selling luxury homes, modern apartments, and prime land.",
+  "description": "Solid Roots Realty is a premium real estate marketplace designed to connect discerning buyers with extraordinary properties. Our platform offers a seamless, fee-free experience for buying and selling luxury homes, modern apartments, and prime land.",
   "main": "index.js",
   "scripts": {
     "dev": "npx wrangler pages dev public --compatibility-date=2024-04-03 --d1 DB",

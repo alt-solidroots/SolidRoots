@@ -1,5 +1,5 @@
 // ============================================================
-// Solid Roots — Submit API
+// Solid Roots Realty — Submit API
 // POST /api/submit
 // Saves a buyer or seller inquiry to the D1 database.
 // ============================================================

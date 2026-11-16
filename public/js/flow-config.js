@@ -1,5 +1,5 @@
 // ============================================================
-// Solid Roots — Flow Configuration
+// Solid Roots Realty — Flow Configuration
 // Constants and question data for Buy / Sell inquiry flows.
 // ============================================================
 

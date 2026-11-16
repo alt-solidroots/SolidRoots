@@ -1,5 +1,5 @@
 // ============================================================
-// Solid Roots — Flow Validation
+// Solid Roots Realty — Flow Validation
 // Pure functions for validating text-type question inputs.
 // Depends on: flow-config.js
 // ============================================================

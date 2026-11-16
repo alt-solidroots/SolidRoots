@@ -1,6 +1,6 @@
 /**
  * IndexNow URL Submission Tool
- * Submits all Solid Roots pages to search engines (Bing, Yandex, etc.)
+ * Submits all Solid Roots Realty pages to search engines (Bing, Yandex, etc.)
  * via the IndexNow protocol for instant indexing.
  *
  * Usage: node tools/submit-indexnow.mjs
@@ -21,7 +21,7 @@ const URLS_TO_SUBMIT = [
 ];
 
 async function submitToIndexNow() {
-  console.log('🚀 IndexNow Submission Tool — Solid Roots');
+  console.log('🚀 IndexNow Submission Tool — Solid Roots Realty');
   console.log('==========================================');
   console.log(`Host:    ${CONFIG.host}`);
   console.log(`Key:     ${CONFIG.key}`);

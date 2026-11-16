@@ -1,5 +1,5 @@
 /**
- * Solid Roots Database Backup Utility
+ * Solid Roots Realty Database Backup Utility
  * This script exports the D1 database to a SQL file for local backup.
  * Usage: node tools/backup-db.mjs <db-name>
  */

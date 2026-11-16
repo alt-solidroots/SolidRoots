@@ -1,4 +1,4 @@
-# Incident Response Plan — Solid Roots
+# Incident Response Plan — Solid Roots Realty
 
 This document outlines the steps to take in the event of a security incident or data breach.
 

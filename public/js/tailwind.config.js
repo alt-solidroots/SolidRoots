@@ -1,5 +1,5 @@
 // ============================================================
-// Solid Roots — Shared Tailwind CSS Configuration
+// Solid Roots Realty — Shared Tailwind CSS Configuration
 // Imported by each HTML page via a <script> tag AFTER
 // the Tailwind CDN script.
 // ============================================================

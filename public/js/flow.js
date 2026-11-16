@@ -1,5 +1,5 @@
 // ============================================================
-// Solid Roots — Inquiry Flow Controller
+// Solid Roots Realty — Inquiry Flow Controller
 // Orchestrates state, rendering, validation, and submission.
 // Depends on: flow-config.js, flow-ui.js, flow-validation.js
 // ============================================================

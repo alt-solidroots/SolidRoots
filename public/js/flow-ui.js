@@ -1,5 +1,5 @@
 // ============================================================
-// Solid Roots — Flow UI Helpers
+// Solid Roots Realty — Flow UI Helpers
 // Pure functions that build HTML strings for each question type.
 // Depends on: flow-config.js
 // ============================================================

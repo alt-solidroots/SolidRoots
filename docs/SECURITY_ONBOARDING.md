@@ -4,7 +4,7 @@ This document helps new contributors understand how this project handles securit
 
 ## Overview
 
-Solid Roots is a static marketing site with two server endpoints:
+Solid Roots Realty is a static marketing site with two server endpoints:
 
 - `POST /api/submit` — accepts a buy/sell inquiry from the public form.
 - `GET|DELETE /api/admin` — lets an operator list and delete inquiries.
